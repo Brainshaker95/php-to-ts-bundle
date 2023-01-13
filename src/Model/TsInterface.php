@@ -2,10 +2,11 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
+use Brainshaker95\PhpToTsBundle\FileNameStrategy\KebabCase;
+use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
-use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
 class TsInterface implements Stringable
@@ -34,10 +35,14 @@ class TsInterface implements Stringable
 
     /**
      * @phpstan-param FileType::TYPE_* $fileType
+     *
+     * @param class-string<FileNameStrategy> $fileNameStrategy
      */
-    public function getFileName(string $fileType = FileType::TYPE_MODULE): string
-    {
-        return Str::toKebab($this->name)
+    public function getFileName(
+        string $fileType = FileType::TYPE_MODULE,
+        string $fileNameStrategy = KebabCase::class,
+    ): string {
+        return (new $fileNameStrategy())->getName($this->name)
             . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
             . '.ts';
     }

@@ -121,12 +121,14 @@ class Dumper
             return;
         }
 
-        $config     = $this->getConfig($config);
-        $fileType   = $config->getFileType();
-        $pathPrefix = $config->getOutputDir() . DIRECTORY_SEPARATOR;
+        $config           = $this->getConfig($config);
+        $fileType         = $config->getFileType();
+        $fileNameStrategy = $config->getFileNameStrategy();
+        $pathPrefix       = $config->getOutputDir() . DIRECTORY_SEPARATOR;
 
         foreach ($tsInterfaces as $tsInterface) {
-            $path = $this->filesystem->makeAbsolute($pathPrefix . $tsInterface->getFileName($fileType));
+            $fileName = $tsInterface->getFileName($fileType, $fileNameStrategy);
+            $path     = $this->filesystem->makeAbsolute($pathPrefix . $fileName);
 
             $this->filesystem->dumpFile($path, $tsInterface->toString(
                 fileType: $fileType,
