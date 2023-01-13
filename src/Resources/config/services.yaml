@@ -8,10 +8,6 @@ services:
     resource: '../../../src/*'
     exclude: '../../../src/{DependencyInjection,Interface,Model,Tool,PhpToTsBundle.php}'
 
-  Brainshaker95\PhpToTsBundle\Service\:
-    resource: '../../../src/Service/*'
-    public: true
-
   Brainshaker95\PhpToTsBundle\Service\Filesystem:
     bind:
       $projectDir: '%kernel.project_dir%'
