@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Tool\Str;
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -93,7 +94,7 @@ class Dumper
         foreach ($this->filesystem->getSplFileInfoArray($files) as $file) {
             if ($file->isDir()) {
                 $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config);
-            } elseif ($file->getExtension() === 'php') {
+            } else {
                 $this->dumpFile($file, $config);
             }
         }
@@ -145,6 +146,10 @@ class Dumper
         $file = $this->filesystem->getSplFileInfo($file);
 
         $this->filesystem->assertFile($file->getRealPath());
+
+        if (Str::toLower($file->getExtension()) !== 'php') {
+            return null;
+        }
 
         $statements = $this->parser->parse($file->getContents());
 
