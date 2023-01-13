@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
@@ -40,6 +41,7 @@ class Dumper
      *         count: int,
      *     },
      *     sort_strategies: class-string<SortStrategy>[],
+     *     file_name_strategy: class-string<FileNameStrategy>
      * } $config
      */
     public function __construct(array $config)
@@ -52,6 +54,7 @@ class Dumper
             fileType: $config['file_type'],
             indent: new Indent($config['indent']['style'], $config['indent']['count']),
             sortStrategies: $config['sort_strategies'],
+            fileNameStrategy: $config['file_name_strategy'],
         );
     }
 
@@ -181,6 +184,7 @@ class Dumper
             fileType: $config->getFileType() ?? $this->config->getFileType(),
             indent: $config->getIndent() ?? $this->config->getIndent(),
             sortStrategies: $config->getSortStrategies() ?? $this->config->getSortStrategies(),
+            fileNameStrategy: $config->getFileNameStrategy() ?? $this->config->getFileNameStrategy(),
         );
     }
 }

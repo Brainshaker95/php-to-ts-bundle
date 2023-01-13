@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 
 class FullConfig implements Config
@@ -11,6 +12,7 @@ class FullConfig implements Config
      * @phpstan-param FileType::TYPE_* $fileType
      *
      * @param class-string<SortStrategy>[] $sortStrategies
+     * @param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function __construct(
         private string $inputDir,
@@ -18,6 +20,7 @@ class FullConfig implements Config
         private string $fileType,
         private Indent $indent,
         private array $sortStrategies,
+        private string $fileNameStrategy,
     ) {
     }
 
@@ -89,6 +92,24 @@ class FullConfig implements Config
     public function setSortStrategies(array $sortStrategies): self
     {
         $this->sortStrategies = $sortStrategies;
+
+        return $this;
+    }
+
+    /**
+     * @return class-string<FileNameStrategy>
+     */
+    public function getFileNameStrategy(): string
+    {
+        return $this->fileNameStrategy;
+    }
+
+    /**
+     * @param class-string<FileNameStrategy> $fileNameStrategy
+     */
+    public function setFileNameStrategy(string $fileNameStrategy): self
+    {
+        $this->fileNameStrategy = $fileNameStrategy;
 
         return $this;
     }

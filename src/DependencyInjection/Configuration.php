@@ -52,6 +52,11 @@ class Configuration implements ConfigurationInterface
                     ->requiresAtLeastOneElement()
                     ->scalarPrototype()
                 ->end()
+                ->scalarNode('file_name_strategy')
+                    ->info('Class name of file name strategies used for generated TypeScript files')
+                    ->defaultValue(Config::DEFAULT_FILE_NAME_STRATEGY)
+                    ->cannotBeEmpty()
+                ->end()
             ->end()
         ;
 

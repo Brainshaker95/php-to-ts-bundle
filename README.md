@@ -106,6 +106,9 @@ php_to_ts:
     - Brainshaker95\PhpToTsBundle\SortStrategy\AlphabeticalAsc
     - Brainshaker95\PhpToTsBundle\SortStrategy\ConstructorFirst
     - Brainshaker95\PhpToTsBundle\SortStrategy\ReadonlyFirst
+
+  # Class name of file name strategies used for generated TypeScript files
+  file_name_strategy: Brainshaker95\PhpToTsBundle\FileNameStrategy\KebabCase
 ```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
