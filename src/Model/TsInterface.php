@@ -37,7 +37,7 @@ class TsInterface implements Stringable
      */
     public function getFileName(string $fileType = FileType::TYPE_MODULE): string
     {
-        return Str::toKebabCase($this->name)
+        return Str::toKebab($this->name)
             . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
             . '.ts';
     }

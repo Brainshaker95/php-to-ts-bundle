@@ -6,7 +6,7 @@ use function Symfony\Component\String\u;
 
 abstract class Str
 {
-    public static function toKebabCase(string $string): string
+    public static function toKebab(string $string): string
     {
         return u($string)
             ->snake()
