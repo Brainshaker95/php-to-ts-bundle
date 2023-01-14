@@ -46,7 +46,7 @@ class Configuration implements ConfigurationInterface
 
     private function inputDir(): self
     {
-        $this->nodeBuilder->scalarNode('input_dir')
+        $this->nodeBuilder->scalarNode(Config::INPUT_DIR_KEY)
             ->info(Config::INPUT_DIR_DESC)
             ->defaultValue(Config::INPUT_DIR_DEFAULT)
             ->cannotBeEmpty()
@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
 
     private function outputDir(): self
     {
-        $this->nodeBuilder->scalarNode('output_dir')
+        $this->nodeBuilder->scalarNode(Config::OUTPUT_DIR_KEY)
             ->info(Config::OUTPUT_DIR_DESC)
             ->defaultValue(Config::OUTPUT_DIR_DEFAULT)
             ->cannotBeEmpty()
@@ -68,7 +68,7 @@ class Configuration implements ConfigurationInterface
 
     private function fileType(): self
     {
-        $this->nodeBuilder->enumNode('file_type')
+        $this->nodeBuilder->enumNode(Config::FILE_TYPE_KEY)
             ->info(Config::FILE_TYPE_DESC)
             ->defaultValue(Config::FILE_TYPE_DEFAULT)
             ->values([FileType::TYPE_DECLARATION, FileType::TYPE_MODULE])
@@ -79,19 +79,19 @@ class Configuration implements ConfigurationInterface
 
     private function indent(): self
     {
-        $indent = $this->nodeBuilder->arrayNode('indent')
+        $indent = $this->nodeBuilder->arrayNode(Config::INDENT_KEY)
             ->info(Config::INDENT_DESC)
             ->addDefaultsIfNotSet()
             ->children()
         ;
 
-        $indent->enumNode('style')
+        $indent->enumNode(Config::INDENT_STYLE_KEY)
             ->info(Config::INDENT_STYLE_DESC)
             ->defaultValue(Config::INDENT_STYLE_DEFAULT)
             ->values([Indent::STYLE_SPACE, Indent::STYLE_TAB])
         ;
 
-        $indent->integerNode('count')
+        $indent->integerNode(Config::INDENT_COUNT_KEY)
             ->info(Config::INDENT_COUNT_DESC)
             ->defaultValue(Config::INDENT_COUNT_DEFAULT)
         ;
@@ -101,7 +101,7 @@ class Configuration implements ConfigurationInterface
 
     private function sortStrategies(): self
     {
-        $this->nodeBuilder->arrayNode('sort_strategies')
+        $this->nodeBuilder->arrayNode(Config::SORT_STRATEGIES_KEY)
             ->info(Config::SORT_STRATEGIES_DESC)
             ->defaultValue(Config::SORT_STRATEGIES_DEFAULT)
             ->requiresAtLeastOneElement()
@@ -113,7 +113,7 @@ class Configuration implements ConfigurationInterface
 
     private function fileNameStrategies(): self
     {
-        $this->nodeBuilder->scalarNode('file_name_strategy')
+        $this->nodeBuilder->scalarNode(Config::FILE_NAME_STRATEGY_KEY)
             ->info(Config::FILE_NAME_STRATEGY_DESC)
             ->defaultValue(Config::FILE_NAME_STRATEGY_DEFAULT)
             ->cannotBeEmpty()
