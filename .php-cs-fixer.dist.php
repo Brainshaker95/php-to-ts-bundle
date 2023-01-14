@@ -1,11 +1,9 @@
 <?php
 
-$finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . '/src')
-    ->notContains('getConfigTreeBuilder')
-;
+$finder = PhpCsFixer\Finder::create()->in(__DIR__ . '/src');
 
 return (new PhpCsFixer\Config())
+    ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR12'                 => true,
@@ -29,5 +27,4 @@ return (new PhpCsFixer\Config())
         'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
         'yoda_style'                  => false,
     ])
-    ->setFinder($finder)
 ;
