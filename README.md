@@ -88,24 +88,27 @@ php_to_ts:
   input_dir: src/Model/TypeScriptables
   
   # Directory in which to dump generated TypeScript interfaces
-  output_dir: resources/ts/types/generated
+  output_dir: assets/ts/types/php-to-ts
 
   # File type to use for TypeScript interfaces
-  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\FileType::TYPE_MODULE
+  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
 
   # Indentation used for generated TypeScript interfaces
   indent:
     # Indent style used for TypeScript interfaces
-    style: !php/const Brainshaker95\PhpToTsBundle\Model\Indent::STYLE_SPACE
+    style: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Indent::STYLE_SPACE
 
     # Number of indent style characters per indent
     count: 2
   
   # Class names of sort strategies used for TypeScript properties
   sort_strategies: 
-    - Brainshaker95\PhpToTsBundle\SortStrategy\AlphabeticalAsc
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ConstructorFirst
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ReadonlyFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst
+
+  # Class name of file name strategies used for generated TypeScript files
+  file_name_strategy: Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
 ```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
