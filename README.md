@@ -103,12 +103,12 @@ php_to_ts:
   
   # Class names of sort strategies used for TypeScript properties
   sort_strategies: 
-    - Brainshaker95\PhpToTsBundle\SortStrategy\AlphabeticalAsc
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ConstructorFirst
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ReadonlyFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst
 
   # Class name of file name strategies used for generated TypeScript files
-  file_name_strategy: Brainshaker95\PhpToTsBundle\FileNameStrategy\KebabCase
+  file_name_strategy: Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
 ```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>

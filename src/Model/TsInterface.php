@@ -2,9 +2,9 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
-use Brainshaker95\PhpToTsBundle\FileNameStrategy\KebabCase;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
+use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Stringable;
