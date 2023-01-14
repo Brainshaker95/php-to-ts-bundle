@@ -130,7 +130,6 @@ TODO 🙃
 - Events for modifying used TsInterface and TsProperty instances
 - Command variations (directory, single file, multiple files)
 - Support for @phpstan- and @psalm- prefixes in doc comments
-- FileNameStrategies for generated interface ts files (kebab, camel, snake, pascal)
 - Generic types like shown here
   ```php
   /**
