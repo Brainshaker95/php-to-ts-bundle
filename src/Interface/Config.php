@@ -15,7 +15,7 @@ interface Config
     public const DEFAULT_INDENT_COUNT       = 2;
     public const DEFAULT_INDENT_STYLE       = Indent::STYLE_SPACE;
     public const DEFAULT_INPUT_DIR          = 'src/Model/TypeScriptables';
-    public const DEFAULT_OUTPUT_DIR         = 'resources/ts/types/generated';
+    public const DEFAULT_OUTPUT_DIR         = 'assets/ts/types/php-to-ts';
     public const DEFAULT_FILE_NAME_STRATEGY = KebabCase::class;
 
     public const DEFAULT_SORT_STRATEGIES = [

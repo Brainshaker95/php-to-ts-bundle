@@ -88,7 +88,7 @@ php_to_ts:
   input_dir: src/Model/TypeScriptables
   
   # Directory in which to dump generated TypeScript interfaces
-  output_dir: resources/ts/types/generated
+  output_dir: assets/ts/types/php-to-ts
 
   # File type to use for TypeScript interfaces
   file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
