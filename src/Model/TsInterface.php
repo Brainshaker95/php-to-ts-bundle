@@ -2,9 +2,9 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
+use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
-use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Stringable;
@@ -39,8 +39,8 @@ class TsInterface implements Stringable
      * @param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function getFileName(
-        string $fileType = FileType::TYPE_MODULE,
-        string $fileNameStrategy = KebabCase::class,
+        string $fileType = Config::FILE_TYPE_DEFAULT,
+        string $fileNameStrategy = Config::FILE_NAME_STRATEGY_DEFAULT,
     ): string {
         return (new $fileNameStrategy())->getName($this->name)
             . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
@@ -53,7 +53,7 @@ class TsInterface implements Stringable
      * @param class-string<SortStrategy>[] $sortStrategies
      */
     public function toString(
-        string $fileType = FileType::TYPE_MODULE,
+        string $fileType = Config::FILE_TYPE_DEFAULT,
         Indent $indent = new Indent(),
         array $sortStrategies = [],
     ): string {
