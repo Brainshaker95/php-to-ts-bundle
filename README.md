@@ -91,12 +91,12 @@ php_to_ts:
   output_dir: resources/ts/types/generated
 
   # File type to use for TypeScript interfaces
-  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\FileType::TYPE_MODULE
+  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
 
   # Indentation used for generated TypeScript interfaces
   indent:
     # Indent style used for TypeScript interfaces
-    style: !php/const Brainshaker95\PhpToTsBundle\Model\Indent::STYLE_SPACE
+    style: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Indent::STYLE_SPACE
 
     # Number of indent style characters per indent
     count: 2
