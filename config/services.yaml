@@ -5,8 +5,8 @@ services:
     public: false
 
   Brainshaker95\PhpToTsBundle\:
-    resource: '../../../src/*'
-    exclude: '../../../src/{DependencyInjection,Interface,Model,Tool,PhpToTsBundle.php}'
+    resource: '../src/*'
+    exclude: '../src/{DependencyInjection,Interface,Model,Tool,PhpToTsBundle.php}'
 
   Brainshaker95\PhpToTsBundle\Service\Filesystem:
     bind:
