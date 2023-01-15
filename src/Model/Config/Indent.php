@@ -2,7 +2,7 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 
 class Indent
 {
@@ -11,10 +11,11 @@ class Indent
 
     /**
      * @param self::STYLE_* $style
+     * @param int<0,max> $count
      */
     public function __construct(
-        public readonly string $style = Config::INDENT_STYLE_DEFAULT,
-        public readonly int $count = Config::INDENT_COUNT_DEFAULT,
+        public readonly string $style = C::INDENT_STYLE_DEFAULT,
+        public readonly int $count = C::INDENT_COUNT_DEFAULT,
     ) {
     }
 }

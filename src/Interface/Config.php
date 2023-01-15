@@ -19,18 +19,20 @@ interface Config
     public const INPUT_DIR_DEFAULT = 'src/Model/TypeScriptables';
     public const INPUT_DIR_DESC    = 'Directory in which to look for models to include';
 
-    public const FILE_TYPE_KEY     = 'file_type';
-    public const FILE_TYPE_DEFAULT = FileType::TYPE_MODULE;
-    public const FILE_TYPE_DESC    = 'File type to use for TypeScript interfaces';
+    public const FILE_TYPE_KEY          = 'file_type';
+    public const FILE_TYPE_DEFAULT      = FileType::TYPE_MODULE;
+    public const FILE_TYPE_DESC         = 'File type to use for TypeScript interfaces';
+    public const FILE_TYPE_VALID_VALUES = [FileType::TYPE_DECLARATION, FileType::TYPE_MODULE];
 
-    public const INDENT_KEY           = 'indent';
-    public const INDENT_DESC          = 'Indentation used for generated TypeScript interfaces';
-    public const INDENT_STYLE_KEY     = 'style';
-    public const INDENT_STYLE_DEFAULT = Indent::STYLE_SPACE;
-    public const INDENT_STYLE_DESC    = 'Indent style used for TypeScript interfaces';
-    public const INDENT_COUNT_KEY     = 'count';
-    public const INDENT_COUNT_DEFAULT = 2;
-    public const INDENT_COUNT_DESC    = 'Number of indent style characters per indent';
+    public const INDENT_KEY                = 'indent';
+    public const INDENT_DESC               = 'Indentation used for generated TypeScript interfaces';
+    public const INDENT_STYLE_KEY          = 'style';
+    public const INDENT_STYLE_DEFAULT      = Indent::STYLE_SPACE;
+    public const INDENT_STYLE_DESC         = 'Indent style used for TypeScript interfaces';
+    public const INDENT_STYLE_VALID_VALUES = [Indent::STYLE_SPACE, Indent::STYLE_TAB];
+    public const INDENT_COUNT_KEY          = 'count';
+    public const INDENT_COUNT_DEFAULT      = 2;
+    public const INDENT_COUNT_DESC         = 'Number of indent style characters per indent';
 
     public const SORT_STRATEGIES_KEY     = 'sort_strategies';
     public const SORT_STRATEGIES_DEFAULT = [
@@ -64,4 +66,19 @@ interface Config
      * @return class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
+
+    /**
+     * @param array{
+     *     input_dir?: ?string,
+     *     output_dir?: ?string,
+     *     file_type?: ?string,
+     *     indent?: ?array{
+     *         style: ?string,
+     *         count: ?int<0,max>,
+     *     },
+     *     sort_strategies?: ?non-empty-string[],
+     *     file_name_strategy?: ?string,
+     * } $values
+     */
+    public static function fromArray(array $values): self;
 }

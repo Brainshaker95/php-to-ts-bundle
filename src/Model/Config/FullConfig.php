@@ -2,11 +2,12 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
-class FullConfig implements Config
+class FullConfig implements C
 {
     /**
      * @phpstan-param FileType::TYPE_* $fileType
@@ -112,5 +113,53 @@ class FullConfig implements Config
         $this->fileNameStrategy = $fileNameStrategy;
 
         return $this;
+    }
+
+    /**
+     * @param array{
+     *     input_dir: string,
+     *     output_dir: string,
+     *     file_type: string,
+     *     indent: array{
+     *         style: ?string,
+     *         count: ?int<0,max>,
+     *     },
+     *     sort_strategies: non-empty-string[],
+     *     file_name_strategy: string,
+     * } $values
+     */
+    public static function fromArray(array $values): self
+    {
+        $fileType = Assert::inStringArrayNonNullable(
+            $values[C::FILE_TYPE_KEY],
+            C::FILE_TYPE_VALID_VALUES,
+        );
+
+        $indentStyle = Assert::inStringArrayNullable(
+            $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
+            C::INDENT_STYLE_VALID_VALUES,
+        );
+
+        $sortStrategies = Assert::interfaceClassStringArrayNonNullable(
+            $values[C::SORT_STRATEGIES_KEY],
+            SortStrategy::class,
+        );
+
+        $fileNameStrategy = Assert::interfaceClassStringNonNullable(
+            $values[C::FILE_NAME_STRATEGY_KEY],
+            FileNameStrategy::class,
+        );
+
+        return new self(
+            inputDir: $values[C::INPUT_DIR_KEY],
+            outputDir: $values[C::OUTPUT_DIR_KEY],
+            fileType: $fileType,
+            indent: new Indent(
+                style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
+                count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
+            ),
+            sortStrategies: $sortStrategies,
+            fileNameStrategy: $fileNameStrategy,
+        );
     }
 }

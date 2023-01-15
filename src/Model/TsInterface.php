@@ -2,7 +2,7 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
@@ -39,8 +39,8 @@ class TsInterface implements Stringable
      * @param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function getFileName(
-        string $fileType = Config::FILE_TYPE_DEFAULT,
-        string $fileNameStrategy = Config::FILE_NAME_STRATEGY_DEFAULT,
+        string $fileType = C::FILE_TYPE_DEFAULT,
+        string $fileNameStrategy = C::FILE_NAME_STRATEGY_DEFAULT,
     ): string {
         return (new $fileNameStrategy())->getName($this->name)
             . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
@@ -53,7 +53,7 @@ class TsInterface implements Stringable
      * @param class-string<SortStrategy>[] $sortStrategies
      */
     public function toString(
-        string $fileType = Config::FILE_TYPE_DEFAULT,
+        string $fileType = C::FILE_TYPE_DEFAULT,
         Indent $indent = new Indent(),
         array $sortStrategies = [],
     ): string {
