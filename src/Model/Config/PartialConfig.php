@@ -113,4 +113,22 @@ class PartialConfig implements Config
 
         return $this;
     }
+
+    /**
+     * @param array{
+     *     input_dir?: ?string,
+     *     output_dir?: ?string,
+     *     file_type?: ?string,
+     *     indent?: ?array{
+     *         style: ?string,
+     *         count: ?int<0,max>,
+     *     },
+     *     sort_strategies?: ?non-empty-string[],
+     *     file_name_strategy?: ?string,
+     * } $values
+     */
+    public static function fromArray(array $values): self
+    {
+        throw new \Exception('Not implemented yet');
+    }
 }

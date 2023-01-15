@@ -64,4 +64,19 @@ interface Config
      * @return class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
+
+    /**
+     * @param array{
+     *     input_dir?: ?string,
+     *     output_dir?: ?string,
+     *     file_type?: ?string,
+     *     indent?: ?array{
+     *         style: ?string,
+     *         count: ?int<0,max>,
+     *     },
+     *     sort_strategies?: ?non-empty-string[],
+     *     file_name_strategy?: ?string,
+     * } $values
+     */
+    public static function fromArray(array $values): self;
 }

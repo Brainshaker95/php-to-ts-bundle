@@ -11,6 +11,7 @@ class Indent
 
     /**
      * @param self::STYLE_* $style
+     * @param int<0,max> $count
      */
     public function __construct(
         public readonly string $style = Config::INDENT_STYLE_DEFAULT,
