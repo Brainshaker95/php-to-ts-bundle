@@ -6,7 +6,7 @@ services:
 
   Brainshaker95\PhpToTsBundle\:
     resource: '../src/*'
-    exclude: '../src/{DependencyInjection,Interface,Model,Tool,PhpToTsBundle.php}'
+    exclude: '../src/{DependencyInjection,Event,Interface,Model,Tool,PhpToTsBundle.php}'
 
   Brainshaker95\PhpToTsBundle\Service\Configuration:
     bind:
