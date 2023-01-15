@@ -5,6 +5,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
 class FullConfig implements C
 {
@@ -129,6 +130,36 @@ class FullConfig implements C
      */
     public static function fromArray(array $values): self
     {
-        throw new \Exception('Not implemented yet');
+        $fileType = Assert::inStringArrayNonNullable(
+            $values[C::FILE_TYPE_KEY],
+            C::FILE_TYPE_VALID_VALUES,
+        );
+
+        $indentStyle = Assert::inStringArrayNullable(
+            $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
+            C::INDENT_STYLE_VALID_VALUES,
+        );
+
+        $sortStrategies = Assert::interfaceClassStringArrayNonNullable(
+            $values[C::SORT_STRATEGIES_KEY],
+            SortStrategy::class,
+        );
+
+        $fileNameStrategy = Assert::interfaceClassStringNonNullable(
+            $values[C::FILE_NAME_STRATEGY_KEY],
+            FileNameStrategy::class,
+        );
+
+        return new self(
+            inputDir: $values[C::INPUT_DIR_KEY],
+            outputDir: $values[C::OUTPUT_DIR_KEY],
+            fileType: $fileType,
+            indent: new Indent(
+                style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
+                count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
+            ),
+            sortStrategies: $sortStrategies,
+            fileNameStrategy: $fileNameStrategy,
+        );
     }
 }
