@@ -34,11 +34,19 @@ class Configuration
         $this->config = FullConfig::fromArray($config);
     }
 
+    /**
+     * Get the base configuration.
+     */
     public function get(): FullConfig
     {
         return $this->config;
     }
 
+    /**
+     * Merge the base configuration with the given configuration.
+     *
+     * @param ?Config $config the config to merge
+     */
     public function merge(?Config $config): FullConfig
     {
         if ($config instanceof FullConfig) {
