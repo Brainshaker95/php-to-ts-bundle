@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -31,13 +32,21 @@ class DumpDirCommand extends DumpCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->dumper->dumpDir(
-            Assert::nonEmptyString($input->getOption(Str::toKebab(C::INPUT_DIR_KEY))),
-            self::getConfig($input),
-        );
+        $inputDir = Assert::nonEmptyString($this->input->getOption(Str::toKebab(C::INPUT_DIR_KEY)));
+        $config   = $this->getConfig();
 
-        $output->writeln('<info>Types successfully dumped!</info>');
+        $this->io->progressStart();
 
-        return self::SUCCESS;
+        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface) {
+            if ($this->isVerbose) {
+                $this->fileSuccess($path, $tsInterface);
+            }
+
+            $this->io->progressAdvance();
+        });
+
+        $this->io->progressFinish();
+
+        return $this->success($config);
     }
 }

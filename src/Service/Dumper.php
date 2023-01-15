@@ -38,6 +38,7 @@ class Dumper
      *
      * @param Config|string|null $configOrDir directory to dump or config used for dumping
      * @param ?Config $config config used for dumping
+     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
@@ -45,6 +46,7 @@ class Dumper
     public function dumpDir(
         Config|string|null $configOrDir = null,
         ?Config $config = null,
+        ?callable $successCallback = null,
     ): void {
         $config = $this->config->merge($configOrDir instanceof Config ? $configOrDir : $config);
 
@@ -53,7 +55,7 @@ class Dumper
         );
 
         $this->filesystem->assertDir($dir);
-        $this->dumpFiles([$dir], $config);
+        $this->dumpFiles([$dir], $config, $successCallback);
     }
 
     /**
@@ -62,17 +64,21 @@ class Dumper
      *
      * @param array<SplFileInfo|string> $files array of files to dump
      * @param ?Config $config config used for dumping
+     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
      */
-    public function dumpFiles(array $files, ?Config $config = null): void
-    {
+    public function dumpFiles(
+        array $files,
+        ?Config $config = null,
+        ?callable $successCallback = null,
+    ): void {
         foreach ($this->filesystem->getSplFileInfoArray($files) as $file) {
             if ($file->isDir()) {
-                $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config);
+                $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config, $successCallback);
             } else {
-                $this->dumpFile($file, $config);
+                $this->dumpFile($file, $config, $successCallback);
             }
         }
     }
@@ -83,12 +89,16 @@ class Dumper
      *
      * @param SplFileInfo|string $file file to dump
      * @param ?Config $config config used for dumping
+     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
      */
-    public function dumpFile(SplFileInfo|string $file, ?Config $config = null): void
-    {
+    public function dumpFile(
+        SplFileInfo|string $file,
+        ?Config $config = null,
+        ?callable $successCallback = null,
+    ): void {
         $tsInterfaces = $this->getTsInterfacesFromFile($file);
 
         if (!$tsInterfaces) {
@@ -109,11 +119,17 @@ class Dumper
                 indent: $config->getIndent(),
                 sortStrategies: $config->getSortStrategies(),
             ));
+
+            if ($successCallback) {
+                $successCallback($path, $tsInterface);
+            }
         }
     }
 
     /**
      * Creates TsInterface instances from all classes in the given file.
+     *
+     * @param SplFileInfo|string $file file to extract TsInterface instances from
      *
      * @return TsInterface[]
      *
