@@ -7,6 +7,9 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @internal
+ */
 class Filesystem extends SymfonyFilesystem
 {
     public function __construct(private string $projectDir)
