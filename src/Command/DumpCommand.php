@@ -4,12 +4,15 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
+use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Dumper;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class DumpCommand extends Command
@@ -19,6 +22,22 @@ abstract class DumpCommand extends Command
 
     #[Required]
     public Dumper $dumper;
+
+    protected InputInterface $input;
+
+    protected OutputInterface $output;
+
+    protected SymfonyStyle $io;
+
+    protected bool $isVerbose;
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->input     = $input;
+        $this->output    = $output;
+        $this->io        = new SymfonyStyle($input, $output);
+        $this->isVerbose = (bool) $input->getOption('verbose');
+    }
 
     protected function configure(): void
     {
@@ -68,14 +87,14 @@ abstract class DumpCommand extends Command
         ;
     }
 
-    protected static function getConfig(InputInterface $input): C
+    protected function getConfig(): C
     {
-        $outputDir        = $input->getOption(Str::toKebab(C::OUTPUT_DIR_KEY));
-        $fileType         = $input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
-        $indentStyle      = $input->getOption(self::INDENT_STYLE_KEY);
-        $indentCount      = $input->getOption(self::INDENT_COUNT_KEY);
-        $sortStrategies   = $input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
-        $fileNameStrategy = $input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
+        $outputDir        = $this->input->getOption(Str::toKebab(C::OUTPUT_DIR_KEY));
+        $fileType         = $this->input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
+        $indentStyle      = $this->input->getOption(self::INDENT_STYLE_KEY);
+        $indentCount      = $this->input->getOption(self::INDENT_COUNT_KEY);
+        $sortStrategies   = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
+        $fileNameStrategy = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
         return PartialConfig::fromArray([
             C::OUTPUT_DIR_KEY         => Assert::nonEmptyString($outputDir),
@@ -87,5 +106,29 @@ abstract class DumpCommand extends Command
             C::SORT_STRATEGIES_KEY    => Assert::nonEmptyStringArray($sortStrategies),
             C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyString($fileNameStrategy),
         ]);
+    }
+
+    protected function fileSuccess(string $path, TsInterface $tsInterface): void
+    {
+        $this->io->text(sprintf(
+            '<fg=#0b0>%s</> -> <fg=#bb0>%s</>',
+            $tsInterface->name,
+            $path,
+        ));
+    }
+
+    protected function success(C $config): int
+    {
+        $this->io->block(
+            messages: sprintf(
+                'Successfully dumped types to "%s"',
+                $config->getOutputDir() ?? C::OUTPUT_DIR_DEFAULT,
+            ),
+            type: 'OK',
+            style: 'fg=#0b0',
+            padding: true,
+        );
+
+        return self::SUCCESS;
     }
 }
