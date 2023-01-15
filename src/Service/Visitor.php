@@ -2,9 +2,12 @@
 
 namespace Brainshaker95\PhpToTsBundle\Service;
 
+use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Interface\TypeScriptable;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
@@ -13,9 +16,17 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\UseUse;
 use PhpParser\NodeVisitorAbstract;
 use ReflectionClass;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
+/**
+ * @internal
+ */
 class Visitor extends NodeVisitorAbstract
 {
+    #[Required]
+    public EventDispatcherInterface $eventDispatcher;
+
     private bool $isTypeScriptable;
 
     private ?string $typeScriptableAlias;
@@ -74,9 +85,7 @@ class Visitor extends NodeVisitorAbstract
         $docComment = $node->getDocComment();
 
         if ($node instanceof Property && $node->isPublic()) {
-            $this->currentTsInterface->addProperty(
-                Converter::toProperty($node, $node->isReadonly(), $docComment),
-            );
+            $this->addTsProperty($node, $node->isReadonly(), $docComment);
         }
 
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
@@ -91,9 +100,7 @@ class Visitor extends NodeVisitorAbstract
             );
 
             array_map(
-                fn (Param $param, bool $isReadonly) => $this->currentTsInterface->addProperty(
-                    Converter::toProperty($param, $isReadonly, $docComment),
-                ),
+                fn (Param $param, bool $isReadonly) => $this->addTsProperty($param, $isReadonly, $docComment),
                 $publicParams,
                 $readonlyStates,
             );
@@ -114,7 +121,14 @@ class Visitor extends NodeVisitorAbstract
         $this->isTypeScriptable = false;
 
         if ($this->currentTsInterface) {
-            $this->tsInterfaces[] = $this->currentTsInterface;
+            $event = $this->eventDispatcher->dispatch(new TsInterfaceGeneratedEvent(
+                tsInterface: $this->currentTsInterface,
+                classNode: $node,
+            ));
+
+            if ($event->tsInterface) {
+                $this->tsInterfaces[] = $event->tsInterface;
+            }
         }
 
         return null;
@@ -128,6 +142,23 @@ class Visitor extends NodeVisitorAbstract
     public function getTsInterfaces(): ?array
     {
         return $this->tsInterfaces;
+    }
+
+    private function addTsProperty(
+        Param|Property $property,
+        bool $isReadonly,
+        ?Doc $docComment,
+    ): void {
+        $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
+
+        $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(
+            tsProperty: $tsProperty,
+            propertyNode: $property,
+        ));
+
+        if ($event->tsProperty) {
+            $this->currentTsInterface?->addProperty($event->tsProperty);
+        }
     }
 
     /**

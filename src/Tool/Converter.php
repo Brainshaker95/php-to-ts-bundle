@@ -56,7 +56,7 @@ abstract class Converter
     public static function toProperty(
         Param|Property $property,
         bool $isReadonly,
-        ?Doc $docComment = null,
+        ?Doc $docComment,
     ): TsProperty {
         $type = null;
 

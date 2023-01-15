@@ -15,8 +15,8 @@ class TsInterface implements Stringable
      * @param TsProperty[] $properties
      */
     public function __construct(
-        public readonly string $name,
-        public readonly ?string $parentName = null,
+        public string $name,
+        public ?string $parentName = null,
         public array $properties = [],
     ) {
     }

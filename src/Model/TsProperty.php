@@ -15,8 +15,8 @@ class TsProperty implements Stringable
     public const TYPE_STRING  = 'string';
 
     public function __construct(
-        public readonly string $name,
-        public readonly string $type,
+        public string $name,
+        public string $type,
         public readonly bool $isReadonly = false,
         public readonly bool $isConstructorProperty = false,
     ) {
