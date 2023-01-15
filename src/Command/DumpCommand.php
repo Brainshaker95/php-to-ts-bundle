@@ -36,7 +36,7 @@ abstract class DumpCommand extends Command
         $this->input     = $input;
         $this->output    = $output;
         $this->io        = new SymfonyStyle($input, $output);
-        $this->isVerbose = (bool) $input->getOption('verbose');
+        $this->isVerbose = $output->isVerbose();
     }
 
     protected function configure(): void
