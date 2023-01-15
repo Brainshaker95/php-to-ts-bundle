@@ -8,7 +8,7 @@
 
 # PhpToTsBundle
 
-Converts PHP model classes to TypeScript interfaces
+Convert PHP model classes to TypeScript interfaces
 
 > ⚠ **This project is still in a very early state** ⚠  
 Everything is subject to change. Use at your own risk!
@@ -25,6 +25,7 @@ Everything is subject to change. Use at your own risk!
 * [⚙ Configuration](#-configuration)
 * [👀 Usage](#-usage)
 * [💻 API](#-api)
+  * [🤝 Events](#-events)
 * [🔨 TODOs / Roadmap](#-todos--roadmap)
 * [❤️ Contributing](#%EF%B8%8F-contributing)
 * [⭐ License](#-license)
@@ -138,13 +139,57 @@ bin/console phptots:dump:file --input-file=path/to/file [options]
 
 ## 💻 API
 
-TODO 🙃
+### 🤝 Events
+
+Each time a TsInterface or TsProperty is generated during the dumping process an event is dispatched.  
+You can subscribe to these events if it is necessary to modify the output right before dumping.
+
+Example implementation:
+```php
+<?php
+
+namespace App\EventSubscriber;
+
+use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return [
+            TsInterfaceGeneratedEvent::class => 'onGeneratedTsInterface',
+            TsPropertyGeneratedEvent::class  => 'onGeneratedTsProperty',
+        ];
+    }
+
+    public function onGeneratedTsInterface(TsInterfaceGeneratedEvent $event): void
+    {
+        $tsInterface = $event->tsInterface;
+
+        // Filter out all constructor properties
+        $tsInterface->properties = array_filter(
+            $tsInterface->properties,
+            fn (TsProperty $tsProperty) => !$tsProperty->isConstructorProperty,
+        );
+    }
+
+    public function onGeneratedTsProperty(TsPropertyGeneratedEvent $event): void
+    {
+        // Hide all properties with `@phptots-hide` in their doc comment
+        if (str_contains($event->propertyNode->getDocComment(), '@phptots-hide')) {
+            $event->tsProperty = null;
+        }
+    }
+}
+```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 
 ## 🔨 TODOs / Roadmap
 
-- Events for modifying used TsInterface and TsProperty instances
 - Support for @phpstan- and @psalm- prefixes in doc comments
 - Generic types like shown here
   ```php
