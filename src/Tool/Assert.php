@@ -175,7 +175,7 @@ abstract class Assert
         if (is_iterable($value)) {
             $value = !is_array($value) ? iterator_to_array($value) : $value;
 
-            return implode(', ', $value);
+            return '[' . implode(', ', $value) . ']';
         }
 
         return '';
