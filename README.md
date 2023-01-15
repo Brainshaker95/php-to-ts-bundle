@@ -115,7 +115,24 @@ php_to_ts:
 
 ## 👀 Usage
 
-TODO 🙃
+This bundle exposes 3 different commands.  
+All of them use the default configuration when no options are passed.  
+Run `bin/console <COMMAND> -h` for a full list of available options.
+
+Dumps all TypeScriptables in the given directory:
+```shell
+bin/console phptots:dump:dir [options]
+```
+
+Dumps all TypeScriptables in the given files and directories:
+```shell
+bin/console phptots:dump:files --input-files=path/to/file1 --input-files=path/to/file2 [options]
+```
+
+Dumps all TypeScriptables in the given file:
+```shell
+bin/console phptots:dump:file --input-file=path/to/file [options]
+```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 

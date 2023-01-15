@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'phptots:dump:files',
-    description: 'Dumps all TypeScriptables in the given files',
+    description: 'Dumps all TypeScriptables in the given files and directories',
 )]
 class DumpFilesCommand extends DumpCommand
 {

@@ -33,7 +33,7 @@ class Dumper
     }
 
     /**
-     * Recursively dumps all TypeScriptables in the given directory.
+     * Dumps all TypeScriptables in the given directory.
      * - When no config is given the global bundle config will be used.
      *
      * @param Config|string|null $configOrDir directory to dump or config used for dumping
@@ -59,7 +59,7 @@ class Dumper
     }
 
     /**
-     * Dumps all TypeScriptables in the given files.
+     * Dumps all TypeScriptables in the given files and directories.
      * - When no config is given the global bundle config will be used.
      *
      * @param array<SplFileInfo|string> $files array of files to dump
