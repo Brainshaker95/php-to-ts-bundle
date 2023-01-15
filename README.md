@@ -116,7 +116,7 @@ php_to_ts:
 
 ## 👀 Usage
 
-This bundle exposes 3 different commands.  
+This bundle exposes 3 different [commands](src/Command).  
 All of them use the default configuration when no options are passed.  
 Run `bin/console <COMMAND> -h` for a full list of available options.
 
@@ -141,7 +141,7 @@ bin/console phptots:dump:file --input-file=path/to/file [options]
 
 ### 🤝 Events
 
-Each time a TsInterface or TsProperty is generated during the dumping process an event is dispatched.  
+Each time a TsInterface or TsProperty is generated during the dumping process an [event](src/Event) is dispatched.  
 You can subscribe to these events if it is necessary to modify the output right before dumping.
 
 Example implementation:
