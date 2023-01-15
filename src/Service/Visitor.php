@@ -19,6 +19,9 @@ use ReflectionClass;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
+/**
+ * @internal
+ */
 class Visitor extends NodeVisitorAbstract
 {
     #[Required]

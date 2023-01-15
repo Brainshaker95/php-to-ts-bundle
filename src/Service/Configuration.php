@@ -9,6 +9,9 @@ use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 
+/**
+ * @internal
+ */
 class Configuration
 {
     private FullConfig $config;
