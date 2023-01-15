@@ -1,14 +1,14 @@
 <?php
 
-namespace Brainshaker95\PhpToTsBundle\SortStrategy;
+namespace Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy;
 
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 
-class AsDefined implements SortStrategy
+class AlphabeticalAsc implements SortStrategy
 {
     public function sort(TsProperty $property1, TsProperty $property2): int
     {
-        return 0;
+        return $property1->name <=> $property2->name;
     }
 }

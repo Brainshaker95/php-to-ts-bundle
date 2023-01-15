@@ -88,31 +88,51 @@ php_to_ts:
   input_dir: src/Model/TypeScriptables
   
   # Directory in which to dump generated TypeScript interfaces
-  output_dir: resources/ts/types/generated
+  output_dir: assets/ts/types/php-to-ts
 
   # File type to use for TypeScript interfaces
-  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\FileType::TYPE_MODULE
+  file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
 
   # Indentation used for generated TypeScript interfaces
   indent:
     # Indent style used for TypeScript interfaces
-    style: !php/const Brainshaker95\PhpToTsBundle\Model\Indent::STYLE_SPACE
+    style: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Indent::STYLE_SPACE
 
     # Number of indent style characters per indent
     count: 2
   
   # Class names of sort strategies used for TypeScript properties
   sort_strategies: 
-    - Brainshaker95\PhpToTsBundle\SortStrategy\AlphabeticalAsc
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ConstructorFirst
-    - Brainshaker95\PhpToTsBundle\SortStrategy\ReadonlyFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst
+    - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst
+
+  # Class name of file name strategies used for generated TypeScript files
+  file_name_strategy: Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
 ```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 
 ## 👀 Usage
 
-TODO 🙃
+This bundle exposes 3 different commands.  
+All of them use the default configuration when no options are passed.  
+Run `bin/console <COMMAND> -h` for a full list of available options.
+
+Dumps all TypeScriptables in the given directory:
+```shell
+bin/console phptots:dump:dir [options]
+```
+
+Dumps all TypeScriptables in the given files and directories:
+```shell
+bin/console phptots:dump:files --input-files=path/to/file1 --input-files=path/to/file2 [options]
+```
+
+Dumps all TypeScriptables in the given file:
+```shell
+bin/console phptots:dump:file --input-file=path/to/file [options]
+```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 
@@ -125,9 +145,7 @@ TODO 🙃
 ## 🔨 TODOs / Roadmap
 
 - Events for modifying used TsInterface and TsProperty instances
-- Command variations (directory, single file, multiple files)
 - Support for @phpstan- and @psalm- prefixes in doc comments
-- FileNameStrategies for generated interface ts files (kebab, camel, snake, pascal)
 - Generic types like shown here
   ```php
   /**

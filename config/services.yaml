@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Brainshaker95\PhpToTsBundle\:
+    resource: '../src/*'
+    exclude: '../src/{DependencyInjection,Interface,Model,Tool,PhpToTsBundle.php}'
+
+  Brainshaker95\PhpToTsBundle\Service\Configuration:
+    bind:
+      $config: '%php_to_ts%'
+
+  Brainshaker95\PhpToTsBundle\Service\Filesystem:
+    bind:
+      $projectDir: '%kernel.project_dir%'
