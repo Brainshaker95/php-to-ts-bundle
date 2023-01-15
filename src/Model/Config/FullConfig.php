@@ -2,11 +2,11 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 
-class FullConfig implements Config
+class FullConfig implements C
 {
     /**
      * @phpstan-param FileType::TYPE_* $fileType

@@ -2,7 +2,7 @@
 
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -46,9 +46,9 @@ class Configuration implements ConfigurationInterface
 
     private function inputDir(): self
     {
-        $this->nodeBuilder->scalarNode(Config::INPUT_DIR_KEY)
-            ->info(Config::INPUT_DIR_DESC)
-            ->defaultValue(Config::INPUT_DIR_DEFAULT)
+        $this->nodeBuilder->scalarNode(C::INPUT_DIR_KEY)
+            ->info(C::INPUT_DIR_DESC)
+            ->defaultValue(C::INPUT_DIR_DEFAULT)
             ->cannotBeEmpty()
         ;
 
@@ -57,9 +57,9 @@ class Configuration implements ConfigurationInterface
 
     private function outputDir(): self
     {
-        $this->nodeBuilder->scalarNode(Config::OUTPUT_DIR_KEY)
-            ->info(Config::OUTPUT_DIR_DESC)
-            ->defaultValue(Config::OUTPUT_DIR_DEFAULT)
+        $this->nodeBuilder->scalarNode(C::OUTPUT_DIR_KEY)
+            ->info(C::OUTPUT_DIR_DESC)
+            ->defaultValue(C::OUTPUT_DIR_DEFAULT)
             ->cannotBeEmpty()
         ;
 
@@ -68,9 +68,9 @@ class Configuration implements ConfigurationInterface
 
     private function fileType(): self
     {
-        $this->nodeBuilder->enumNode(Config::FILE_TYPE_KEY)
-            ->info(Config::FILE_TYPE_DESC)
-            ->defaultValue(Config::FILE_TYPE_DEFAULT)
+        $this->nodeBuilder->enumNode(C::FILE_TYPE_KEY)
+            ->info(C::FILE_TYPE_DESC)
+            ->defaultValue(C::FILE_TYPE_DEFAULT)
             ->values([FileType::TYPE_DECLARATION, FileType::TYPE_MODULE])
         ;
 
@@ -79,21 +79,22 @@ class Configuration implements ConfigurationInterface
 
     private function indent(): self
     {
-        $indent = $this->nodeBuilder->arrayNode(Config::INDENT_KEY)
-            ->info(Config::INDENT_DESC)
+        $indent = $this->nodeBuilder->arrayNode(C::INDENT_KEY)
+            ->info(C::INDENT_DESC)
             ->addDefaultsIfNotSet()
             ->children()
         ;
 
-        $indent->enumNode(Config::INDENT_STYLE_KEY)
-            ->info(Config::INDENT_STYLE_DESC)
-            ->defaultValue(Config::INDENT_STYLE_DEFAULT)
+        $indent->enumNode(C::INDENT_STYLE_KEY)
+            ->info(C::INDENT_STYLE_DESC)
+            ->defaultValue(C::INDENT_STYLE_DEFAULT)
             ->values([Indent::STYLE_SPACE, Indent::STYLE_TAB])
         ;
 
-        $indent->integerNode(Config::INDENT_COUNT_KEY)
-            ->info(Config::INDENT_COUNT_DESC)
-            ->defaultValue(Config::INDENT_COUNT_DEFAULT)
+        $indent->integerNode(C::INDENT_COUNT_KEY)
+            ->info(C::INDENT_COUNT_DESC)
+            ->defaultValue(C::INDENT_COUNT_DEFAULT)
+            ->min(0)
         ;
 
         return $this;
@@ -101,9 +102,9 @@ class Configuration implements ConfigurationInterface
 
     private function sortStrategies(): self
     {
-        $this->nodeBuilder->arrayNode(Config::SORT_STRATEGIES_KEY)
-            ->info(Config::SORT_STRATEGIES_DESC)
-            ->defaultValue(Config::SORT_STRATEGIES_DEFAULT)
+        $this->nodeBuilder->arrayNode(C::SORT_STRATEGIES_KEY)
+            ->info(C::SORT_STRATEGIES_DESC)
+            ->defaultValue(C::SORT_STRATEGIES_DEFAULT)
             ->requiresAtLeastOneElement()
             ->scalarPrototype()
         ;
@@ -113,9 +114,9 @@ class Configuration implements ConfigurationInterface
 
     private function fileNameStrategies(): self
     {
-        $this->nodeBuilder->scalarNode(Config::FILE_NAME_STRATEGY_KEY)
-            ->info(Config::FILE_NAME_STRATEGY_DESC)
-            ->defaultValue(Config::FILE_NAME_STRATEGY_DEFAULT)
+        $this->nodeBuilder->scalarNode(C::FILE_NAME_STRATEGY_KEY)
+            ->info(C::FILE_NAME_STRATEGY_DESC)
+            ->defaultValue(C::FILE_NAME_STRATEGY_DEFAULT)
             ->cannotBeEmpty()
         ;
 
