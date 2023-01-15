@@ -26,6 +26,7 @@ Everything is subject to change. Use at your own risk!
 * [👀 Usage](#-usage)
 * [💻 API](#-api)
   * [🤝 Events](#-events)
+  * [💩 Dumper](#-dumper)
 * [🔨 TODOs / Roadmap](#-todos--roadmap)
 * [❤️ Contributing](#%EF%B8%8F-contributing)
 * [⭐ License](#-license)
@@ -182,6 +183,38 @@ class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
         if (str_contains($event->propertyNode->getDocComment(), '@phptots-hide')) {
             $event->tsProperty = null;
         }
+    }
+}
+```
+
+<p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
+
+### 💩 Dumper
+
+If you do want to implement your own way of initiating the dump process you can inject the [dumper service](src/Service/Dumper.php) into your own services.  
+This of course can be done via all the various different ways of [dependency injection](https://symfony.com/doc/current/components/dependency_injection.html) and not only the one shown here:
+```php
+<?php
+
+namespace App\Service;
+
+use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
+use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
+use Brainshaker95\PhpToTsBundle\Service\Dumper;
+use Symfony\Contracts\Service\Attribute\Required;
+
+class MyService
+{
+    #[Required]
+    public Dumper $dumper;
+    
+    public function doTheThingsAndStuff(): void
+    { 
+        // See method descriptions for more detail
+        $this->dumper->dumpDir();
+        $this->dumper->dumpFiles(['path/to/file1', 'path/to/file2']);
+        $this->dumper->dumpFile('path/to/file', new PartialConfig(fileType: FileType::TYPE_DECLARATION));
+        $this->dumper->getTsInterfacesFromFile('path/to/file');
     }
 }
 ```
