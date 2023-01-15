@@ -3,8 +3,6 @@
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
-use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
-use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -71,7 +69,7 @@ class Configuration implements ConfigurationInterface
         $this->nodeBuilder->enumNode(C::FILE_TYPE_KEY)
             ->info(C::FILE_TYPE_DESC)
             ->defaultValue(C::FILE_TYPE_DEFAULT)
-            ->values([FileType::TYPE_DECLARATION, FileType::TYPE_MODULE])
+            ->values(C::FILE_TYPE_VALID_VALUES)
         ;
 
         return $this;
@@ -88,7 +86,7 @@ class Configuration implements ConfigurationInterface
         $indent->enumNode(C::INDENT_STYLE_KEY)
             ->info(C::INDENT_STYLE_DESC)
             ->defaultValue(C::INDENT_STYLE_DEFAULT)
-            ->values([Indent::STYLE_SPACE, Indent::STYLE_TAB])
+            ->values(C::INDENT_STYLE_VALID_VALUES)
         ;
 
         $indent->integerNode(C::INDENT_COUNT_KEY)
