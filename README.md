@@ -225,7 +225,7 @@ class MyService
 
 - Generate type imports when TsInterface has parentName an TYPE_MODULE is chosen
 - Document example TypeScriptable class
-- Document TsResponse usage
+- Document TsController usage
 - Support for @phpstan- and @psalm- prefixes in doc comments
 - Generic types like shown here
   ```php
