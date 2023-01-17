@@ -2,7 +2,7 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model\Traits;
 
-use Brainshaker95\PhpToTsBundle\Service\Exception\ValidationException;
+use Brainshaker95\PhpToTsBundle\Exception\ValidationException;
 
 /**
  * @phpstan-import-type ClientData from MapsToClient

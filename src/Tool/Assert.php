@@ -2,7 +2,7 @@
 
 namespace Brainshaker95\PhpToTsBundle\Tool;
 
-use Brainshaker95\PhpToTsBundle\Service\Exception\AssertionFailedException;
+use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use ReflectionClass;
 use Stringable;
 

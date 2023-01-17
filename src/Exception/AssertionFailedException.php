@@ -1,6 +1,6 @@
 <?php
 
-namespace Brainshaker95\PhpToTsBundle\Service\Exception;
+namespace Brainshaker95\PhpToTsBundle\Exception;
 
 use InvalidArgumentException;
 
