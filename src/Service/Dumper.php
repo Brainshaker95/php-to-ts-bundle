@@ -76,7 +76,7 @@ class Dumper
     ): void {
         foreach ($this->filesystem->getSplFileInfoArray($files) as $file) {
             if ($file->isDir()) {
-                $this->dumpFiles([...(new Finder())->files()->in($file->getPathname())], $config, $successCallback);
+                $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config, $successCallback);
             } else {
                 $this->dumpFile($file, $config, $successCallback);
             }
@@ -118,7 +118,7 @@ class Dumper
                 fileType: $fileType,
                 indent: $config->getIndent(),
                 sortStrategies: $config->getSortStrategies(),
-            ));
+            ) . PHP_EOL);
 
             if ($successCallback) {
                 $successCallback($path, $tsInterface);
