@@ -4,7 +4,6 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
-use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +21,6 @@ class DumpDirCommand extends DumpCommand
         $this->addOption(
             name: Str::toKebab(C::INPUT_DIR_KEY),
             description: C::INPUT_DIR_DESC,
-            default: C::INPUT_DIR_DEFAULT,
             mode: InputOption::VALUE_REQUIRED,
             shortcut: 'i',
         );
@@ -32,8 +30,9 @@ class DumpDirCommand extends DumpCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $inputDir = Assert::nonEmptyString($this->input->getOption(Str::toKebab(C::INPUT_DIR_KEY)));
         $config   = $this->getConfig();
+        $inputDir = $this->input->getOption(Str::toKebab(C::INPUT_DIR_KEY));
+        $inputDir = is_string($inputDir) ? $inputDir : null;
 
         $this->io->progressStart();
 

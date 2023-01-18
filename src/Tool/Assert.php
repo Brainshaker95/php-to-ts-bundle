@@ -8,7 +8,12 @@ use Stringable;
 
 abstract class Assert
 {
-    public static function nonEmptyString(mixed $value): string
+    /**
+     * @phpstan-assert non-empty-string $value
+     *
+     * @return non-empty-string
+     */
+    public static function nonEmptyStringNonNullable(mixed $value): string
     {
         if (!is_string($value) || !$value) {
             throw new AssertionFailedException(sprintf(
@@ -21,9 +26,25 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?non-empty-string $value
+     *
+     * @return ?non-empty-string
+     */
+    public static function nonEmptyStringNullable(mixed $value): ?string
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        return self::nonEmptyStringNonNullable($value);
+    }
+
+    /**
+     * @phpstan-assert int<0,max> $value
+     *
      * @return int<0,max>
      */
-    public static function nonNegativeInteger(mixed $value): int
+    public static function nonNegativeIntegerNonNullable(mixed $value): int
     {
         $intval = intval($value);
 
@@ -38,9 +59,25 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?int<0,max> $value
+     *
+     * @return ?int<0,max>
+     */
+    public static function nonNegativeIntegerNullable(mixed $value): ?int
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        return self::nonNegativeIntegerNonNullable($value);
+    }
+
+    /**
+     * @phpstan-assert non-empty-string[] $value
+     *
      * @return non-empty-string[]
      */
-    public static function nonEmptyStringArray(mixed $value): array
+    public static function nonEmptyStringArrayNonNullable(mixed $value): array
     {
         if (!is_array($value)
             || !empty(array_filter($value, fn (mixed $v) => !is_string($v) || (is_string($v) && !$v)))) {
@@ -54,7 +91,23 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?non-empty-string[] $value
+     *
+     * @return ?non-empty-string[]
+     */
+    public static function nonEmptyStringArrayNullable(mixed $value): ?array
+    {
+        if (is_null($value)) {
+            return $value;
+        }
+
+        return self::nonEmptyStringArrayNonNullable($value);
+    }
+
+    /**
      * @template T of string[]
+     *
+     * @phpstan-assert value-of<T> $value
      *
      * @param T $allowedStrings
      *
@@ -76,6 +129,8 @@ abstract class Assert
     /**
      * @template T of string[]
      *
+     * @phpstan-assert ?value-of<T> $value
+     *
      * @param T $allowedStrings
      *
      * @return ?value-of<T>
@@ -91,6 +146,8 @@ abstract class Assert
 
     /**
      * @template T of object
+     *
+     * @phpstan-assert class-string<T> $value
      *
      * @param class-string<T> $class
      *
@@ -114,6 +171,8 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert ?class-string<T> $value
+     *
      * @param class-string<T> $class
      *
      * @return ?class-string<T>
@@ -130,6 +189,8 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert class-string<T>[] $value
+     *
      * @param class-string<T> $class
      *
      * @return class-string<T>[]
@@ -138,12 +199,14 @@ abstract class Assert
     {
         return array_map(
             fn (string $v) => self::interfaceClassStringNonNullable($v, $class),
-            self::nonEmptyStringArray($value),
+            self::nonEmptyStringArrayNonNullable($value),
         );
     }
 
     /**
      * @template T of object
+     *
+     * @phpstan-assert ?class-string<T>[] $value
      *
      * @param class-string<T> $class
      *

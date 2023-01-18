@@ -30,12 +30,15 @@ class DumpFileCommand extends DumpCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$this->input->getOption('input-file')) {
+        $inputFile = $this->input->getOption('input-file');
+
+        if (!$inputFile) {
             throw new InvalidOptionException('The "--input-file" option to be defined.');
         }
 
-        $inputFile = Assert::nonEmptyString($this->input->getOption('input-file'));
-        $config    = $this->getConfig();
+        Assert::nonEmptyStringNonNullable($inputFile);
+
+        $config = $this->getConfig();
 
         $this->io->progressStart();
 

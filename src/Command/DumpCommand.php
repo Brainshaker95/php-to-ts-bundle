@@ -97,14 +97,14 @@ abstract class DumpCommand extends Command
         $fileNameStrategy = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
         return PartialConfig::fromArray([
-            C::OUTPUT_DIR_KEY         => Assert::nonEmptyString($outputDir),
-            C::FILE_TYPE_KEY          => Assert::nonEmptyString($fileType),
+            C::OUTPUT_DIR_KEY         => Assert::nonEmptyStringNullable($outputDir),
+            C::FILE_TYPE_KEY          => Assert::nonEmptyStringNullable($fileType),
             C::INDENT_KEY             => [
-                C::INDENT_STYLE_KEY => Assert::nonEmptyString($indentStyle),
-                C::INDENT_COUNT_KEY => Assert::nonNegativeInteger($indentCount),
+                C::INDENT_STYLE_KEY => Assert::nonEmptyStringNullable($indentStyle),
+                C::INDENT_COUNT_KEY => Assert::nonNegativeIntegerNullable($indentCount),
             ],
-            C::SORT_STRATEGIES_KEY    => Assert::nonEmptyStringArray($sortStrategies),
-            C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyString($fileNameStrategy),
+            C::SORT_STRATEGIES_KEY    => Assert::nonEmptyStringArrayNullable($sortStrategies),
+            C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyStringNullable($fileNameStrategy),
         ]);
     }
 
