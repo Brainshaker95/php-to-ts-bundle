@@ -84,7 +84,7 @@ class Filesystem extends SymfonyFilesystem
     {
         if (!$this->exists($fd)) {
             throw new FileNotFoundException(sprintf(
-                'File descriptor "%s" not found',
+                'File descriptor "%s" not found.',
                 $fd,
             ));
         }
@@ -103,7 +103,7 @@ class Filesystem extends SymfonyFilesystem
 
         if (!is_file($file)) {
             throw new FileNotFoundException(sprintf(
-                'File "%s" not found',
+                'File "%s" not found.',
                 $file,
             ));
         }
@@ -122,7 +122,7 @@ class Filesystem extends SymfonyFilesystem
 
         if (!is_dir($dir)) {
             throw new FileNotFoundException(sprintf(
-                'Directoy "%s" not found',
+                'Directoy "%s" not found.',
                 $dir,
             ));
         }

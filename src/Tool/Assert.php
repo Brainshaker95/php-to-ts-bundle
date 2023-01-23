@@ -17,7 +17,7 @@ abstract class Assert
     {
         if (!is_string($value) || !$value) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string',
+                'Expected value "%s" to be a non empty string.',
                 self::mixedToString($value),
             ));
         }
@@ -50,7 +50,7 @@ abstract class Assert
 
         if (filter_var($value, FILTER_VALIDATE_INT) === false || $intval < 0) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non negative integer',
+                'Expected value "%s" to be a non negative integer.',
                 self::mixedToString($value),
             ));
         }
@@ -82,7 +82,7 @@ abstract class Assert
         if (!is_array($value)
             || !empty(array_filter($value, fn (mixed $v) => !is_string($v) || (is_string($v) && !$v)))) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string array',
+                'Expected value "%s" to be a non empty string array.',
                 self::mixedToString($value),
             ));
         }
@@ -117,7 +117,7 @@ abstract class Assert
     {
         if (!is_string($value) || !in_array($value, $allowedStrings)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be contained in array "%s"',
+                'Expected value "%s" to be contained in array "%s".',
                 self::mixedToString($value),
                 self::mixedToString($allowedStrings),
             ));
@@ -159,7 +159,7 @@ abstract class Assert
             || !is_a($value, $class, true)
             || !(new ReflectionClass($value))->implementsInterface($class)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a class string of a class that implements "%s"',
+                'Expected value "%s" to be a class string of a class that implements "%s".',
                 self::mixedToString($value),
                 self::mixedToString($class),
             ));
