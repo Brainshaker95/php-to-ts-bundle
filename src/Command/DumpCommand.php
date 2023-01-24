@@ -45,42 +45,36 @@ abstract class DumpCommand extends Command
             ->addOption(
                 name: Str::toKebab(C::OUTPUT_DIR_KEY),
                 description: C::OUTPUT_DIR_DESC,
-                default: C::OUTPUT_DIR_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED,
                 shortcut: 'o',
             )
             ->addOption(
                 name: Str::toKebab(C::FILE_TYPE_KEY),
                 description: C::FILE_TYPE_DESC,
-                default: C::FILE_TYPE_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED,
                 shortcut: 't',
             )
             ->addOption(
                 name: Str::toKebab(self::INDENT_STYLE_KEY),
                 description: C::INDENT_STYLE_DESC,
-                default: C::INDENT_STYLE_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED,
                 shortcut: 'p',
             )
             ->addOption(
                 name: Str::toKebab(self::INDENT_COUNT_KEY),
                 description: C::INDENT_COUNT_DESC,
-                default: C::INDENT_COUNT_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED,
                 shortcut: 'c',
             )
             ->addOption(
                 name: Str::toKebab(C::SORT_STRATEGIES_KEY),
                 description: C::SORT_STRATEGIES_DESC,
-                default: C::SORT_STRATEGIES_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 shortcut: 's',
             )
             ->addOption(
                 name: Str::toKebab(C::FILE_NAME_STRATEGY_KEY),
                 description: C::FILE_NAME_STRATEGY_DESC,
-                default: C::FILE_NAME_STRATEGY_DEFAULT,
                 mode: InputOption::VALUE_REQUIRED,
                 shortcut: 'f',
             )
@@ -96,14 +90,18 @@ abstract class DumpCommand extends Command
         $sortStrategies   = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
         $fileNameStrategy = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
+        $indentStyle    = Assert::nonEmptyStringNullable($indentStyle);
+        $indentCount    = Assert::nonNegativeIntegerNullable($indentCount);
+        $sortStrategies = Assert::nonEmptyStringArrayNullable($sortStrategies);
+
         return PartialConfig::fromArray([
             C::OUTPUT_DIR_KEY         => Assert::nonEmptyStringNullable($outputDir),
             C::FILE_TYPE_KEY          => Assert::nonEmptyStringNullable($fileType),
-            C::INDENT_KEY             => [
-                C::INDENT_STYLE_KEY => Assert::nonEmptyStringNullable($indentStyle),
-                C::INDENT_COUNT_KEY => Assert::nonNegativeIntegerNullable($indentCount),
-            ],
-            C::SORT_STRATEGIES_KEY    => Assert::nonEmptyStringArrayNullable($sortStrategies),
+            C::INDENT_KEY             => ($indentStyle !== null || $indentCount !== null) ? [
+                C::INDENT_STYLE_KEY => $indentStyle,
+                C::INDENT_COUNT_KEY => $indentCount,
+            ] : null,
+            C::SORT_STRATEGIES_KEY    => !empty($sortStrategies) ? $sortStrategies : null,
             C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyStringNullable($fileNameStrategy),
         ]);
     }
