@@ -15,6 +15,7 @@ class TsProperty implements Stringable
     public const TYPE_OBJECT  = 'object';
     public const TYPE_NUMBER  = 'number';
     public const TYPE_STRING  = 'string';
+    public const TYPE_UNKNOWN = 'unknown';
 
     public function __construct(
         public string $name,
