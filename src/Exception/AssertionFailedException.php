@@ -2,8 +2,8 @@
 
 namespace Brainshaker95\PhpToTsBundle\Exception;
 
-use InvalidArgumentException;
+use RuntimeException;
 
-class AssertionFailedException extends InvalidArgumentException
+class AssertionFailedException extends RuntimeException
 {
 }
