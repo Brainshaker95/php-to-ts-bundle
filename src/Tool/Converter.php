@@ -31,12 +31,12 @@ abstract class Converter
 
     public const NON_ITERABLE_TYPE_MAP = [
         self::TYPE_BOOLEAN  => TsProperty::TYPE_BOOLEAN,
-        self::TYPE_CALLABLE => TsProperty::TYPE_ANY,
+        self::TYPE_CALLABLE => TsProperty::TYPE_UNKNOWN,
         self::TYPE_FLOAT    => TsProperty::TYPE_NUMBER,
         self::TYPE_INTEGER  => TsProperty::TYPE_NUMBER,
         self::TYPE_MIXED    => TsProperty::TYPE_ANY,
         self::TYPE_NULL     => TsProperty::TYPE_NULL,
-        self::TYPE_OBJECT   => TsProperty::TYPE_ANY,
+        self::TYPE_OBJECT   => TsProperty::TYPE_UNKNOWN,
         self::TYPE_STRING   => TsProperty::TYPE_STRING,
     ];
 
