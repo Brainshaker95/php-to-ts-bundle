@@ -79,7 +79,7 @@ class TsInterface implements Stringable
         }
 
         foreach ($properties as $property) {
-            $string .= $indent . $property->toString() . PHP_EOL;
+            $string .= $property->toString($indent) . PHP_EOL;
         }
 
         $string .= '}';

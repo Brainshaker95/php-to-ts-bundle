@@ -2,6 +2,8 @@
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
+use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+
 use Stringable;
 
 class TsProperty implements Stringable
@@ -27,10 +29,11 @@ class TsProperty implements Stringable
         return $this->toString();
     }
 
-    public function toString(): string
+    public function toString(Indent $indent = new Indent()): string
     {
         return sprintf(
-            '%s%s: %s;',
+            '%s%s%s: %s;',
+            $indent->toString(),
             $this->isReadonly ? 'readonly ' : '',
             $this->name,
             $this->type,
