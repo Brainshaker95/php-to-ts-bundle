@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNode;
@@ -24,11 +25,10 @@ class IdentifierTypeNode implements Node
         return $this->name;
     }
 
-    /**
-     * @param PHPStanIdentifierTypeNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanIdentifierTypeNode::class);
+
         $name = $node->name;
 
         if (array_key_exists($name, Converter::NON_ITERABLE_TYPE_MAP)) {

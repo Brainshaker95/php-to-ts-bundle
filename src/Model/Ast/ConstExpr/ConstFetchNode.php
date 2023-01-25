@@ -4,6 +4,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Error;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode as PHPStanConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -41,11 +42,10 @@ class ConstFetchNode implements Node
         return TsProperty::TYPE_UNKNOWN . (is_array($value) ? '[]' : '');
     }
 
-    /**
-     * @param PHPStanConstFetchNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanConstFetchNode::class);
+
         return new self(
             className: $node->className,
             name: $node->name,

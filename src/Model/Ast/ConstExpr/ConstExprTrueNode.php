@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprTrueNode as PHPStanConstExprTrueNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 
@@ -18,11 +19,10 @@ class ConstExprTrueNode implements Node
         return 'true';
     }
 
-    /**
-     * @param PHPStanConstExprTrueNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanConstExprTrueNode::class);
+
         return new self();
     }
 }

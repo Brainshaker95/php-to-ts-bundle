@@ -5,6 +5,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Type;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -48,11 +49,10 @@ class GenericTypeNode implements Node
         return $type . '<' . implode(', ', $this->genericTypes) . '>';
     }
 
-    /**
-     * @param PHPStanGenericTypeNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanGenericTypeNode::class);
+
         foreach ($node->variances as $variance) {
             if ($variance !== PHPStanGenericTypeNode::VARIANCE_INVARIANT) {
                 throw new UnsupportedNodeException(sprintf(

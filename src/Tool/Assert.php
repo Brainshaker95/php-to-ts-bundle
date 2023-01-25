@@ -147,6 +147,28 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert T $value
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
+     */
+    public static function instanceOf(object $value, string $class): object
+    {
+        if (!$value instanceof $class) {
+            throw new AssertionFailedException(sprintf(
+                'Expected object with class "%s" to be an instance of class "%s".',
+                get_class($value),
+                $class,
+            ));
+        }
+
+        return $value;
+    }
+
+    /**
+     * @template T of object
+     *
      * @phpstan-assert class-string<T> $value
      *
      * @param class-string<T> $class
@@ -161,7 +183,7 @@ abstract class Assert
             throw new AssertionFailedException(sprintf(
                 'Expected value "%s" to be a class string of a class that implements "%s".',
                 self::mixedToString($value),
-                self::mixedToString($class),
+                $class,
             ));
         }
 

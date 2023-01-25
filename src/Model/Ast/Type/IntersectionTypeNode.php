@@ -3,7 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Tool\Type;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode as PHPStanIntersectionTypeNode;
 
@@ -27,11 +27,10 @@ class IntersectionTypeNode implements Node
         return '(' . implode(' & ', $this->types) . ')';
     }
 
-    /**
-     * @param PHPStanIntersectionTypeNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanIntersectionTypeNode::class);
+
         return new self(
             types: array_map(
                 [Type::class, 'fromPhpStan'],

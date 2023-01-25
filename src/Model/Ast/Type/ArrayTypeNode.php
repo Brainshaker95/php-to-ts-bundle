@@ -3,7 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Tool\Type;
+use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode as PHPStanArrayTypeNode;
 
@@ -24,11 +24,10 @@ class ArrayTypeNode implements Node
         return $this->type . '[]';
     }
 
-    /**
-     * @param PHPStanArrayTypeNode $node
-     */
     public static function fromPhpStan(PHPStanNode $node): self
     {
+        Assert::instanceOf($node, PHPStanArrayTypeNode::class);
+
         return new self(
             type: Type::fromPhpStan($node->type),
         );
