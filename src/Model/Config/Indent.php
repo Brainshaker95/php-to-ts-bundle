@@ -33,4 +33,18 @@ class Indent implements Stringable
             $this->count,
         );
     }
+
+    public function withTabPresses(int $tabPresses): self
+    {
+        $count = $this->count * $tabPresses;
+
+        if ($count < 0) {
+            $count = 0;
+        }
+
+        return new self(
+            style: $this->style,
+            count: $count,
+        );
+    }
 }
