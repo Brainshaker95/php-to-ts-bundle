@@ -3,12 +3,12 @@
 namespace Brainshaker95\PhpToTsBundle\Model;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Stringable;
 
 class TsProperty implements Stringable
@@ -27,6 +27,8 @@ class TsProperty implements Stringable
         public string|Node $type,
         public readonly bool $isReadonly = false,
         public readonly bool $isConstructorProperty = false,
+        public readonly ?string $description = null,
+        public readonly ?string $deprecation = null,
     ) {
     }
 
@@ -42,12 +44,47 @@ class TsProperty implements Stringable
         }
 
         return sprintf(
-            '%s%s%s: %s;',
+            '%s%s%s%s: %s;',
             $indent->toString(),
+            $this->getDocComment($indent),
             $this->isReadonly ? 'readonly ' : '',
             $this->name,
             $this->type,
         );
+    }
+
+    private function getDocComment(Indent $indent): string
+    {
+        if (!$this->description && !$this->deprecation) {
+            return '';
+        }
+
+        $linePrefix = $indent->toString() . ' * ';
+
+        $descriptionLines = array_map(
+            fn (string $line) => $linePrefix . $line,
+            array_filter(preg_split('/\n/', $this->description ?? '') ?: []),
+        );
+
+        $hasDescription = !empty($descriptionLines);
+        $docComment     = '/**' . PHP_EOL;
+
+        if ($hasDescription) {
+            $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
+        }
+
+        if ($this->deprecation) {
+            if ($hasDescription) {
+                $docComment .= $linePrefix . PHP_EOL;
+            }
+
+            $docComment .= $linePrefix . $this->deprecation . PHP_EOL;
+        }
+
+        $docComment .= $indent->toString() . ' */' . PHP_EOL
+            . $indent->toString();
+
+        return $docComment;
     }
 
     /**
