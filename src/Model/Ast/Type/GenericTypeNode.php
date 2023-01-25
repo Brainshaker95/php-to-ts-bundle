@@ -7,7 +7,7 @@ use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
-use Brainshaker95\PhpToTsBundle\Tool\Type;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode as PHPStanGenericTypeNode;
 
@@ -63,7 +63,7 @@ class GenericTypeNode implements Node
             }
         }
 
-        $type = Type::fromPhpStan($node->type);
+        $type = PhpStan::toNode($node->type);
 
         if (!$type instanceof IdentifierTypeNode) {
             throw new AssertionFailedException(sprintf(
@@ -76,7 +76,7 @@ class GenericTypeNode implements Node
         return new self(
             type: $type,
             genericTypes: array_map(
-                [Type::class, 'fromPhpStan'],
+                [PhpStan::class, 'toNode'],
                 $node->genericTypes,
             ),
         );

@@ -20,6 +20,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
+use Closure;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprFalseNode as PHPStanConstExprFalseNode;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprFloatNode as PHPStanConstExprFloatNode;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprIntegerNode as PHPStanConstExprIntegerNode;
@@ -38,7 +39,7 @@ use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode as PHPStanIntersectionTyp
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode as PHPStanNullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode as PHPStanUnionTypeNode;
 
-abstract class Type
+abstract class PhpStan
 {
     /**
      * @var array<class-string<PHPStanNode>,class-string<Node>>
@@ -62,7 +63,7 @@ abstract class Type
         PHPStanConstFetchNode::class       => ConstFetchNode::class,
     ];
 
-    public static function fromPhpStan(PHPStanNode $node): Node
+    public static function toNode(PHPStanNode $node): Node
     {
         $nodeClass = self::NODE_CLASS_MAP[get_class($node)] ?? null;
 
@@ -73,6 +74,6 @@ abstract class Type
             ));
         }
 
-        return $nodeClass::fromPhpStan($node);
+        return Closure::fromCallable([$nodeClass, 'fromPhpStan'])($node);
     }
 }

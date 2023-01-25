@@ -5,6 +5,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 
@@ -51,9 +52,9 @@ class ArrayShapeItemNode implements Node
         Assert::instanceOf($node, PHPStanArrayShapeItemNode::class);
 
         return new self(
-            keyNode: $node->keyName ? Type::fromPhpStan($node->keyName) : null,
+            keyNode: $node->keyName ? PhpStan::toNode($node->keyName) : null,
             isOptional: $node->optional,
-            valueNode: Type::fromPhpStan($node->valueType),
+            valueNode: PhpStan::toNode($node->valueType),
         );
     }
 

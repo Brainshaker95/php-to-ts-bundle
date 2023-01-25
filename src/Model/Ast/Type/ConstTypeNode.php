@@ -4,6 +4,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ConstTypeNode as PHPStanConstTypeNode;
 
@@ -29,7 +30,7 @@ class ConstTypeNode implements Node
         Assert::instanceOf($node, PHPStanConstTypeNode::class);
 
         return new self(
-            constExpr: Type::fromPhpStan($node->constExpr),
+            constExpr: PhpStan::toNode($node->constExpr),
         );
     }
 }

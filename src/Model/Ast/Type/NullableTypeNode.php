@@ -4,6 +4,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode as PHPStanNullableTypeNode;
 
@@ -29,7 +30,7 @@ class NullableTypeNode implements Node
         Assert::instanceOf($node, PHPStanNullableTypeNode::class);
 
         return new self(
-            type: Type::fromPhpStan($node->type),
+            type: PhpStan::toNode($node->type),
         );
     }
 }

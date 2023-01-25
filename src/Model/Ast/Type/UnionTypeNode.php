@@ -4,6 +4,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode as PHPStanUnionTypeNode;
 
@@ -33,7 +34,7 @@ class UnionTypeNode implements Node
 
         return new self(
             types: array_map(
-                [Type::class, 'fromPhpStan'],
+                [PhpStan::class, 'toNode'],
                 $node->types,
             ),
         );
