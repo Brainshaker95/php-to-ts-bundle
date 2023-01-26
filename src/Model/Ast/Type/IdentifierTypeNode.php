@@ -3,6 +3,7 @@
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -34,7 +35,7 @@ class IdentifierTypeNode implements Node
         if (array_key_exists($name, Converter::NON_ITERABLE_TYPE_MAP)) {
             $name = Converter::NON_ITERABLE_TYPE_MAP[$name];
         } elseif (in_array($name, Converter::ITERABLE_TYPES)) {
-            $name = 'Array';
+            $name = TsProperty::TYPE_UNKNOWN . '[]';
         }
 
         return new self(

@@ -5,6 +5,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
@@ -31,7 +32,7 @@ class GenericTypeNode implements Node
     {
         $type = $this->type->name;
 
-        if ($type === 'Array') {
+        if ($type === TsProperty::TYPE_UNKNOWN . '[]') {
             $genericTypeCount = count($this->genericTypes);
 
             if ($genericTypeCount === 2) {
