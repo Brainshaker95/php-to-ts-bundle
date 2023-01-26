@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;

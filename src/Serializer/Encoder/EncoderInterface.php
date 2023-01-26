@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Serializer\Encoder;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;

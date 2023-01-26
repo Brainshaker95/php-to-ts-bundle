@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Serializer;
 
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;

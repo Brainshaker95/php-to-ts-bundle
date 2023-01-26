@@ -149,6 +149,8 @@ Example implementation:
 ```php
 <?php
 
+declare(strict_types=1);
+
 namespace App\EventSubscriber;
 
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
@@ -195,6 +197,8 @@ If you do want to implement your own way of initiating the dump process you can 
 This of course can be done via all the various different ways of [dependency injection](https://symfony.com/doc/current/components/dependency_injection.html) and not only the one shown here:
 ```php
 <?php
+
+declare(strict_types=1);
 
 namespace App\Service;
 

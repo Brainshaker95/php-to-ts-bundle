@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;

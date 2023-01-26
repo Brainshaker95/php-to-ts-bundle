@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service\Traits;
 
 use Brainshaker95\PhpToTsBundle\Interface\MapsToClient;

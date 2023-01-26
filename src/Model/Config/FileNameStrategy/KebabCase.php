@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy;
 
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;

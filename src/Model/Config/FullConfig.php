@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
