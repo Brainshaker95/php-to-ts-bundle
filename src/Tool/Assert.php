@@ -6,6 +6,9 @@ use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use ReflectionClass;
 use Stringable;
 
+/**
+ * @internal
+ */
 abstract class Assert
 {
     /**

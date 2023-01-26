@@ -7,6 +7,9 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode as PHPStanConstExprStringNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 
+/**
+ * @internal
+ */
 class ConstExprStringNode implements Node
 {
     public function __construct(

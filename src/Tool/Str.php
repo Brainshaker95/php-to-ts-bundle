@@ -4,6 +4,9 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use function Symfony\Component\String\u;
 
+/**
+ * @internal
+ */
 abstract class Str
 {
     public static function toLower(string $string): string

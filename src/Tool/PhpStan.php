@@ -18,6 +18,9 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\TypelessParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type as PHPStanType;
 
+/**
+ * @internal
+ */
 abstract class PhpStan
 {
     /**

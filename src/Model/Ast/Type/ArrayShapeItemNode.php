@@ -9,6 +9,9 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 
+/**
+ * @internal
+ */
 class ArrayShapeItemNode implements Node
 {
     private ?Indent $indent = null;

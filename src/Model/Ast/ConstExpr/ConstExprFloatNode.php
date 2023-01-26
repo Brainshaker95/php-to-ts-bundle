@@ -7,6 +7,9 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprFloatNode as PHPStanConstExprFloatNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 
+/**
+ * @internal
+ */
 class ConstExprFloatNode implements Node
 {
     public function __construct(

@@ -9,6 +9,9 @@ use Error;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode as PHPStanConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 
+/**
+ * @internal
+ */
 class ConstFetchNode implements Node
 {
     public function __construct(

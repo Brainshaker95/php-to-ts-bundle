@@ -12,6 +12,9 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode as PHPStanGenericTypeNode;
 
+/**
+ * @internal
+ */
 class GenericTypeNode implements Node
 {
     /**

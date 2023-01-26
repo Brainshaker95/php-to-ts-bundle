@@ -8,6 +8,9 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode as PHPStanArrayTypeNode;
 
+/**
+ * @internal
+ */
 class ArrayTypeNode implements Node
 {
     public function __construct(

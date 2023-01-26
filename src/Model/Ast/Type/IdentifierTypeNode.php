@@ -9,6 +9,9 @@ use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNode;
 
+/**
+ * @internal
+ */
 class IdentifierTypeNode implements Node
 {
     public function __construct(

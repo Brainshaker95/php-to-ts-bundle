@@ -8,6 +8,9 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode as PHPStanUnionTypeNode;
 
+/**
+ * @internal
+ */
 class UnionTypeNode implements Node
 {
     /**

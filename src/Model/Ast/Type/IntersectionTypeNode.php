@@ -8,6 +8,9 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode as PHPStanIntersectionTypeNode;
 
+/**
+ * @internal
+ */
 class IntersectionTypeNode implements Node
 {
     /**
