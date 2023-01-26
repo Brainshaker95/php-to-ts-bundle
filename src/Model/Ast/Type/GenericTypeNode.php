@@ -37,6 +37,7 @@ class GenericTypeNode implements Node
 
         if ($type === TsProperty::TYPE_UNKNOWN . '[]') {
             $genericTypeCount = count($this->genericTypes);
+            $type             = 'Array';
 
             if ($genericTypeCount === 2) {
                 $type = 'Record';
