@@ -45,7 +45,7 @@ class GenericTypeNode implements Node
                 $type = 'Record';
             } elseif ($genericTypeCount !== 1) {
                 throw new UnsupportedNodeException(sprintf(
-                    'Expected generic array node to contain 1 or 2 subtypes, %s given.',
+                    'Expected generic array node to contain 1 or 2 sub types, %s given.',
                     $genericTypeCount,
                 ));
             }
@@ -62,22 +62,14 @@ class GenericTypeNode implements Node
 
         foreach ($node->variances as $variance) {
             if ($variance !== PHPStanGenericTypeNode::VARIANCE_INVARIANT) {
-                throw new UnsupportedNodeException(sprintf(
-                    'Invalid variance "%s" of generic type node. Only %s nodes are supported.',
-                    $variance,
-                    PHPStanGenericTypeNode::VARIANCE_INVARIANT,
-                ));
+                throw new UnsupportedNodeException(sprintf('Invalid variance "%s" of generic type node. Only %s nodes are supported.', $variance, PHPStanGenericTypeNode::VARIANCE_INVARIANT));
             }
         }
 
         $type = PhpStan::toNode($node->type);
 
         if (!$type instanceof IdentifierTypeNode) {
-            throw new AssertionFailedException(sprintf(
-                'Expected node to be an instance of "%s", "%s" given.',
-                IdentifierTypeNode::class,
-                get_class($type),
-            ));
+            throw new AssertionFailedException(sprintf('Expected node to be an instance of "%s", "%s" given.', IdentifierTypeNode::class, get_class($type)));
         }
 
         return new self(
