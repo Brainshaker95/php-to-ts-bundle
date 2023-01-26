@@ -20,6 +20,9 @@ class TsProperty implements Stringable
     public const TYPE_STRING  = 'string';
     public const TYPE_UNKNOWN = 'unknown';
 
+    /**
+     * @param self::TYPE_UNKNOWN|Node $type
+     */
     public function __construct(
         public string $name,
         public string|Node $type,
