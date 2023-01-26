@@ -21,6 +21,7 @@ abstract class Converter
     public const TYPE_ARRAY    = 'array';
     public const TYPE_BOOLEAN  = 'bool';
     public const TYPE_CALLABLE = 'callable';
+    public const TYPE_FALSE    = 'false';
     public const TYPE_FLOAT    = 'float';
     public const TYPE_INTEGER  = 'int';
     public const TYPE_ITERABLE = 'iterable';
@@ -32,9 +33,10 @@ abstract class Converter
     public const NON_ITERABLE_TYPE_MAP = [
         self::TYPE_BOOLEAN  => TsProperty::TYPE_BOOLEAN,
         self::TYPE_CALLABLE => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_FALSE    => TsProperty::TYPE_FALSE,
         self::TYPE_FLOAT    => TsProperty::TYPE_NUMBER,
         self::TYPE_INTEGER  => TsProperty::TYPE_NUMBER,
-        self::TYPE_MIXED    => TsProperty::TYPE_ANY,
+        self::TYPE_MIXED    => TsProperty::TYPE_UNKNOWN,
         self::TYPE_NULL     => TsProperty::TYPE_NULL,
         self::TYPE_OBJECT   => TsProperty::TYPE_UNKNOWN,
         self::TYPE_STRING   => TsProperty::TYPE_STRING,

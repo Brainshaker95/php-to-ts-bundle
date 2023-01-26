@@ -13,11 +13,9 @@ use Stringable;
 
 class TsProperty implements Stringable
 {
-    public const TYPE_ANY     = 'any';
-    public const TYPE_ARRAY   = 'array';
     public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_FALSE   = 'false';
     public const TYPE_NULL    = 'null';
-    public const TYPE_OBJECT  = 'object';
     public const TYPE_NUMBER  = 'number';
     public const TYPE_STRING  = 'string';
     public const TYPE_UNKNOWN = 'unknown';
