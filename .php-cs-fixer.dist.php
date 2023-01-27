@@ -39,6 +39,7 @@ return (new PhpCsFixer\Config())
         'phpdoc_to_comment'           => false,
         'phpdoc_types_order'          => ['null_adjustment' => 'always_last', 'sort_algorithm' => 'none'],
         'standardize_increment'       => false,
+        'declare_strict_types'        => true,
         'trailing_comma_in_multiline' => ['elements' => ['arrays', 'arguments', 'parameters']],
         'yoda_style'                  => false,
     ])
