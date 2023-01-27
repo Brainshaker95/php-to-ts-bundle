@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
 class TsProperty implements Stringable
@@ -31,6 +32,7 @@ class TsProperty implements Stringable
         public string|Node $type,
         public readonly bool $isReadonly = false,
         public readonly bool $isConstructorProperty = false,
+        public readonly ?string $summary = null,
         public readonly ?string $description = null,
         public readonly ?string $deprecation = null,
     ) {
@@ -59,26 +61,27 @@ class TsProperty implements Stringable
 
     private function getDocComment(Indent $indent): string
     {
-        if (!$this->description && !$this->deprecation) {
+        if (!$this->summary && !$this->description && !$this->deprecation) {
             return '';
         }
 
-        $linePrefix = $indent->toString() . ' * ';
+        $docComment       = '/**' . PHP_EOL;
+        $linePrefix       = $indent->toString() . ' * ';
+        $summaryLines     = $this->summary ? Str::splitByNewLines($this->summary, $linePrefix) : null;
+        $descriptionLines = $this->description ? Str::splitByNewLines($this->description, $linePrefix) : null;
+        $hasSummary       = !empty($summaryLines);
+        $hasDescription   = !empty($descriptionLines);
 
-        $descriptionLines = array_map(
-            fn (string $line) => $linePrefix . $line,
-            array_filter(preg_split('/\n/', $this->description ?? '') ?: []),
-        );
-
-        $hasDescription = !empty($descriptionLines);
-        $docComment     = '/**' . PHP_EOL;
+        if ($hasSummary) {
+            $docComment .= implode(PHP_EOL, $summaryLines) . PHP_EOL;
+        }
 
         if ($hasDescription) {
             $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
         }
 
         if ($this->deprecation) {
-            if ($hasDescription) {
+            if ($hasSummary || $hasDescription) {
                 $docComment .= $linePrefix . PHP_EOL;
             }
 

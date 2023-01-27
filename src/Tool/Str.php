@@ -60,4 +60,15 @@ abstract class Str
             ->toString()
         ;
     }
+
+    /**
+     * @return string[]
+     */
+    public static function splitByNewLines(string $string, string $linePrefix = ''): array
+    {
+        return array_map(
+            fn (string $line) => $linePrefix . $line,
+            array_filter(preg_split('/\n/', $string) ?: []),
+        );
+    }
 }

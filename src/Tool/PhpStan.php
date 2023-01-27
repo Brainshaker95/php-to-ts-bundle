@@ -8,13 +8,14 @@ use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type;
-use Closure;
 use PhpParser\Comment\Doc;
 use PHPStan\PhpDocParser\Ast\ConstExpr as PHPStanConstExpr;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocChildNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTextNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TypelessParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -129,5 +130,13 @@ abstract class PhpStan
             ...$docNode->getTemplateTagValues('@phpstan-template'),
             ...$docNode->getTemplateTagValues('@psalm-template'),
         ];
+    }
+
+    public static function getTextNode(PhpDocNode $docNode): ?PhpDocTextNode
+    {
+        return current(array_filter(
+            $docNode->children,
+            fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode,
+        )) ?: null;
     }
 }
