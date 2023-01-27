@@ -40,6 +40,7 @@ abstract class Converter
     public const TYPE_NULL     = 'null';
     public const TYPE_OBJECT   = 'object';
     public const TYPE_STRING   = 'string';
+    public const TYPE_TRUE     = 'true';
 
     public const NON_ITERABLE_TYPE_MAP = [
         self::TYPE_BOOLEAN  => TsProperty::TYPE_BOOLEAN,
@@ -51,6 +52,7 @@ abstract class Converter
         self::TYPE_NULL     => TsProperty::TYPE_NULL,
         self::TYPE_OBJECT   => TsProperty::TYPE_UNKNOWN,
         self::TYPE_STRING   => TsProperty::TYPE_STRING,
+        self::TYPE_TRUE     => TsProperty::TYPE_TRUE,
     ];
 
     public const ITERABLE_TYPES = [
