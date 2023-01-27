@@ -60,6 +60,9 @@ abstract class PhpStan
 
     public static function toNode(PHPStanNode $node): Node
     {
+        /**
+         * @var ?class-string<Node>
+         */
         $nodeClass = self::NODE_CLASS_MAP[get_class($node)] ?? null;
 
         if (!$nodeClass) {
@@ -69,7 +72,7 @@ abstract class PhpStan
             ));
         }
 
-        return Closure::fromCallable([$nodeClass, 'fromPhpStan'])($node);
+        return $nodeClass::fromPhpStan($node);
     }
 
     public static function getDocNode(Doc $docComment): PhpDocNode
