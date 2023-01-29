@@ -20,9 +20,7 @@ interface MapsToClient
 
     /**
      * @phpstan-param ClientData $data
-     *
      * @param ReflectionProperty[] $properties
-     *
      * @phpstan-param ClientData $data
      *
      * @phpstan-return ClientData

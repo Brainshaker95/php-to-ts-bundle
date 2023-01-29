@@ -10,7 +10,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer as SymfonySerializer;
 use Traversable;
 
-class Serializer extends SymfonySerializer
+use function iterator_to_array;
+
+final class Serializer extends SymfonySerializer
 {
     /**
      * @param Traversable<NormalizerInterface> $normalizers

@@ -11,7 +11,12 @@ use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Stringable;
 
-class TsInterface implements Stringable
+use const PHP_EOL;
+
+use function sprintf;
+use function usort;
+
+final class TsInterface implements Stringable
 {
     /**
      * @param TsProperty[] $properties
@@ -37,7 +42,6 @@ class TsInterface implements Stringable
 
     /**
      * @phpstan-param FileType::TYPE_* $fileType
-     *
      * @param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function getFileName(
@@ -51,7 +55,6 @@ class TsInterface implements Stringable
 
     /**
      * @phpstan-param FileType::TYPE_* $fileType
-     *
      * @param class-string<SortStrategy>[] $sortStrategies
      */
     public function toString(
@@ -76,7 +79,7 @@ class TsInterface implements Stringable
         foreach ($sortStrategies as $sortStrategy) {
             usort(
                 $properties,
-                fn (TsProperty $prop1, TsProperty $prop2) => (new $sortStrategy())->sort($prop1, $prop2),
+                static fn (TsProperty $prop1, TsProperty $prop2) => (new $sortStrategy())->sort($prop1, $prop2),
             );
         }
 

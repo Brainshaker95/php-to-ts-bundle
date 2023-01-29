@@ -13,7 +13,7 @@ use PHPStan\PhpDocParser\Ast\Type\ConstTypeNode as PHPStanConstTypeNode;
 /**
  * @internal
  */
-class ConstTypeNode implements Node
+final class ConstTypeNode implements Node
 {
     public function __construct(
         public readonly Node $constExpr,

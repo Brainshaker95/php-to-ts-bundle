@@ -9,11 +9,10 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
-class PartialConfig implements C
+final class PartialConfig implements C
 {
     /**
      * @phpstan-param ?FileType::TYPE_* $fileType
-     *
      * @param ?class-string<SortStrategy>[] $sortStrategies
      * @param ?class-string<FileNameStrategy> $fileNameStrategy
      */

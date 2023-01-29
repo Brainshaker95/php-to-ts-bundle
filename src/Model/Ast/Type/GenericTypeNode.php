@@ -14,10 +14,17 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode as PHPStanGenericTypeNode;
 
+use function array_flip;
+use function array_key_exists;
+use function array_map;
+use function count;
+use function implode;
+use function sprintf;
+
 /**
  * @internal
  */
-class GenericTypeNode implements Node
+final class GenericTypeNode implements Node
 {
     /**
      * @param Node[] $genericTypes
@@ -76,7 +83,7 @@ class GenericTypeNode implements Node
             throw new AssertionFailedException(sprintf(
                 'Expected node to be an instance of "%s", "%s" given.',
                 IdentifierTypeNode::class,
-                get_class($type),
+                $type::class,
             ));
         }
 

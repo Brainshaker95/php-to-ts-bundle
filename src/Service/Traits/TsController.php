@@ -12,6 +12,8 @@ use ReflectionProperty;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Service\Attribute\Required;
 
+use function is_string;
+
 trait TsController
 {
     private Serializer $serializer;

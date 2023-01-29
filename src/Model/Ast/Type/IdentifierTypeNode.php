@@ -11,10 +11,13 @@ use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNode;
 
+use function array_key_exists;
+use function in_array;
+
 /**
  * @internal
  */
-class IdentifierTypeNode implements Node
+final class IdentifierTypeNode implements Node
 {
     public function __construct(
         public readonly string $name,
@@ -39,7 +42,7 @@ class IdentifierTypeNode implements Node
 
         if (array_key_exists($name, Converter::NON_ITERABLE_TYPE_MAP)) {
             $name = Converter::NON_ITERABLE_TYPE_MAP[$name];
-        } elseif (in_array($name, Converter::ITERABLE_TYPES)) {
+        } elseif (in_array($name, Converter::ITERABLE_TYPES, true)) {
             $name = TsProperty::TYPE_UNKNOWN . '[]';
         }
 

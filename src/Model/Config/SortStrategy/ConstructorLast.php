@@ -7,7 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 
-class ConstructorLast implements SortStrategy
+final class ConstructorLast implements SortStrategy
 {
     public function sort(TsProperty $property1, TsProperty $property2): int
     {

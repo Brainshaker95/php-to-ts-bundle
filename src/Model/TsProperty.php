@@ -14,7 +14,12 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
-class TsProperty implements Stringable
+use const PHP_EOL;
+
+use function implode;
+use function sprintf;
+
+final class TsProperty implements Stringable
 {
     public const TYPE_BOOLEAN = 'boolean';
     public const TYPE_FALSE   = 'false';

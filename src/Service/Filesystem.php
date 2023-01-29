@@ -9,10 +9,15 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\SplFileInfo;
 
+use function array_map;
+use function is_dir;
+use function is_file;
+use function sprintf;
+
 /**
  * @internal
  */
-class Filesystem extends SymfonyFilesystem
+final class Filesystem extends SymfonyFilesystem
 {
     public function __construct(private string $projectDir)
     {

@@ -14,7 +14,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 /**
  * @internal
  */
-class Configuration
+final class Configuration
 {
     private FullConfig $config;
 

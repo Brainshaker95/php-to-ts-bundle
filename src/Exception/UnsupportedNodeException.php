@@ -9,6 +9,6 @@ use RuntimeException;
 /**
  * @internal
  */
-class UnsupportedNodeException extends RuntimeException
+final class UnsupportedNodeException extends RuntimeException
 {
 }

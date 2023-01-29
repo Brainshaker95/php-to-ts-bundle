@@ -10,10 +10,17 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode as PHPStanArrayShapeNode;
 
+use const PHP_EOL;
+
+use function array_filter;
+use function array_map;
+use function current;
+use function implode;
+
 /**
  * @internal
  */
-class ArrayShapeNode implements Node
+final class ArrayShapeNode implements Node
 {
     private ?Indent $indent = null;
 
@@ -32,7 +39,7 @@ class ArrayShapeNode implements Node
 
     public function toString(): string
     {
-        $hasKeys        = (bool) current(array_filter($this->items, fn (ArrayShapeItemNode $node) => $node->keyNode));
+        $hasKeys        = (bool) current(array_filter($this->items, static fn (ArrayShapeItemNode $node) => $node->keyNode));
         $openingBracket = $hasKeys ? '{' : '[';
         $closingBracket = $hasKeys ? '}' : ']';
 

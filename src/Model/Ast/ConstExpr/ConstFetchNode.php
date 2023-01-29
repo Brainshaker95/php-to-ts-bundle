@@ -11,10 +11,14 @@ use Error;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode as PHPStanConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 
+use function constant;
+use function is_array;
+use function is_string;
+
 /**
  * @internal
  */
-class ConstFetchNode implements Node
+final class ConstFetchNode implements Node
 {
     public function __construct(
         public readonly string $className,

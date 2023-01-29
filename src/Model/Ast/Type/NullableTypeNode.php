@@ -13,7 +13,7 @@ use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode as PHPStanNullableTypeNode;
 /**
  * @internal
  */
-class NullableTypeNode implements Node
+final class NullableTypeNode implements Node
 {
     public function __construct(
         public readonly Node $type,

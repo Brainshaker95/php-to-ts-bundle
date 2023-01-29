@@ -7,14 +7,15 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Stringable;
 
-class Indent implements Stringable
+use function str_repeat;
+
+final class Indent implements Stringable
 {
     public const STYLE_SPACE = 'space';
     public const STYLE_TAB   = 'tab';
 
     /**
      * @phpstan-param self::STYLE_* $style
-     *
      * @param int<0,max> $count
      */
     public function __construct(

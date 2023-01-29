@@ -12,7 +12,7 @@ use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 /**
  * @internal
  */
-class ConstExprIntegerNode implements Node
+final class ConstExprIntegerNode implements Node
 {
     public function __construct(
         private readonly string $value,

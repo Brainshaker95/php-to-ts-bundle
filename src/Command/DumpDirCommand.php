@@ -12,11 +12,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function is_string;
+
 #[AsCommand(
     name: 'phptots:dump:dir',
     description: 'Dumps all TypeScriptables in the given directory',
 )]
-class DumpDirCommand extends DumpCommand
+final class DumpDirCommand extends DumpCommand
 {
     protected function configure(): void
     {
@@ -38,7 +40,7 @@ class DumpDirCommand extends DumpCommand
 
         $this->io->progressStart();
 
-        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface) {
+        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

@@ -11,10 +11,15 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 
+use const PHP_EOL;
+
+use function is_numeric;
+use function sprintf;
+
 /**
  * @internal
  */
-class ArrayShapeItemNode implements Node
+final class ArrayShapeItemNode implements Node
 {
     private ?Indent $indent = null;
 

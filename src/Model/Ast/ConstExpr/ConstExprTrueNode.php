@@ -12,7 +12,7 @@ use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 /**
  * @internal
  */
-class ConstExprTrueNode implements Node
+final class ConstExprTrueNode implements Node
 {
     public function __toString(): string
     {

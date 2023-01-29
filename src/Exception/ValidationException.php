@@ -9,6 +9,6 @@ use InvalidArgumentException;
 /**
  * @internal
  */
-class ValidationException extends InvalidArgumentException
+final class ValidationException extends InvalidArgumentException
 {
 }

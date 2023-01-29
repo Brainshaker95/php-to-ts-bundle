@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
     name: 'phptots:dump:files',
     description: 'Dumps all TypeScriptables in the given files and directories',
 )]
-class DumpFilesCommand extends DumpCommand
+final class DumpFilesCommand extends DumpCommand
 {
     protected function configure(): void
     {
@@ -44,7 +44,7 @@ class DumpFilesCommand extends DumpCommand
 
         $this->io->progressStart();
 
-        $this->dumper->dumpFiles($inputFiles, $config, function (string $path, TsInterface $tsInterface) {
+        $this->dumper->dumpFiles($inputFiles, $config, function (string $path, TsInterface $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

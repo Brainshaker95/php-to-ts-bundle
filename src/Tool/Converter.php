@@ -24,6 +24,15 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 
+use function array_filter;
+use function array_map;
+use function end;
+use function get_debug_type;
+use function implode;
+use function is_string;
+use function sprintf;
+use function trim;
+
 /**
  * @internal
  */
@@ -60,7 +69,7 @@ abstract class Converter
         self::TYPE_ITERABLE,
     ];
 
-    public static function toInterface(Class_ $node): TsInterface
+    final public static function toInterface(Class_ $node): TsInterface
     {
         $name = $node->name?->name;
 
@@ -75,7 +84,7 @@ abstract class Converter
     /**
      * @throws InvalidPropertyException
      */
-    public static function toProperty(
+    final public static function toProperty(
         Param|Property $property,
         bool $isReadonly,
         ?Doc $docComment,
@@ -197,7 +206,7 @@ abstract class Converter
     private static function getSubTypes(IntersectionType|UnionType $type): array
     {
         return array_filter(array_map(
-            fn (Identifier|IntersectionType|Name $subType) => $subType instanceof IntersectionType
+            static fn (Identifier|IntersectionType|Name $subType) => $subType instanceof IntersectionType
                 ? '(' . implode(' & ', self::getSubTypes($subType)) . ')'
                 : self::getTypeName($subType),
             $type->types,

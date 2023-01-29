@@ -16,7 +16,13 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\Service\Attribute\Required;
 
-class Dumper
+use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
+
+use function is_array;
+use function is_string;
+
+final class Dumper
 {
     #[Required]
     public Configuration $config;
@@ -135,8 +141,8 @@ class Dumper
      *
      * @return TsInterface[]
      *
-     * @throws FileNotFoundException
      * @throws Error
+     * @throws FileNotFoundException
      */
     public function getTsInterfacesFromFile(SplFileInfo|string $file): ?array
     {

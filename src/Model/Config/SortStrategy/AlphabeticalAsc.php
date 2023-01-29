@@ -7,7 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 
-class AlphabeticalAsc implements SortStrategy
+final class AlphabeticalAsc implements SortStrategy
 {
     public function sort(TsProperty $property1, TsProperty $property2): int
     {

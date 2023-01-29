@@ -26,6 +26,10 @@ use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 
+use function array_filter;
+use function current;
+use function sprintf;
+
 /**
  * @internal
  */
@@ -59,24 +63,24 @@ abstract class PhpStan
 
     private static PhpDocParser $phpDocParser;
 
-    public static function toNode(PHPStanNode $node): Node
+    final public static function toNode(PHPStanNode $node): Node
     {
         /**
          * @var ?class-string<Node>
          */
-        $nodeClass = self::NODE_CLASS_MAP[get_class($node)] ?? null;
+        $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;
 
         if (!$nodeClass) {
             throw new UnsupportedNodeException(sprintf(
                 'Unsupported node type "%s".',
-                get_class($node),
+                $node::class,
             ));
         }
 
         return $nodeClass::fromPhpStan($node);
     }
 
-    public static function getDocNode(Doc $docComment): PhpDocNode
+    final public static function getDocNode(Doc $docComment): PhpDocNode
     {
         self::$lexer           ??= new Lexer();
         self::$constExprParser ??= new ConstExprParser();
@@ -87,7 +91,7 @@ abstract class PhpStan
         ));
     }
 
-    public static function getParamNode(PhpDocNode $docNode, string $name): ParamTagValueNode|TypelessParamTagValueNode|null
+    final public static function getParamNode(PhpDocNode $docNode, string $name): ParamTagValueNode|TypelessParamTagValueNode|null
     {
         $values = [
             ...$docNode->getParamTagValues('@param'),
@@ -100,11 +104,11 @@ abstract class PhpStan
 
         return current(array_filter(
             $values,
-            fn (ParamTagValueNode|TypelessParamTagValueNode $node) => $node->parameterName === '$' . $name,
+            static fn (ParamTagValueNode|TypelessParamTagValueNode $node) => $node->parameterName === '$' . $name,
         )) ?: null;
     }
 
-    public static function getVarNode(PhpDocNode $docNode): ?VarTagValueNode
+    final public static function getVarNode(PhpDocNode $docNode): ?VarTagValueNode
     {
         $values = [
             ...$docNode->getVarTagValues('@var'),
@@ -115,7 +119,7 @@ abstract class PhpStan
         return current($values) ?: null;
     }
 
-    public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
+    final public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
     {
         return current($docNode->getDeprecatedTagValues()) ?: null;
     }
@@ -123,7 +127,7 @@ abstract class PhpStan
     /**
      * @return TemplateTagValueNode[]
      */
-    public static function getTemplateNodes(PhpDocNode $docNode): array
+    final public static function getTemplateNodes(PhpDocNode $docNode): array
     {
         return [
             ...$docNode->getTemplateTagValues('@template'),
@@ -132,11 +136,11 @@ abstract class PhpStan
         ];
     }
 
-    public static function getTextNode(PhpDocNode $docNode): ?PhpDocTextNode
+    final public static function getTextNode(PhpDocNode $docNode): ?PhpDocTextNode
     {
         return current(array_filter(
             $docNode->children,
-            fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode,
+            static fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode,
         )) ?: null;
     }
 }

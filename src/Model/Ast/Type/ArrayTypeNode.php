@@ -13,7 +13,7 @@ use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode as PHPStanArrayTypeNode;
 /**
  * @internal
  */
-class ArrayTypeNode implements Node
+final class ArrayTypeNode implements Node
 {
     public function __construct(
         public readonly Node $type,

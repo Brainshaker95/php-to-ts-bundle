@@ -10,10 +10,13 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode as PHPStanIntersectionTypeNode;
 
+use function array_map;
+use function implode;
+
 /**
  * @internal
  */
-class IntersectionTypeNode implements Node
+final class IntersectionTypeNode implements Node
 {
     /**
      * @param Node[] $types
