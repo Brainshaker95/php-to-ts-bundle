@@ -7,9 +7,8 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Exception\InvalidOptionException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
@@ -20,11 +19,10 @@ final class DumpFilesCommand extends DumpCommand
 {
     protected function configure(): void
     {
-        $this->addOption(
+        $this->addArgument(
             name: 'input-files',
             description: 'Paths to files to dump',
-            mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            shortcut: 'i',
+            mode: InputArgument::REQUIRED | InputArgument::IS_ARRAY,
         );
 
         parent::configure();
@@ -32,11 +30,10 @@ final class DumpFilesCommand extends DumpCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $inputFiles = $this->input->getOption('input-files');
-
-        if (!$inputFiles) {
-            throw new InvalidOptionException('The "--input-files" option to be defined.');
-        }
+        /**
+         * @var string[]
+         */
+        $inputFiles = $this->input->getArgument('input-files');
 
         Assert::nonEmptyStringArrayNonNullable($inputFiles);
 
