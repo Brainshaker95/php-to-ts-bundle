@@ -6,6 +6,9 @@ namespace Brainshaker95\PhpToTsBundle\Model\Traits;
 
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 
+/**
+ * @internal
+ */
 trait HasQuotes
 {
     private ?Quotes $quotes = null;

@@ -6,6 +6,9 @@ namespace Brainshaker95\PhpToTsBundle\Model\Traits;
 
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 
+/**
+ * @internal
+ */
 trait HasIndent
 {
     private ?Indent $indent = null;
