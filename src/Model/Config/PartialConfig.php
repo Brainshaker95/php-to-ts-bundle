@@ -21,6 +21,7 @@ final class PartialConfig implements C
         private ?string $outputDir = null,
         private ?string $fileType = null,
         private ?Indent $indent = null,
+        private ?Quotes $quotes = null,
         private ?array $sortStrategies = null,
         private ?string $fileNameStrategy = null,
     ) {
@@ -80,6 +81,18 @@ final class PartialConfig implements C
         return $this;
     }
 
+    public function getQuotes(): ?Quotes
+    {
+        return $this->quotes;
+    }
+
+    public function setQuotes(?Quotes $quotes): self
+    {
+        $this->quotes = $quotes;
+
+        return $this;
+    }
+
     /**
      * @return ?class-string<SortStrategy>[]
      */
@@ -125,6 +138,7 @@ final class PartialConfig implements C
      *         style: ?string,
      *         count: ?int<0,max>,
      *     },
+     *     quotes: ?string,
      *     sort_strategies?: ?non-empty-string[],
      *     file_name_strategy?: ?string,
      * } $values
@@ -142,6 +156,13 @@ final class PartialConfig implements C
             ? Assert::inStringArrayNullable(
                 $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
                 C::INDENT_STYLE_VALID_VALUES,
+            )
+            : null;
+
+        $quotes = isset($values[C::QUOTES_KEY])
+            ? Assert::inStringArrayNullable(
+                $values[C::QUOTES_KEY],
+                C::QUOTES_VALID_VALUES,
             )
             : null;
 
@@ -167,6 +188,7 @@ final class PartialConfig implements C
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ) : null,
+            quotes: $quotes ? new Quotes($quotes) : null,
             sortStrategies: $sortStrategies,
             fileNameStrategy: $fileNameStrategy,
         );

@@ -21,6 +21,7 @@ final class FullConfig implements C
         private string $outputDir,
         private string $fileType,
         private Indent $indent,
+        private Quotes $quotes,
         private array $sortStrategies,
         private string $fileNameStrategy,
     ) {
@@ -80,6 +81,18 @@ final class FullConfig implements C
         return $this;
     }
 
+    public function getQuotes(): Quotes
+    {
+        return $this->quotes;
+    }
+
+    public function setQuotes(Quotes $quotes): self
+    {
+        $this->quotes = $quotes;
+
+        return $this;
+    }
+
     /**
      * @return class-string<SortStrategy>[]
      */
@@ -125,6 +138,7 @@ final class FullConfig implements C
      *         style: ?string,
      *         count: ?int<0,max>,
      *     },
+     *     quotes: string,
      *     sort_strategies: non-empty-string[],
      *     file_name_strategy: string,
      * } $values
@@ -139,6 +153,11 @@ final class FullConfig implements C
         $indentStyle = Assert::inStringArrayNullable(
             $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
             C::INDENT_STYLE_VALID_VALUES,
+        );
+
+        $quotes = Assert::inStringArrayNonNullable(
+            $values[C::QUOTES_KEY],
+            C::QUOTES_VALID_VALUES,
         );
 
         $sortStrategies = Assert::interfaceClassStringArrayNonNullable(
@@ -159,6 +178,7 @@ final class FullConfig implements C
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ),
+            quotes: new Quotes($quotes),
             sortStrategies: $sortStrategies,
             fileNameStrategy: $fileNameStrategy,
         );

@@ -29,6 +29,7 @@ final class Configuration implements ConfigurationInterface
             ->outputDir()
             ->fileType()
             ->indent()
+            ->quotes()
             ->sortStrategies()
             ->fileNameStrategies()
         ;
@@ -95,6 +96,17 @@ final class Configuration implements ConfigurationInterface
             ->info(C::INDENT_COUNT_DESC)
             ->defaultValue(C::INDENT_COUNT_DEFAULT)
             ->min(0)
+        ;
+
+        return $this;
+    }
+
+    private function quotes(): self
+    {
+        $this->nodeBuilder->enumNode(C::QUOTES_KEY)
+            ->info(C::QUOTES_DESC)
+            ->defaultValue(C::QUOTES_DEFAULT)
+            ->values(C::QUOTES_VALID_VALUES)
         ;
 
         return $this;

@@ -102,7 +102,10 @@ php_to_ts:
 
     # Number of indent style characters per indent
     count: 2
-  
+
+  # Quote style used for strings in generated TypeScript interfaces
+  quotes: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Quotes::STYLE_SINGLE
+
   # Class names of sort strategies used for TypeScript properties
   sort_strategies: 
     - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc

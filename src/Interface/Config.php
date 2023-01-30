@@ -7,6 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Interface;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst;
@@ -36,6 +37,11 @@ interface Config
     public const INDENT_COUNT_DEFAULT      = 2;
     public const INDENT_COUNT_DESC         = 'Number of indent style characters per indent';
 
+    public const QUOTES_KEY          = 'quotes';
+    public const QUOTES_DESC         = 'Quote style used for strings in generated TypeScript interfaces';
+    public const QUOTES_DEFAULT      = Quotes::STYLE_SINGLE;
+    public const QUOTES_VALID_VALUES = [Quotes::STYLE_DOUBLE, Quotes::STYLE_SINGLE];
+
     public const SORT_STRATEGIES_KEY     = 'sort_strategies';
     public const SORT_STRATEGIES_DEFAULT = [
         AlphabeticalAsc::class,
@@ -58,6 +64,8 @@ interface Config
     public function getFileType(): ?string;
 
     public function getIndent(): ?Indent;
+
+    public function getQuotes(): ?Quotes;
 
     /**
      * @return class-string<SortStrategy>[]

@@ -71,6 +71,12 @@ abstract class DumpCommand extends Command
                 shortcut: 'c',
             )
             ->addOption(
+                name: Str::toKebab(C::QUOTES_KEY),
+                description: C::QUOTES_DESC,
+                mode: InputOption::VALUE_REQUIRED,
+                shortcut: 'u',
+            )
+            ->addOption(
                 name: Str::toKebab(C::SORT_STRATEGIES_KEY),
                 description: C::SORT_STRATEGIES_DESC,
                 mode: InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -91,6 +97,7 @@ abstract class DumpCommand extends Command
         $fileType         = $this->input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
         $indentStyle      = $this->input->getOption(self::INDENT_STYLE_KEY);
         $indentCount      = $this->input->getOption(self::INDENT_COUNT_KEY);
+        $quotes           = $this->input->getOption(Str::toKebab(C::QUOTES_KEY));
         $sortStrategies   = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
         $fileNameStrategy = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
@@ -105,6 +112,7 @@ abstract class DumpCommand extends Command
                 C::INDENT_STYLE_KEY => $indentStyle,
                 C::INDENT_COUNT_KEY => $indentCount,
             ] : null,
+            C::QUOTES_KEY             => Assert::nonEmptyStringNullable($quotes),
             C::SORT_STRATEGIES_KEY    => !empty($sortStrategies) ? $sortStrategies : null,
             C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyStringNullable($fileNameStrategy),
         ]);
