@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode as PHPStanArrayShapeNode;
@@ -20,9 +22,10 @@ use function implode;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Node
+final class ArrayShapeNode implements Node, QuotesAware
 {
-    private ?Indent $indent = null;
+    use HasIndent;
+    use HasQuotes;
 
     /**
      * @param ArrayShapeItemNode[] $items
@@ -43,6 +46,14 @@ final class ArrayShapeNode implements Node
         $openingBracket = $hasKeys ? '{' : '[';
         $closingBracket = $hasKeys ? '}' : ']';
 
+        if ($this->quotes) {
+            foreach ($this->items as $item) {
+                if ($item instanceof QuotesAware) {
+                    $item->setQuotes($this->quotes);
+                }
+            }
+        }
+
         return $openingBracket . PHP_EOL
             . implode('', $this->items)
             . ($this->indent?->toString() ?? '') . $closingBracket;
@@ -58,12 +69,5 @@ final class ArrayShapeNode implements Node
                 $node->items,
             ),
         );
-    }
-
-    public function setIndent(?Indent $indent): self
-    {
-        $this->indent = $indent;
-
-        return $this;
     }
 }

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -16,8 +18,10 @@ use function implode;
 /**
  * @internal
  */
-final class IntersectionTypeNode implements Node
+final class IntersectionTypeNode implements Node, QuotesAware
 {
+    use HasQuotes;
+
     /**
      * @param Node[] $types
      */
@@ -33,6 +37,14 @@ final class IntersectionTypeNode implements Node
 
     public function toString(): string
     {
+        if ($this->quotes) {
+            foreach ($this->types as $type) {
+                if ($type instanceof QuotesAware) {
+                    $type->setQuotes($this->quotes);
+                }
+            }
+        }
+
         return '(' . implode(' & ', $this->types) . ')';
     }
 

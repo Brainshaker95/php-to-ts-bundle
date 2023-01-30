@@ -7,6 +7,8 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
@@ -24,8 +26,10 @@ use function sprintf;
 /**
  * @internal
  */
-final class GenericTypeNode implements Node
+final class GenericTypeNode implements Node, QuotesAware
 {
+    use HasQuotes;
+
     /**
      * @param Node[] $genericTypes
      */
@@ -58,6 +62,14 @@ final class GenericTypeNode implements Node
             }
         } elseif (array_key_exists($type, array_flip(Converter::NON_ITERABLE_TYPE_MAP))) {
             return $type;
+        }
+
+        if ($this->quotes) {
+            foreach ($this->genericTypes as $genericType) {
+                if ($genericType instanceof QuotesAware) {
+                    $genericType->setQuotes($this->quotes);
+                }
+            }
         }
 
         return $type . '<' . implode(', ', $this->genericTypes) . '>';

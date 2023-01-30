@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -19,9 +23,10 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeItemNode implements Node
+final class ArrayShapeItemNode implements Node, QuotesAware
 {
-    private ?Indent $indent = null;
+    use HasIndent;
+    use HasQuotes;
 
     public function __construct(
         public readonly ?Node $keyNode,
@@ -37,6 +42,10 @@ final class ArrayShapeItemNode implements Node
 
     public function toString(): string
     {
+        if ($this->valueNode instanceof QuotesAware && $this->quotes) {
+            $this->valueNode->setQuotes($this->quotes);
+        }
+
         if (!$this->keyNode) {
             return sprintf(
                 '%s%s,' . PHP_EOL,
@@ -45,13 +54,20 @@ final class ArrayShapeItemNode implements Node
             );
         }
 
-        $key = (string) $this->keyNode;
+        $key = $this->keyNode instanceof ConstExprStringNode
+            ? $this->keyNode->toString(false)
+            : (string) $this->keyNode;
+
+        if (is_numeric($key[0])) {
+            $key = $this->quotes
+                ? $this->quotes->toString($key)
+                : Quotes::default($key);
+        }
 
         return sprintf(
             '%s%s%s: %s;' . PHP_EOL,
             $this->indent?->toString() ?? '',
-            // TODO: config for quote style ' or "
-            is_numeric($key[0]) ? '\'' . $key . '\'' : $key,
+            $key,
             $this->isOptional ? '?' : '',
             (string) $this->valueNode,
         );
@@ -66,12 +82,5 @@ final class ArrayShapeItemNode implements Node
             isOptional: $node->optional,
             valueNode: PhpStan::toNode($node->valueType),
         );
-    }
-
-    public function setIndent(?Indent $indent): self
-    {
-        $this->indent = $indent;
-
-        return $this;
     }
 }

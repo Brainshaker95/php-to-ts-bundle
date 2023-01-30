@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Error;
@@ -18,8 +21,10 @@ use function is_string;
 /**
  * @internal
  */
-final class ConstFetchNode implements Node
+final class ConstFetchNode implements Node, QuotesAware
 {
+    use HasQuotes;
+
     public function __construct(
         public readonly string $className,
         public readonly string $name,
@@ -44,8 +49,9 @@ final class ConstFetchNode implements Node
         }
 
         if (is_string($value)) {
-            // TODO: config for quote style ' or "
-            return '\'' . $value . '\'';
+            return $this->quotes
+                ? $this->quotes->toString($value)
+                : Quotes::default($value);
         }
 
         return TsProperty::TYPE_UNKNOWN . (is_array($value) ? '[]' : '');
