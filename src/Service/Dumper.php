@@ -125,6 +125,7 @@ final class Dumper
             $this->filesystem->dumpFile($path, $tsInterface->toString(
                 fileType: $fileType,
                 indent: $config->getIndent(),
+                quotes: $config->getQuotes(),
                 sortStrategies: $config->getSortStrategies(),
             ) . PHP_EOL);
 
