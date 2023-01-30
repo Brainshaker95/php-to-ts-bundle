@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
@@ -48,10 +50,10 @@ final class TsProperty implements Stringable
         return $this->toString();
     }
 
-    public function toString(Indent $indent = new Indent()): string
+    public function toString(Indent $indent = new Indent(), Quotes $quotes = new Quotes()): string
     {
         if ($this->type instanceof Node) {
-            $this->applyIndent([$this->type], $indent);
+            $this->applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
 
         return sprintf(
@@ -102,41 +104,45 @@ final class TsProperty implements Stringable
     /**
      * @param Node[] $nodes
      */
-    private function applyIndent(array $nodes, Indent $indent, int $depth = 2): void
+    private function applyIndentAndQuotes(array $nodes, Indent $indent, Quotes $quotes, int $depth = 2): void
     {
         foreach ($nodes as $node) {
+            if ($node instanceof QuotesAware) {
+                $node->setQuotes($quotes);
+            }
+
             if ($node instanceof ArrayShapeNode) {
                 $node->setIndent($indent->withTabPresses($depth - 1));
 
                 foreach ($node->items as $item) {
                     $item->setIndent($indent->withTabPresses($depth));
-                    $this->applyIndent([$item->valueNode], $indent, $depth + 1);
+                    $this->applyIndentAndQuotes([$item->valueNode], $indent, $quotes, $depth + 1);
                 }
 
                 continue;
             }
 
             if ($node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode) {
-                $this->applyIndent($node->types, $indent, $depth);
+                $this->applyIndentAndQuotes($node->types, $indent, $quotes, $depth);
 
                 continue;
             }
 
             if ($node instanceof GenericTypeNode) {
-                $this->applyIndent($node->genericTypes, $indent, $depth);
+                $this->applyIndentAndQuotes($node->genericTypes, $indent, $quotes, $depth);
 
                 continue;
             }
 
             if ($node instanceof NullableTypeNode) {
                 if ($node->type instanceof ArrayShapeNode) {
-                    $this->applyIndent([$node->type], $indent, $depth);
+                    $this->applyIndentAndQuotes([$node->type], $indent, $quotes, $depth);
 
                     continue;
                 }
 
                 if ($node->type instanceof UnionTypeNode || $node->type instanceof IntersectionTypeNode) {
-                    $this->applyIndent($node->type->types, $indent, $depth);
+                    $this->applyIndentAndQuotes($node->type->types, $indent, $quotes, $depth);
                 }
             }
         }

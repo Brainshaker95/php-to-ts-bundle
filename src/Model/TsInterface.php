@@ -9,6 +9,7 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Stringable;
 
 use const PHP_EOL;
@@ -60,6 +61,7 @@ final class TsInterface implements Stringable
     public function toString(
         string $fileType = C::FILE_TYPE_DEFAULT,
         Indent $indent = new Indent(),
+        Quotes $quotes = new Quotes(),
         array $sortStrategies = [],
     ): string {
         $string = '/*' . PHP_EOL
@@ -84,7 +86,7 @@ final class TsInterface implements Stringable
         }
 
         foreach ($properties as $property) {
-            $string .= $property->toString($indent) . PHP_EOL;
+            $string .= $property->toString($indent, $quotes) . PHP_EOL;
         }
 
         $string .= '}';
