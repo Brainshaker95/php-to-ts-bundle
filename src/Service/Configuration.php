@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
@@ -8,11 +10,12 @@ use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 
 /**
  * @internal
  */
-class Configuration
+final class Configuration
 {
     private FullConfig $config;
 
@@ -25,6 +28,7 @@ class Configuration
      *         style: Indent::STYLE_*,
      *         count: int<0,max>,
      *     },
+     *     quotes: Quotes::STYLE_*,
      *     sort_strategies: class-string<SortStrategy>[],
      *     file_name_strategy: class-string<FileNameStrategy>,
      * } $config
@@ -62,6 +66,7 @@ class Configuration
             outputDir: $config->getOutputDir() ?? $this->config->getOutputDir(),
             fileType: $config->getFileType() ?? $this->config->getFileType(),
             indent: $config->getIndent() ?? $this->config->getIndent(),
+            quotes: $config->getQuotes() ?? $this->config->getQuotes(),
             sortStrategies: $config->getSortStrategies() ?? $this->config->getSortStrategies(),
             fileNameStrategy: $config->getFileNameStrategy() ?? $this->config->getFileNameStrategy(),
         );

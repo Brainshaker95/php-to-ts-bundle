@@ -6,7 +6,7 @@ services:
 
   Brainshaker95\PhpToTsBundle\:
     resource: '../src/*'
-    exclude: '../src/{DependencyInjection,Event,Interface,Model,Tool,PhpToTsBundle.php}'
+    exclude: '../src/{DependencyInjection,Event,Exception,Interface,Model,Tool,PhpToTsBundle.php}'
 
   Brainshaker95\PhpToTsBundle\Service\Configuration:
     bind:
@@ -15,3 +15,9 @@ services:
   Brainshaker95\PhpToTsBundle\Service\Filesystem:
     bind:
       $projectDir: '%kernel.project_dir%'
+
+  Symfony\Component\Serializer\Encoder\JsonEncoder:
+    tags: [php_to_ts.serializer.encoder]
+
+  Symfony\Component\Serializer\Normalizer\ObjectNormalizer:
+    tags: [php_to_ts.serializer.normalizer]

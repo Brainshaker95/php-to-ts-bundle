@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
@@ -8,7 +10,7 @@ use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class Configuration implements ConfigurationInterface
+final class Configuration implements ConfigurationInterface
 {
     public const TREE_BUILDER_NAME = 'php_to_ts';
     public const TREE_BUILDER_TYPE = 'array';
@@ -27,6 +29,7 @@ class Configuration implements ConfigurationInterface
             ->outputDir()
             ->fileType()
             ->indent()
+            ->quotes()
             ->sortStrategies()
             ->fileNameStrategies()
         ;
@@ -93,6 +96,17 @@ class Configuration implements ConfigurationInterface
             ->info(C::INDENT_COUNT_DESC)
             ->defaultValue(C::INDENT_COUNT_DEFAULT)
             ->min(0)
+        ;
+
+        return $this;
+    }
+
+    private function quotes(): self
+    {
+        $this->nodeBuilder->enumNode(C::QUOTES_KEY)
+            ->info(C::QUOTES_DESC)
+            ->defaultValue(C::QUOTES_DEFAULT)
+            ->values(C::QUOTES_VALID_VALUES)
         ;
 
         return $this;

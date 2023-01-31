@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
@@ -7,10 +9,15 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\SplFileInfo;
 
+use function array_map;
+use function is_dir;
+use function is_file;
+use function sprintf;
+
 /**
  * @internal
  */
-class Filesystem extends SymfonyFilesystem
+final class Filesystem extends SymfonyFilesystem
 {
     public function __construct(private string $projectDir)
     {
@@ -84,7 +91,7 @@ class Filesystem extends SymfonyFilesystem
     {
         if (!$this->exists($fd)) {
             throw new FileNotFoundException(sprintf(
-                'File descriptor "%s" not found',
+                'File descriptor "%s" not found.',
                 $fd,
             ));
         }
@@ -103,7 +110,7 @@ class Filesystem extends SymfonyFilesystem
 
         if (!is_file($file)) {
             throw new FileNotFoundException(sprintf(
-                'File "%s" not found',
+                'File "%s" not found.',
                 $file,
             ));
         }
@@ -122,7 +129,7 @@ class Filesystem extends SymfonyFilesystem
 
         if (!is_dir($dir)) {
             throw new FileNotFoundException(sprintf(
-                'Directoy "%s" not found',
+                'Directoy "%s" not found.',
                 $dir,
             ));
         }

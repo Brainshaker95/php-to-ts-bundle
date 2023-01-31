@@ -1,9 +1,14 @@
 <?php
 
-namespace Brainshaker95\PhpToTsBundle\Service\Exception;
+declare(strict_types=1);
+
+namespace Brainshaker95\PhpToTsBundle\Exception;
 
 use InvalidArgumentException;
 
-class ValidationException extends InvalidArgumentException
+/**
+ * @internal
+ */
+final class ValidationException extends InvalidArgumentException
 {
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
@@ -19,10 +21,14 @@ use ReflectionClass;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
+use function array_filter;
+use function array_map;
+use function end;
+
 /**
  * @internal
  */
-class Visitor extends NodeVisitorAbstract
+final class Visitor extends NodeVisitorAbstract
 {
     #[Required]
     public EventDispatcherInterface $eventDispatcher;
@@ -91,11 +97,11 @@ class Visitor extends NodeVisitorAbstract
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
             $publicParams = array_filter(
                 $node->params,
-                fn (Param $param) => ($param->flags & Class_::MODIFIER_PUBLIC) !== 0,
+                static fn (Param $param) => ($param->flags & Class_::MODIFIER_PUBLIC) !== 0,
             );
 
             $readonlyStates = array_map(
-                fn (Param $param) => ($param->flags & Class_::MODIFIER_READONLY) !== 0,
+                static fn (Param $param) => ($param->flags & Class_::MODIFIER_READONLY) !== 0,
                 $publicParams,
             );
 

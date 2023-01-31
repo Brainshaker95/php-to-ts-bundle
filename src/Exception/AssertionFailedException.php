@@ -1,9 +1,14 @@
 <?php
 
-namespace Brainshaker95\PhpToTsBundle\Service\Exception;
+declare(strict_types=1);
 
-use InvalidArgumentException;
+namespace Brainshaker95\PhpToTsBundle\Exception;
 
-class AssertionFailedException extends InvalidArgumentException
+use RuntimeException;
+
+/**
+ * @internal
+ */
+final class AssertionFailedException extends RuntimeException
 {
 }

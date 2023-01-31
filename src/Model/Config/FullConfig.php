@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
@@ -7,11 +9,10 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
-class FullConfig implements C
+final class FullConfig implements C
 {
     /**
      * @phpstan-param FileType::TYPE_* $fileType
-     *
      * @param class-string<SortStrategy>[] $sortStrategies
      * @param class-string<FileNameStrategy> $fileNameStrategy
      */
@@ -20,6 +21,7 @@ class FullConfig implements C
         private string $outputDir,
         private string $fileType,
         private Indent $indent,
+        private Quotes $quotes,
         private array $sortStrategies,
         private string $fileNameStrategy,
     ) {
@@ -79,6 +81,18 @@ class FullConfig implements C
         return $this;
     }
 
+    public function getQuotes(): Quotes
+    {
+        return $this->quotes;
+    }
+
+    public function setQuotes(Quotes $quotes): self
+    {
+        $this->quotes = $quotes;
+
+        return $this;
+    }
+
     /**
      * @return class-string<SortStrategy>[]
      */
@@ -124,6 +138,7 @@ class FullConfig implements C
      *         style: ?string,
      *         count: ?int<0,max>,
      *     },
+     *     quotes: string,
      *     sort_strategies: non-empty-string[],
      *     file_name_strategy: string,
      * } $values
@@ -138,6 +153,11 @@ class FullConfig implements C
         $indentStyle = Assert::inStringArrayNullable(
             $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
             C::INDENT_STYLE_VALID_VALUES,
+        );
+
+        $quotes = Assert::inStringArrayNonNullable(
+            $values[C::QUOTES_KEY],
+            C::QUOTES_VALID_VALUES,
         );
 
         $sortStrategies = Assert::interfaceClassStringArrayNonNullable(
@@ -158,6 +178,7 @@ class FullConfig implements C
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ),
+            quotes: new Quotes($quotes),
             sortStrategies: $sortStrategies,
             fileNameStrategy: $fileNameStrategy,
         );

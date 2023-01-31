@@ -102,7 +102,10 @@ php_to_ts:
 
     # Number of indent style characters per indent
     count: 2
-  
+
+  # Quote style used for strings in generated TypeScript interfaces
+  quotes: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Quotes::STYLE_SINGLE
+
   # Class names of sort strategies used for TypeScript properties
   sort_strategies: 
     - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc
@@ -119,21 +122,21 @@ php_to_ts:
 
 This bundle exposes 3 different [commands](src/Command).  
 All of them use the default configuration when no options are passed.  
-Run `bin/console <COMMAND> -h` for a full list of available options.
+Run `bin/console <command> -h` for a full list of available options.
 
-Dumps all TypeScriptables in the given directory:
+Dumps all TypeScriptables in the given directory (`input-dir: string`):
 ```shell
-bin/console phptots:dump:dir [options]
+bin/console phptots:dump:dir [<input-dir>] [options]
 ```
 
-Dumps all TypeScriptables in the given files and directories:
+Dumps all TypeScriptables in the given files and directories (`input-files: string[]`):
 ```shell
-bin/console phptots:dump:files --input-files=path/to/file1 --input-files=path/to/file2 [options]
+bin/console phptots:dump:files <input-files> [options]
 ```
 
-Dumps all TypeScriptables in the given file:
+Dumps all TypeScriptables in the given file (`input-file: string`):
 ```shell
-bin/console phptots:dump:file --input-file=path/to/file [options]
+bin/console phptots:dump:file <input-file> [options]
 ```
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
@@ -148,6 +151,8 @@ You can subscribe to these events if it is necessary to modify the output right 
 Example implementation:
 ```php
 <?php
+
+declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
@@ -196,6 +201,8 @@ This of course can be done via all the various different ways of [dependency inj
 ```php
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
@@ -223,213 +230,10 @@ class MyService
 
 ## 🔨 TODOs / Roadmap
 
-- Generate type imports when TsInterface has parentName an TYPE_MODULE is chosen
+- Handle class-string type
+- Generate type imports when TsInterface has parentName and TYPE_MODULE is chosen
 - Document example TypeScriptable class
-- Document TsResponse usage
-- Support for @phpstan- and @psalm- prefixes in doc comments
-- Generic types like shown here
-  ```php
-  /**
-   * @template T
-   * @param T $foo
-   */
-  public function __construct(
-      public $foo,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType<T> {
-    foo: T;
-  }
-  ```
-  ___
-  ```php
-  /**
-   * @template T of \Exception
-   * @param T $foo
-   */
-  public function __construct(
-      public \Exception $foo,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType<T extends Exception> {
-    foo: T;
-  }
-  ```
-  ___
-  ```php
-  /**
-   * @template T of \Stringable
-   * @param class-string<T> $foo
-   */
-  public function __construct(
-      public string $foo,
-      public \Stringable $bar,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType {
-    foo: string;
-    bar: Stringable;
-  }
-  ```
-  ___
-  ```php
-  /**
-   * @template T of \Stringable
-   * @param class-string<T> $foo
-   * @param T $baz
-   */
-  public function __construct(
-      public string $foo,
-      public \Stringable $bar,
-      public $baz,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType<T extends Stringable> {
-    foo: string;
-    bar: Stringable;
-    baz: T;
-  }
-  ```
-  ___
-  ```php
-  /**
-   * @template T of \Exception
-   * @param array<string,T[]> $foo
-   */
-  public function __construct(
-      public array $foo,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType<T extends Exception> {
-    foo: Record<string,T[]>;
-  }
-  ```
-- Complex iterable types like shown here
-  ```php
-  /**
-   * @see {somewhere}
-   * @var array{
-   *     foo: string,
-   * }
-   * @since 1.1.0
-   */
-  public array $foo1;
-
-  /**
-   * @var array<string>
-   * @since 1.1.0
-   */
-  public array $foo2;
-
-  /**
-   * @var array<int,string>
-   */
-  public array $foo3;
-
-  /**
-   * @var array<int,string[]>
-   */
-  public array $foo4;
-
-  /**
-   * @var array<int,array<int,string[]>>
-   */
-  public array $foo5;
-
-  /**
-   * @var string[]
-   */
-  public array $foo6;
-
-  /**
-   * @var string[][]
-   */
-  public array $foo7;
-
-  /**
-   * @var array<int,array{
-   *     foo: string,
-   *     bar: array{
-   *         baz: array<string,int[]>,
-   *     },
-   * }>
-   */
-  public array $foo8;
-
-  /**
-   * @var iterable<Foo>
-   */
-  public iterable $foo10;
-
-  /**
-   * @var iterable<Foo[]>
-   */
-  public iterable $foo11;
-
-  /**
-   * @var iterable<array<int,Foo|(Bar&Baz)[]>>
-   */
-  public iterable $foo12;
-
-  /**
-   * @var iterable<array<string,Foo|(Bar&Baz)[]>>
-   */
-  public iterable $foo13;
-
-  /**
-   * @param Foo[] $foo11
-   * @param array{
-   *   foo: string,
-   * } $foo12
-   * @param array<Foo[][]> $foo13
-   */
-  public function __construct(
-      public array $foo12,
-      public array $foo13,
-      private array $foo14,
-      string $foo15,
-  ) {
-  }
-  ```
-  Should generate:
-  ```ts
-  interface MyType {
-    foo1: {
-      foo: string;
-    };
-    foo2: string[];
-    foo3: string[];
-    foo4: string[][];
-    foo5: string[][][];
-    foo6: string[];
-    foo7: string[][];
-    foo8: {
-      foo: string;
-      bar: {
-        baz: Record<string, number[]>;
-      };
-    }[];
-    foo10: Foo[];
-    foo11: Foo[][];
-    foo12: (Foo|(Bar&Baz))[][][];
-    foo13: Record<string, (Foo|(Bar&Baz))[]>[]
-  }
-  ```
+- Document TsController usage
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 

@@ -1,18 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Tool;
 
-use Brainshaker95\PhpToTsBundle\Service\Exception\AssertionFailedException;
+use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use ReflectionClass;
 use Stringable;
 
+use const FILTER_VALIDATE_INT;
+
+use function array_filter;
+use function array_map;
+use function filter_var;
+use function implode;
+use function in_array;
+use function is_a;
+use function is_array;
+use function is_iterable;
+use function is_numeric;
+use function is_scalar;
+use function is_string;
+use function iterator_to_array;
+use function sprintf;
+
+/**
+ * @internal
+ */
 abstract class Assert
 {
-    public static function nonEmptyString(mixed $value): string
+    /**
+     * @phpstan-assert non-empty-string $value
+     *
+     * @return non-empty-string
+     */
+    final public static function nonEmptyStringNonNullable(mixed $value): string
     {
         if (!is_string($value) || !$value) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string',
+                'Expected value "%s" to be a non empty string.',
                 self::mixedToString($value),
             ));
         }
@@ -21,15 +47,31 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?non-empty-string $value
+     *
+     * @return ?non-empty-string
+     */
+    final public static function nonEmptyStringNullable(mixed $value): ?string
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        return self::nonEmptyStringNonNullable($value);
+    }
+
+    /**
+     * @phpstan-assert int<0,max> $value
+     *
      * @return int<0,max>
      */
-    public static function nonNegativeInteger(mixed $value): int
+    final public static function nonNegativeIntegerNonNullable(mixed $value): int
     {
-        $intval = intval($value);
+        $intval = is_numeric($value) ? (int) $value : -1;
 
         if (filter_var($value, FILTER_VALIDATE_INT) === false || $intval < 0) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non negative integer',
+                'Expected value "%s" to be a non negative integer.',
                 self::mixedToString($value),
             ));
         }
@@ -38,14 +80,30 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?int<0,max> $value
+     *
+     * @return ?int<0,max>
+     */
+    final public static function nonNegativeIntegerNullable(mixed $value): ?int
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        return self::nonNegativeIntegerNonNullable($value);
+    }
+
+    /**
+     * @phpstan-assert non-empty-string[] $value
+     *
      * @return non-empty-string[]
      */
-    public static function nonEmptyStringArray(mixed $value): array
+    final public static function nonEmptyStringArrayNonNullable(mixed $value): array
     {
         if (!is_array($value)
-            || !empty(array_filter($value, fn (mixed $v) => !is_string($v) || (is_string($v) && !$v)))) {
+            || !empty(array_filter($value, static fn (mixed $v) => !is_string($v) || (is_string($v) && !$v)))) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string array',
+                'Expected value "%s" to be a non empty string array.',
                 self::mixedToString($value),
             ));
         }
@@ -54,17 +112,33 @@ abstract class Assert
     }
 
     /**
+     * @phpstan-assert ?non-empty-string[] $value
+     *
+     * @return ?non-empty-string[]
+     */
+    final public static function nonEmptyStringArrayNullable(mixed $value): ?array
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        return self::nonEmptyStringArrayNonNullable($value);
+    }
+
+    /**
      * @template T of string[]
+     *
+     * @phpstan-assert value-of<T> $value
      *
      * @param T $allowedStrings
      *
      * @return value-of<T>
      */
-    public static function inStringArrayNonNullable(mixed $value, array $allowedStrings): string
+    final public static function inStringArrayNonNullable(mixed $value, array $allowedStrings): string
     {
-        if (!is_string($value) || !in_array($value, $allowedStrings)) {
+        if (!is_string($value) || !in_array($value, $allowedStrings, true)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be contained in array "%s"',
+                'Expected value "%s" to be contained in array "%s".',
                 self::mixedToString($value),
                 self::mixedToString($allowedStrings),
             ));
@@ -76,13 +150,15 @@ abstract class Assert
     /**
      * @template T of string[]
      *
+     * @phpstan-assert ?value-of<T> $value
+     *
      * @param T $allowedStrings
      *
      * @return ?value-of<T>
      */
-    public static function inStringArrayNullable(mixed $value, array $allowedStrings): ?string
+    final public static function inStringArrayNullable(mixed $value, array $allowedStrings): ?string
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $value;
         }
 
@@ -92,19 +168,19 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert T $value
+     *
      * @param class-string<T> $class
      *
-     * @return class-string<T>
+     * @return T
      */
-    public static function interfaceClassStringNonNullable(mixed $value, string $class): string
+    final public static function instanceOf(object $value, string $class): object
     {
-        if (!is_string($value)
-            || !is_a($value, $class, true)
-            || !(new ReflectionClass($value))->implementsInterface($class)) {
+        if (!$value instanceof $class) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a class string of a class that implements "%s"',
-                self::mixedToString($value),
-                self::mixedToString($class),
+                'Expected object with class "%s" to be an instance of class "%s".',
+                $value::class,
+                $class,
             ));
         }
 
@@ -114,13 +190,39 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert class-string<T> $value
+     *
+     * @param class-string<T> $class
+     *
+     * @return class-string<T>
+     */
+    final public static function interfaceClassStringNonNullable(mixed $value, string $class): string
+    {
+        if (!is_string($value)
+            || !is_a($value, $class, true)
+            || !(new ReflectionClass($value))->implementsInterface($class)) {
+            throw new AssertionFailedException(sprintf(
+                'Expected value "%s" to be a class string of a class that implements "%s".',
+                self::mixedToString($value),
+                $class,
+            ));
+        }
+
+        return $value;
+    }
+
+    /**
+     * @template T of object
+     *
+     * @phpstan-assert ?class-string<T> $value
+     *
      * @param class-string<T> $class
      *
      * @return ?class-string<T>
      */
-    public static function interfaceClassStringNullable(mixed $value, string $class): ?string
+    final public static function interfaceClassStringNullable(mixed $value, string $class): ?string
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $value;
         }
 
@@ -130,28 +232,32 @@ abstract class Assert
     /**
      * @template T of object
      *
+     * @phpstan-assert class-string<T>[] $value
+     *
      * @param class-string<T> $class
      *
      * @return class-string<T>[]
      */
-    public static function interfaceClassStringArrayNonNullable(mixed $value, string $class): array
+    final public static function interfaceClassStringArrayNonNullable(mixed $value, string $class): array
     {
         return array_map(
-            fn (string $v) => self::interfaceClassStringNonNullable($v, $class),
-            self::nonEmptyStringArray($value),
+            static fn (string $v) => self::interfaceClassStringNonNullable($v, $class),
+            self::nonEmptyStringArrayNonNullable($value),
         );
     }
 
     /**
      * @template T of object
      *
+     * @phpstan-assert ?class-string<T>[] $value
+     *
      * @param class-string<T> $class
      *
      * @return ?class-string<T>[]
      */
-    public static function interfaceClassStringArrayNullable(mixed $value, string $class): ?array
+    final public static function interfaceClassStringArrayNullable(mixed $value, string $class): ?array
     {
-        if (is_null($value)) {
+        if ($value === null) {
             return $value;
         }
 
@@ -169,7 +275,7 @@ abstract class Assert
         }
 
         if (is_scalar($value)) {
-            return strval($value);
+            return (string) $value;
         }
 
         if (is_iterable($value)) {
