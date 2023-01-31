@@ -29,9 +29,11 @@ final class ArrayShapeNode implements Node, QuotesAware
 
     /**
      * @param ArrayShapeItemNode[] $items
+     * @phpstan-param PHPStanArrayShapeNode::KIND_* $kind
      */
     public function __construct(
         public readonly array $items,
+        public readonly string $kind,
     ) {
     }
 
@@ -42,9 +44,15 @@ final class ArrayShapeNode implements Node, QuotesAware
 
     public function toString(): string
     {
-        $hasKeys        = (bool) current(array_filter($this->items, static fn (ArrayShapeItemNode $node) => $node->keyNode));
-        $openingBracket = $hasKeys ? '{' : '[';
-        $closingBracket = $hasKeys ? '}' : ']';
+        $isList         = $this->kind === PHPStanArrayShapeNode::KIND_LIST;
+        $openingBracket = '[';
+        $closingBracket = ']';
+
+        if (!$isList) {
+            $hasKeys        = (bool) current(array_filter($this->items, static fn (ArrayShapeItemNode $node) => $node->keyNode));
+            $openingBracket = $hasKeys ? '{' : '[';
+            $closingBracket = $hasKeys ? '}' : ']';
+        }
 
         if ($this->quotes) {
             foreach ($this->items as $item) {
@@ -68,6 +76,7 @@ final class ArrayShapeNode implements Node, QuotesAware
                 [ArrayShapeItemNode::class, 'fromPhpStan'],
                 $node->items,
             ),
+            kind: $node->kind,
         );
     }
 }
