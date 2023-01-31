@@ -1,28 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Exception\InvalidOptionException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'phptots:dump:file',
     description: 'Dumps all TypeScriptables in the given file',
 )]
-class DumpFileCommand extends DumpCommand
+final class DumpFileCommand extends DumpCommand
 {
     protected function configure(): void
     {
-        $this->addOption(
+        $this->addArgument(
             name: 'input-file',
             description: 'Path to file to dump',
-            mode: InputOption::VALUE_REQUIRED,
-            shortcut: 'i',
+            mode: InputArgument::REQUIRED,
         );
 
         parent::configure();
@@ -30,11 +30,10 @@ class DumpFileCommand extends DumpCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $inputFile = $this->input->getOption('input-file');
-
-        if (!$inputFile) {
-            throw new InvalidOptionException('The "--input-file" option to be defined.');
-        }
+        /**
+         * @var string
+         */
+        $inputFile = $this->input->getArgument('input-file');
 
         Assert::nonEmptyStringNonNullable($inputFile);
 
@@ -42,7 +41,7 @@ class DumpFileCommand extends DumpCommand
 
         $this->io->progressStart();
 
-        $this->dumper->dumpFile($inputFile, $config, function (string $path, TsInterface $tsInterface) {
+        $this->dumper->dumpFile($inputFile, $config, function (string $path, TsInterface $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

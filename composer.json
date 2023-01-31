@@ -16,7 +16,7 @@
       }
     ],
     "require-dev": {
-      "friendsofphp/php-cs-fixer": "3.13.2",
+      "friendsofphp/php-cs-fixer": "3.14.3",
       "phpstan/phpstan": "1.9.14"
     },
     "require": {
@@ -32,7 +32,8 @@
       "symfony/http-kernel": "^5.0 || ^6.0",
       "symfony/property-access": "^5.0 || ^6.0",
       "symfony/serializer": "^5.0 || ^6.0",
-      "symfony/string": "^5.0 || ^6.0"
+      "symfony/string": "^5.0 || ^6.0",
+      "phpstan/phpdoc-parser": "^1.15"
     },
     "autoload": {
       "psr-4": {

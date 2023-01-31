@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -8,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class PhpToTsExtension extends Extension
+final class PhpToTsExtension extends Extension
 {
     /**
      * @param mixed[] $configs

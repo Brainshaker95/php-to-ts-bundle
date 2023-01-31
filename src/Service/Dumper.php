@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
@@ -14,7 +16,13 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\Service\Attribute\Required;
 
-class Dumper
+use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
+
+use function is_array;
+use function is_string;
+
+final class Dumper
 {
     #[Required]
     public Configuration $config;
@@ -117,6 +125,7 @@ class Dumper
             $this->filesystem->dumpFile($path, $tsInterface->toString(
                 fileType: $fileType,
                 indent: $config->getIndent(),
+                quotes: $config->getQuotes(),
                 sortStrategies: $config->getSortStrategies(),
             ) . PHP_EOL);
 
@@ -133,8 +142,8 @@ class Dumper
      *
      * @return TsInterface[]
      *
-     * @throws FileNotFoundException
      * @throws Error
+     * @throws FileNotFoundException
      */
     public function getTsInterfacesFromFile(SplFileInfo|string $file): ?array
     {

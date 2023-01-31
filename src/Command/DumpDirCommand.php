@@ -1,28 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function is_string;
 
 #[AsCommand(
     name: 'phptots:dump:dir',
     description: 'Dumps all TypeScriptables in the given directory',
 )]
-class DumpDirCommand extends DumpCommand
+final class DumpDirCommand extends DumpCommand
 {
     protected function configure(): void
     {
-        $this->addOption(
+        $this->addArgument(
             name: Str::toKebab(C::INPUT_DIR_KEY),
             description: C::INPUT_DIR_DESC,
-            mode: InputOption::VALUE_REQUIRED,
-            shortcut: 'i',
+            mode: InputArgument::OPTIONAL,
         );
 
         parent::configure();
@@ -31,12 +34,12 @@ class DumpDirCommand extends DumpCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $config   = $this->getConfig();
-        $inputDir = $this->input->getOption(Str::toKebab(C::INPUT_DIR_KEY));
+        $inputDir = $this->input->getArgument(Str::toKebab(C::INPUT_DIR_KEY));
         $inputDir = is_string($inputDir) ? $inputDir : null;
 
         $this->io->progressStart();
 
-        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface) {
+        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
@@ -7,11 +9,10 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
-class PartialConfig implements C
+final class PartialConfig implements C
 {
     /**
      * @phpstan-param ?FileType::TYPE_* $fileType
-     *
      * @param ?class-string<SortStrategy>[] $sortStrategies
      * @param ?class-string<FileNameStrategy> $fileNameStrategy
      */
@@ -20,6 +21,7 @@ class PartialConfig implements C
         private ?string $outputDir = null,
         private ?string $fileType = null,
         private ?Indent $indent = null,
+        private ?Quotes $quotes = null,
         private ?array $sortStrategies = null,
         private ?string $fileNameStrategy = null,
     ) {
@@ -79,6 +81,18 @@ class PartialConfig implements C
         return $this;
     }
 
+    public function getQuotes(): ?Quotes
+    {
+        return $this->quotes;
+    }
+
+    public function setQuotes(?Quotes $quotes): self
+    {
+        $this->quotes = $quotes;
+
+        return $this;
+    }
+
     /**
      * @return ?class-string<SortStrategy>[]
      */
@@ -124,6 +138,7 @@ class PartialConfig implements C
      *         style: ?string,
      *         count: ?int<0,max>,
      *     },
+     *     quotes: ?string,
      *     sort_strategies?: ?non-empty-string[],
      *     file_name_strategy?: ?string,
      * } $values
@@ -141,6 +156,13 @@ class PartialConfig implements C
             ? Assert::inStringArrayNullable(
                 $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
                 C::INDENT_STYLE_VALID_VALUES,
+            )
+            : null;
+
+        $quotes = isset($values[C::QUOTES_KEY])
+            ? Assert::inStringArrayNullable(
+                $values[C::QUOTES_KEY],
+                C::QUOTES_VALID_VALUES,
             )
             : null;
 
@@ -166,6 +188,7 @@ class PartialConfig implements C
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ) : null,
+            quotes: $quotes ? new Quotes($quotes) : null,
             sortStrategies: $sortStrategies,
             fileNameStrategy: $fileNameStrategy,
         );
