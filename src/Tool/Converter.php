@@ -6,6 +6,15 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use Brainshaker95\PhpToTsBundle\Exception\InvalidPropertyException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use PhpParser\Comment\Doc;
@@ -114,12 +123,64 @@ abstract class Converter
             type: $data['rootNode'] ?? TsProperty::TYPE_UNKNOWN,
             isReadonly: $isReadonly,
             isConstructorProperty: $property instanceof Param,
+            generics: self::getGenerics($data['templateNodes']),
             summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode'])
                 ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
                 : null,
         );
+    }
+
+    /**
+     * @param Node[] $nodes
+     */
+    final public static function applyIndentAndQuotes(
+        array $nodes,
+        Indent $indent,
+        Quotes $quotes,
+        int $depth = 1,
+    ): void {
+        foreach ($nodes as $node) {
+            if ($node instanceof QuotesAware) {
+                $node->setQuotes($quotes);
+            }
+
+            if ($node instanceof ArrayShapeNode) {
+                $node->setIndent($indent->withTabPresses($depth - 1));
+
+                foreach ($node->items as $item) {
+                    $item->setIndent($indent->withTabPresses($depth));
+                    self::applyIndentAndQuotes([$item->valueNode], $indent, $quotes, $depth + 1);
+                }
+
+                continue;
+            }
+
+            if ($node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode) {
+                self::applyIndentAndQuotes($node->types, $indent, $quotes, $depth);
+
+                continue;
+            }
+
+            if ($node instanceof GenericTypeNode) {
+                self::applyIndentAndQuotes($node->genericTypes, $indent, $quotes, $depth);
+
+                continue;
+            }
+
+            if ($node instanceof NullableTypeNode) {
+                if ($node->type instanceof ArrayShapeNode) {
+                    self::applyIndentAndQuotes([$node->type], $indent, $quotes, $depth);
+
+                    continue;
+                }
+
+                if ($node->type instanceof UnionTypeNode || $node->type instanceof IntersectionTypeNode) {
+                    self::applyIndentAndQuotes($node->type->types, $indent, $quotes, $depth);
+                }
+            }
+        }
     }
 
     /**
@@ -198,6 +259,23 @@ abstract class Converter
         }
 
         return $type ?? self::TYPE_MIXED;
+    }
+
+    /**
+     * @param TemplateTagValueNode[] $templateNodes
+     *
+     * @return TsGeneric[]
+     */
+    private static function getGenerics(array $templateNodes): array
+    {
+        return array_map(
+            static fn (TemplateTagValueNode $node) => new TsGeneric(
+                name: $node->name,
+                bound: $node->bound ? PhpStan::toNode($node->bound) : null,
+                default: $node->default ? PhpStan::toNode($node->default) : null,
+            ),
+            $templateNodes,
+        );
     }
 
     /**

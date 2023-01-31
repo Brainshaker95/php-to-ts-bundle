@@ -13,6 +13,8 @@ use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNod
 
 use function array_key_exists;
 use function in_array;
+use function ltrim;
+use function str_starts_with;
 
 /**
  * @internal
@@ -31,7 +33,9 @@ final class IdentifierTypeNode implements Node
 
     public function toString(): string
     {
-        return $this->name;
+        return str_starts_with($this->name, '\\')
+            ? ltrim($this->name, $this->name[0])
+            : $this->name;
     }
 
     public static function fromPhpStan(PHPStanNode $node): self
