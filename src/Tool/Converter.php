@@ -47,35 +47,81 @@ use function trim;
  */
 abstract class Converter
 {
-    public const TYPE_ARRAY    = 'array';
-    public const TYPE_BOOLEAN  = 'bool';
-    public const TYPE_CALLABLE = 'callable';
-    public const TYPE_FALSE    = 'false';
-    public const TYPE_FLOAT    = 'float';
-    public const TYPE_INTEGER  = 'int';
-    public const TYPE_ITERABLE = 'iterable';
-    public const TYPE_MIXED    = 'mixed';
-    public const TYPE_NULL     = 'null';
-    public const TYPE_OBJECT   = 'object';
-    public const TYPE_STRING   = 'string';
-    public const TYPE_TRUE     = 'true';
+    public const TYPE_ARRAY            = 'array';
+    public const TYPE_ARRAY_KEY        = 'array-key';
+    public const TYPE_BOOL             = 'bool';
+    public const TYPE_BOOLEAN          = 'boolean';
+    public const TYPE_CALLABLE         = 'callable';
+    public const TYPE_CALLABLE_STRING  = 'callable-string';
+    public const TYPE_CLASS_STRING     = 'class-string';
+    public const TYPE_DOUBLE           = 'double';
+    public const TYPE_FALSE            = 'false';
+    public const TYPE_FLOAT            = 'float';
+    public const TYPE_POSITIVE_INT     = 'positive-int';
+    public const TYPE_NEGATIVE_INT     = 'negative-int';
+    public const TYPE_INT              = 'int';
+    public const TYPE_INT_MASK         = 'int-mask';
+    public const TYPE_INTEGER          = 'integer';
+    public const TYPE_ITERABLE         = 'iterable';
+    public const TYPE_KEY_OF           = 'key-of';
+    public const TYPE_LIST             = 'list';
+    public const TYPE_LITERAL_STRING   = 'literal-string';
+    public const TYPE_MIXED            = 'mixed';
+    public const TYPE_NON_EMPTY_ARRAY  = 'non-empty-array';
+    public const TYPE_NON_EMPTY_LIST   = 'non-empty-list';
+    public const TYPE_NON_EMPTY_STRING = 'non-empty-string';
+    public const TYPE_NON_FALSY_STRING = 'non-falsy-string';
+    public const TYPE_NULL             = 'null';
+    public const TYPE_NUMERIC_STRING   = 'numeric-string';
+    public const TYPE_OBJECT           = 'object';
+    public const TYPE_RESOURCE         = 'resource';
+    public const TYPE_SCALAR           = 'scalar';
+    public const TYPE_STATIC           = 'static';
+    public const TYPE_STRING           = 'string';
+    public const TYPE_THIS             = '$this';
+    public const TYPE_TRUE             = 'true';
+    public const TYPE_TRUTHY_STRING    = 'truthy-string';
+    public const TYPE_VALUE_OF         = 'value-of';
 
     public const NON_ITERABLE_TYPE_MAP = [
-        self::TYPE_BOOLEAN  => TsProperty::TYPE_BOOLEAN,
-        self::TYPE_CALLABLE => TsProperty::TYPE_UNKNOWN,
-        self::TYPE_FALSE    => TsProperty::TYPE_FALSE,
-        self::TYPE_FLOAT    => TsProperty::TYPE_NUMBER,
-        self::TYPE_INTEGER  => TsProperty::TYPE_NUMBER,
-        self::TYPE_MIXED    => TsProperty::TYPE_UNKNOWN,
-        self::TYPE_NULL     => TsProperty::TYPE_NULL,
-        self::TYPE_OBJECT   => TsProperty::TYPE_UNKNOWN,
-        self::TYPE_STRING   => TsProperty::TYPE_STRING,
-        self::TYPE_TRUE     => TsProperty::TYPE_TRUE,
+        self::TYPE_ARRAY_KEY        => TsProperty::TYPE_STRING,
+        self::TYPE_BOOL             => TsProperty::TYPE_BOOLEAN,
+        self::TYPE_BOOLEAN          => TsProperty::TYPE_BOOLEAN,
+        self::TYPE_CALLABLE         => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_CALLABLE_STRING  => TsProperty::TYPE_STRING,
+        self::TYPE_CLASS_STRING     => TsProperty::TYPE_STRING,
+        self::TYPE_DOUBLE           => TsProperty::TYPE_NUMBER,
+        self::TYPE_FALSE            => TsProperty::TYPE_FALSE,
+        self::TYPE_FLOAT            => TsProperty::TYPE_NUMBER,
+        self::TYPE_INT              => TsProperty::TYPE_NUMBER,
+        self::TYPE_INT_MASK         => TsProperty::TYPE_NUMBER,
+        self::TYPE_INTEGER          => TsProperty::TYPE_NUMBER,
+        self::TYPE_KEY_OF           => TsProperty::TYPE_STRING,
+        self::TYPE_MIXED            => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_NULL             => TsProperty::TYPE_NULL,
+        self::TYPE_LITERAL_STRING   => TsProperty::TYPE_STRING,
+        self::TYPE_NEGATIVE_INT     => TsProperty::TYPE_NUMBER,
+        self::TYPE_NUMERIC_STRING   => TsProperty::TYPE_STRING,
+        self::TYPE_NON_EMPTY_STRING => TsProperty::TYPE_STRING,
+        self::TYPE_NON_FALSY_STRING => TsProperty::TYPE_STRING,
+        self::TYPE_OBJECT           => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_POSITIVE_INT     => TsProperty::TYPE_NUMBER,
+        self::TYPE_RESOURCE         => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_SCALAR           => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_STATIC           => TsProperty::TYPE_UNKNOWN,
+        self::TYPE_STRING           => TsProperty::TYPE_STRING,
+        self::TYPE_THIS             => TsProperty::TYPE_THIS,
+        self::TYPE_TRUE             => TsProperty::TYPE_TRUE,
+        self::TYPE_TRUTHY_STRING    => TsProperty::TYPE_STRING,
+        self::TYPE_VALUE_OF         => TsProperty::TYPE_STRING,
     ];
 
     public const ITERABLE_TYPES = [
         self::TYPE_ARRAY,
         self::TYPE_ITERABLE,
+        self::TYPE_LIST,
+        self::TYPE_NON_EMPTY_ARRAY,
+        self::TYPE_NON_EMPTY_LIST,
     ];
 
     final public static function toInterface(Class_ $node): TsInterface
