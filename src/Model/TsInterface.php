@@ -115,6 +115,7 @@ final class TsInterface implements Stringable
                 if ($constructorPropertiesHandled) {
                     continue;
                 }
+
                 $constructorPropertiesHandled = true;
             }
 
@@ -130,6 +131,7 @@ final class TsInterface implements Stringable
                 if ($constructorPropertiesHandled) {
                     continue;
                 }
+
                 $constructorPropertiesHandled = true;
             }
 
