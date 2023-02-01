@@ -172,12 +172,12 @@ abstract class Converter
         }
 
         if (!isset($data['rootNode'])) {
-            $data = self::getDataFromDocComment(
+            $data['rootNode'] = self::getDataFromDocComment(
                 docComment: new Doc('/** @var ' . self::getTypeFromProperty($property) . ' */'),
                 property: $property,
                 name: $name,
                 forceVarNode: true,
-            );
+            )['rootNode'];
         }
 
         $classIdentifiers = $data['rootNode']
@@ -190,7 +190,7 @@ abstract class Converter
             isReadonly: $isReadonly,
             isConstructorProperty: $property instanceof Param,
             classIdentifiers: $classIdentifiers,
-            generics: self::getGenerics($data['templateNodes']),
+            generics: isset($data['templateNodes']) ? self::getGenerics($data['templateNodes']) : [],
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode'])
                 ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
