@@ -14,8 +14,9 @@ use Stringable;
 
 use const PHP_EOL;
 
+use function array_filter;
+use function count;
 use function implode;
-use function in_array;
 use function sprintf;
 use function usort;
 
@@ -104,17 +105,52 @@ final class TsInterface implements Stringable
      */
     private function getGenerics(Indent $indent, Quotes $quotes): array
     {
-        $generics  = [];
-        $usedNames = [];
+        $generics                     = [];
+        $genericNames                 = [];
+        $usedNames                    = [];
+        $constructorPropertiesHandled = false;
 
         foreach ($this->properties as $property) {
-            foreach ($property->generics as $generic) {
-                if (in_array($generic->name, $usedNames, true)) {
+            if ($property->isConstructorProperty) {
+                if ($constructorPropertiesHandled) {
                     continue;
                 }
+                $constructorPropertiesHandled = true;
+            }
 
-                $generics[]  = $generic->toString($indent, $quotes);
-                $usedNames[] = $generic->name;
+            foreach ($property->generics as $generic) {
+                $genericNames[] = $generic->name;
+            }
+        }
+
+        $constructorPropertiesHandled = false;
+
+        foreach ($this->properties as $property) {
+            if ($property->isConstructorProperty) {
+                if ($constructorPropertiesHandled) {
+                    continue;
+                }
+                $constructorPropertiesHandled = true;
+            }
+
+            foreach ($property->generics as $generic) {
+                $name = $generic->name;
+
+                $usageCount = count(array_filter(
+                    $genericNames,
+                    static fn (string $genericName) => $genericName === $name,
+                ));
+
+                $usedNames[$name] ??= 0;
+                $usedNames[$name] += 1;
+
+                $genericString = $generic->toString(
+                    $usageCount === 1 ? $name : $name . $usedNames[$name],
+                    $indent,
+                    $quotes,
+                );
+
+                $generics[] = $genericString;
             }
         }
 
