@@ -9,6 +9,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
@@ -35,6 +36,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 
 use function array_filter;
 use function array_map;
+use function array_unique;
 use function end;
 use function get_debug_type;
 use function implode;
@@ -164,11 +166,16 @@ abstract class Converter
             );
         }
 
+        $classIdentifiers = $data['rootNode']
+            ? array_unique(self::getClassIdentifiers([$data['rootNode']]))
+            : [];
+
         return new TsProperty(
             name: $name,
             type: $data['rootNode'] ?? TsProperty::TYPE_UNKNOWN,
             isReadonly: $isReadonly,
             isConstructorProperty: $property instanceof Param,
+            classIdentifiers: $classIdentifiers,
             generics: self::getGenerics($data['templateNodes']),
             summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
@@ -322,6 +329,55 @@ abstract class Converter
             ),
             $templateNodes,
         );
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param string[] $identifiers
+     *
+     * @return string[]
+     */
+    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof IdentifierTypeNode && $node->type === IdentifierTypeNode::TYPE_CLASS) {
+                $identifiers[] = $node->name;
+            }
+
+            if ($node instanceof ArrayShapeNode) {
+                foreach ($node->items as $item) {
+                    $identifiers = self::getClassIdentifiers([$item->valueNode], $identifiers);
+                }
+
+                continue;
+            }
+
+            if ($node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode) {
+                $identifiers = self::getClassIdentifiers($node->types, $identifiers);
+
+                continue;
+            }
+
+            if ($node instanceof GenericTypeNode) {
+                $identifiers = self::getClassIdentifiers($node->genericTypes, $identifiers);
+
+                continue;
+            }
+
+            if ($node instanceof NullableTypeNode) {
+                if ($node->type instanceof ArrayShapeNode) {
+                    $identifiers = self::getClassIdentifiers([$node->type], $identifiers);
+
+                    continue;
+                }
+
+                if ($node->type instanceof UnionTypeNode || $node->type instanceof IntersectionTypeNode) {
+                    $identifiers = self::getClassIdentifiers($node->type->types, $identifiers);
+                }
+            }
+        }
+
+        return $identifiers;
     }
 
     /**

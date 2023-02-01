@@ -126,6 +126,7 @@ final class Dumper
                 fileType: $fileType,
                 indent: $config->getIndent(),
                 quotes: $config->getQuotes(),
+                fileNameStrategy: $config->getFileNameStrategy(),
                 sortStrategies: $config->getSortStrategies(),
             ) . PHP_EOL);
 

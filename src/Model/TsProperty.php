@@ -30,12 +30,14 @@ final class TsProperty implements Stringable
     /**
      * @param self::TYPE_UNKNOWN|Node $type
      * @param TsGeneric[] $generics
+     * @param string[] $classIdentifiers
      */
     public function __construct(
         public string $name,
         public string|Node $type,
         public readonly bool $isReadonly = false,
         public readonly bool $isConstructorProperty = false,
+        public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
         public readonly ?string $summary = null,
         public readonly ?string $description = null,
