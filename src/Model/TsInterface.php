@@ -234,9 +234,9 @@ final class TsInterface implements Stringable
 
         return array_map(
             static fn (string $classIdentifier) => sprintf(
-                'import %s from %s',
+                'import type { %s } from %s',
                 $classIdentifier,
-                $quotes->toString('./' . (new $fileNameStrategy())->getName($classIdentifier) . '.ts') . ';',
+                $quotes->toString('./' . (new $fileNameStrategy())->getName($classIdentifier)) . ';',
             ),
             $imports,
         );
