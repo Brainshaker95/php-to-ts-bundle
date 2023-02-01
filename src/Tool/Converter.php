@@ -132,9 +132,23 @@ abstract class Converter
 
         Assert::nonEmptyStringNonNullable($name);
 
+        $docComment     = $node->getDocComment();
+        $textNode       = null;
+        $deprecatedNode = null;
+
+        if ($docComment) {
+            $docNode        = PhpStan::getDocNode($docComment);
+            $textNode       = PhpStan::getTextNode($docNode);
+            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+        }
+
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
+            description: $textNode ? trim($textNode->text) : null,
+            deprecation: $deprecatedNode
+                ? implode(' ', ['@deprecated', $deprecatedNode->description])
+                : null,
         );
     }
 

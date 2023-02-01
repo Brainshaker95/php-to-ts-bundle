@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
 use const PHP_EOL;
@@ -19,6 +20,7 @@ use function array_map;
 use function count;
 use function implode;
 use function in_array;
+use function sort;
 use function sprintf;
 use function usort;
 
@@ -30,6 +32,8 @@ final class TsInterface implements Stringable
     public function __construct(
         public string $name,
         public ?string $parentName = null,
+        public ?string $description = null,
+        public ?string $deprecation = null,
         public array $properties = [],
     ) {
     }
@@ -67,6 +71,7 @@ final class TsInterface implements Stringable
             . ' * Do not modify directly!' . PHP_EOL
             . ' */' . PHP_EOL . PHP_EOL
             . (!empty($imports) ? implode(PHP_EOL, $imports) . PHP_EOL . PHP_EOL : '')
+            . $this->getDocComment()
             . sprintf(
                 '%s interface %s%s%s {',
                 $isModule ? 'export' : 'declare',
@@ -96,6 +101,34 @@ final class TsInterface implements Stringable
         return (new $fileNameStrategy())->getName($this->name)
             . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
             . '.ts';
+    }
+
+    private function getDocComment(): string
+    {
+        if (!$this->description && !$this->deprecation) {
+            return '';
+        }
+
+        $docComment       = '/**' . PHP_EOL;
+        $linePrefix       = ' * ';
+        $descriptionLines = $this->description ? Str::splitByNewLines($this->description, $linePrefix) : null;
+        $hasDescription   = !empty($descriptionLines);
+
+        if ($hasDescription) {
+            $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
+        }
+
+        if ($this->deprecation) {
+            if ($hasDescription) {
+                $docComment .= $linePrefix . PHP_EOL;
+            }
+
+            $docComment .= $linePrefix . $this->deprecation . PHP_EOL;
+        }
+
+        $docComment .= ' */' . PHP_EOL;
+
+        return $docComment;
     }
 
     /**
