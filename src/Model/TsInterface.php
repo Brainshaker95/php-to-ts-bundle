@@ -216,7 +216,7 @@ final class TsInterface implements Stringable
      */
     private function getImports(string $fileNameStrategy, Quotes $quotes): array
     {
-        $imports = [];
+        $imports = $this->parentName ? [$this->parentName] : [];
 
         foreach ($this->properties as $property) {
             if (empty($property->classIdentifiers)) {
