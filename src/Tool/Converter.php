@@ -191,7 +191,6 @@ abstract class Converter
             isConstructorProperty: $property instanceof Param,
             classIdentifiers: $classIdentifiers,
             generics: self::getGenerics($data['templateNodes']),
-            summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode'])
                 ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
@@ -254,7 +253,6 @@ abstract class Converter
      * @return array{
      *     rootNode: ?Node,
      *     description: ?string,
-     *     summary: ?string,
      *     deprecatedNode: ?DeprecatedTagValueNode,
      *     templateNodes: TemplateTagValueNode[],
      * }
@@ -275,14 +273,13 @@ abstract class Converter
             ? PhpStan::toNode($rawNode->type)
             : null;
 
-        $textNode = $property instanceof Property
-            ? PhpStan::getTextNode($docNode)
-            : null;
+        $description = $property instanceof Property
+            ? trim(PhpStan::getTextNode($docNode)?->text ?? '')
+            : trim($rawNode?->description ?? '');
 
         return [
             'rootNode'       => $rootNode,
-            'description'    => trim($rawNode?->description ?? ''),
-            'summary'        => trim($textNode?->text ?? ''),
+            'description'    => $description ?: null,
             'deprecatedNode' => PhpStan::getDeprecatedNode($docNode),
             'templateNodes'  => PhpStan::getTemplateNodes($docNode),
         ];
