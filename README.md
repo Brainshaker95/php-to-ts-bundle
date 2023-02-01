@@ -230,8 +230,6 @@ class MyService
 
 ## 🔨 TODOs / Roadmap
 
-- Handle class-string type
-- Generate type imports when TsInterface has parentName and TYPE_MODULE is chosen
 - Document example TypeScriptable class
 - Document TsController usage
 
