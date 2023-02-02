@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
+use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
@@ -23,7 +24,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeItemNode implements Node, Quotable
+final class ArrayShapeItemNode implements Indentable, Node, Quotable
 {
     use HasIndent;
     use HasQuotes;

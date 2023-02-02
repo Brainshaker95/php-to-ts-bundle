@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
+use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
@@ -22,7 +23,7 @@ use function implode;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Node, Quotable
+final class ArrayShapeNode implements Indentable, Node, Quotable
 {
     use HasIndent;
     use HasQuotes;
