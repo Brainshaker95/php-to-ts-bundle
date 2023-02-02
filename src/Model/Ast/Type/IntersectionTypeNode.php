@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
@@ -18,7 +18,7 @@ use function implode;
 /**
  * @internal
  */
-final class IntersectionTypeNode implements Node, QuotesAware
+final class IntersectionTypeNode implements Node, Quotable
 {
     use HasQuotes;
 
@@ -39,7 +39,7 @@ final class IntersectionTypeNode implements Node, QuotesAware
     {
         if ($this->quotes) {
             foreach ($this->types as $type) {
-                if ($type instanceof QuotesAware) {
+                if ($type instanceof Quotable) {
                     $type->setQuotes($this->quotes);
                 }
             }

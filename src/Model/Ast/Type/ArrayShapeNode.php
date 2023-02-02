@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
@@ -22,7 +22,7 @@ use function implode;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Node, QuotesAware
+final class ArrayShapeNode implements Node, Quotable
 {
     use HasIndent;
     use HasQuotes;
@@ -56,7 +56,7 @@ final class ArrayShapeNode implements Node, QuotesAware
 
         if ($this->quotes) {
             foreach ($this->items as $item) {
-                if ($item instanceof QuotesAware) {
+                if ($item instanceof Quotable) {
                     $item->setQuotes($this->quotes);
                 }
             }

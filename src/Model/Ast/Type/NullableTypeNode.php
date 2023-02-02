@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
@@ -15,7 +15,7 @@ use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode as PHPStanNullableTypeNode;
 /**
  * @internal
  */
-final class NullableTypeNode implements Node, QuotesAware
+final class NullableTypeNode implements Node, Quotable
 {
     use HasQuotes;
 
@@ -32,7 +32,7 @@ final class NullableTypeNode implements Node, QuotesAware
     public function toString(): string
     {
         if ($this->quotes) {
-            if ($this->type instanceof QuotesAware) {
+            if ($this->type instanceof Quotable) {
                 $this->type->setQuotes($this->quotes);
             }
         }

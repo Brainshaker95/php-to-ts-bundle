@@ -6,7 +6,7 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use Brainshaker95\PhpToTsBundle\Exception\InvalidPropertyException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
@@ -208,7 +208,7 @@ abstract class Converter
         int $depth = 1,
     ): void {
         foreach ($nodes as $node) {
-            if ($node instanceof QuotesAware) {
+            if ($node instanceof Quotable) {
                 $node->setQuotes($quotes);
             }
 

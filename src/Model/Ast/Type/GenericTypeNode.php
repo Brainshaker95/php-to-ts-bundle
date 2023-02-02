@@ -7,7 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
@@ -26,7 +26,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class GenericTypeNode implements Node, QuotesAware
+final class GenericTypeNode implements Node, Quotable
 {
     use HasQuotes;
 
@@ -66,7 +66,7 @@ final class GenericTypeNode implements Node, QuotesAware
 
         if ($this->quotes) {
             foreach ($this->genericTypes as $genericType) {
-                if ($genericType instanceof QuotesAware) {
+                if ($genericType instanceof Quotable) {
                     $genericType->setQuotes($this->quotes);
                 }
             }

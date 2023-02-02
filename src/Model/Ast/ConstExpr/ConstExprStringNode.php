@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
@@ -15,7 +15,7 @@ use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 /**
  * @internal
  */
-final class ConstExprStringNode implements Node, QuotesAware
+final class ConstExprStringNode implements Node, Quotable
 {
     use HasQuotes;
 
