@@ -73,7 +73,7 @@ final class TsInterface implements Stringable
             . (!empty($imports) ? implode(PHP_EOL, $imports) . PHP_EOL . PHP_EOL : '')
             . $this->getDocComment()
             . sprintf(
-                '%s interface %s%s%s {%s}',
+                '%s interface %s%s%s {' . PHP_EOL . '%s' . PHP_EOL . '}',
                 $isModule ? 'export' : 'declare',
                 $this->name,
                 !empty($generics) ? '<' . implode(', ', $generics) . '>' : '',
@@ -81,7 +81,7 @@ final class TsInterface implements Stringable
                 implode(PHP_EOL, array_map(
                     static fn (TsProperty $property) => $property->toString($indent, $quotes),
                     self::getSortedProperties($sortStrategies),
-                )) . PHP_EOL,
+                )),
             );
     }
 
