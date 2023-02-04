@@ -54,7 +54,12 @@ use Brainshaker95\PhpToTsBundle\Interface\TypeScriptable;
 class MyClass extends MyParentClass implements TypeScriptable
 {
     /**
-     * @param non-empty-list<int>[] $foo1 This is a promoted constructor property description
+     * @param non-empty-list<array{
+     *     foo: int,
+     *     bar: array{
+     *         baz: Baz,
+     *     },
+     * }>[] $foo1 This is a promoted constructor property description
      * with a new line 
      * and another one 
      */
@@ -118,7 +123,12 @@ export interface MyClass<T extends ('foo' | 'bar' | 'baz') = 'bar'> extends MyPa
    * with a new line 
    * and another one
    */
-  foo1: Array<number>[];
+  foo1: Array<{
+    foo: number;
+    bar: {
+      baz: Baz;
+    };
+  }>[];
   baz2: (T | number | null);
   foo2: string;
 }
