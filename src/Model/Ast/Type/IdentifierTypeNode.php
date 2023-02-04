@@ -14,8 +14,7 @@ use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNod
 
 use function array_key_exists;
 use function in_array;
-use function ltrim;
-use function str_starts_with;
+use function str_contains;
 
 /**
  * @internal
@@ -41,9 +40,7 @@ final class IdentifierTypeNode implements Node
 
     public function toString(): string
     {
-        return str_starts_with($this->name, '\\')
-            ? ltrim($this->name, $this->name[0])
-            : $this->name;
+        return $this->name;
     }
 
     public static function fromPhpStan(PHPStanNode $node): self
@@ -57,7 +54,10 @@ final class IdentifierTypeNode implements Node
             $name = Converter::NON_ITERABLE_TYPE_MAP[$name];
         } elseif (in_array($name, Converter::ITERABLE_TYPES, true)) {
             $name = TsProperty::TYPE_UNKNOWN . '[]';
+        } elseif ($name === '\stdClass' || $name === 'stdClass') {
+            $name = TsProperty::TYPE_UNKNOWN;
         } elseif (self::isInterpretedAsClass($name)) {
+            $name = self::getShortClassName($name);
             $type = self::TYPE_CLASS;
         }
 
@@ -67,8 +67,15 @@ final class IdentifierTypeNode implements Node
         );
     }
 
-    public static function isInterpretedAsClass(string $name): bool
+    private static function isInterpretedAsClass(string $name): bool
     {
         return $name[0] === Str::toUpper($name[0]) && Str::length($name) > 1;
+    }
+
+    private static function getShortClassName(string $name): string
+    {
+        return str_contains($name, '\\')
+            ? Str::afterLast($name, '\\')
+            : $name;
     }
 }
