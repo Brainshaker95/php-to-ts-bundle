@@ -31,10 +31,6 @@ final class ConstTypeNode implements Node, Quotable
 
     public function toString(): string
     {
-        if ($this->constExpr instanceof Quotable && $this->quotes) {
-            $this->constExpr->setQuotes($this->quotes);
-        }
-
         return $this->constExpr->toString();
     }
 

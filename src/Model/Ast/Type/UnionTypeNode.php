@@ -37,14 +37,6 @@ final class UnionTypeNode implements Node, Quotable
 
     public function toString(): string
     {
-        if ($this->quotes) {
-            foreach ($this->types as $type) {
-                if ($type instanceof Quotable) {
-                    $type->setQuotes($this->quotes);
-                }
-            }
-        }
-
         return '(' . implode(' | ', $this->types) . ')';
     }
 

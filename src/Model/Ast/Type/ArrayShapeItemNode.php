@@ -43,10 +43,6 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
 
     public function toString(): string
     {
-        if ($this->valueNode instanceof Quotable && $this->quotes) {
-            $this->valueNode->setQuotes($this->quotes);
-        }
-
         if (!$this->keyNode) {
             return sprintf(
                 '%s%s,' . PHP_EOL,

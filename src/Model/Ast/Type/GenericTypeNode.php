@@ -64,14 +64,6 @@ final class GenericTypeNode implements Node, Quotable
             return $type;
         }
 
-        if ($this->quotes) {
-            foreach ($this->genericTypes as $genericType) {
-                if ($genericType instanceof Quotable) {
-                    $genericType->setQuotes($this->quotes);
-                }
-            }
-        }
-
         return $type . '<' . implode(', ', $this->genericTypes) . '>';
     }
 

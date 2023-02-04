@@ -31,12 +31,6 @@ final class NullableTypeNode implements Node, Quotable
 
     public function toString(): string
     {
-        if ($this->quotes) {
-            if ($this->type instanceof Quotable) {
-                $this->type->setQuotes($this->quotes);
-            }
-        }
-
         return '(' . $this->type . ' | null)';
     }
 

@@ -31,10 +31,6 @@ final class ArrayTypeNode implements Node, Quotable
 
     public function toString(): string
     {
-        if ($this->type instanceof Quotable && $this->quotes) {
-            $this->type->setQuotes($this->quotes);
-        }
-
         return $this->type . '[]';
     }
 

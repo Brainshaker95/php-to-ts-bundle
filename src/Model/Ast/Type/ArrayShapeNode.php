@@ -55,14 +55,6 @@ final class ArrayShapeNode implements Indentable, Node, Quotable
             $closingBracket = $hasKeys ? '}' : ']';
         }
 
-        if ($this->quotes) {
-            foreach ($this->items as $item) {
-                if ($item instanceof Quotable) {
-                    $item->setQuotes($this->quotes);
-                }
-            }
-        }
-
         return $openingBracket . PHP_EOL
             . implode('', $this->items)
             . ($this->indent?->toString() ?? '') . $closingBracket;
