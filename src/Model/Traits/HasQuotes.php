@@ -13,7 +13,7 @@ trait HasQuotes
 {
     private ?Quotes $quotes = null;
 
-    public function setQuotes(?Quotes $quotes): self
+    public function setQuotes(Quotes $quotes): self
     {
         $this->quotes = $quotes;
 

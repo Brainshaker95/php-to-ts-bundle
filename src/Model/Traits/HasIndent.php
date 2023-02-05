@@ -13,7 +13,7 @@ trait HasIndent
 {
     private ?Indent $indent = null;
 
-    public function setIndent(?Indent $indent): self
+    public function setIndent(Indent $indent): self
     {
         $this->indent = $indent;
 

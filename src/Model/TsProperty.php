@@ -39,7 +39,6 @@ final class TsProperty implements Stringable
         public readonly bool $isConstructorProperty = false,
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
-        public readonly ?string $summary = null,
         public readonly ?string $description = null,
         public readonly ?string $deprecation = null,
     ) {
@@ -53,7 +52,7 @@ final class TsProperty implements Stringable
     public function toString(Indent $indent = new Indent(), Quotes $quotes = new Quotes()): string
     {
         if ($this->type instanceof Node) {
-            Converter::applyIndentAndQuotes([$this->type], $indent, $quotes, 2);
+            Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
 
         return sprintf(
@@ -68,27 +67,21 @@ final class TsProperty implements Stringable
 
     private function getDocComment(Indent $indent): string
     {
-        if (!$this->summary && !$this->description && !$this->deprecation) {
+        if (!$this->description && !$this->deprecation) {
             return '';
         }
 
         $docComment       = '/**' . PHP_EOL;
         $linePrefix       = $indent->toString() . ' * ';
-        $summaryLines     = $this->summary ? Str::splitByNewLines($this->summary, $linePrefix) : null;
         $descriptionLines = $this->description ? Str::splitByNewLines($this->description, $linePrefix) : null;
-        $hasSummary       = !empty($summaryLines);
         $hasDescription   = !empty($descriptionLines);
-
-        if ($hasSummary) {
-            $docComment .= implode(PHP_EOL, $summaryLines) . PHP_EOL;
-        }
 
         if ($hasDescription) {
             $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
         }
 
         if ($this->deprecation) {
-            if ($hasSummary || $hasDescription) {
+            if ($hasDescription) {
                 $docComment .= $linePrefix . PHP_EOL;
             }
 

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
+use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\QuotesAware;
+use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
@@ -23,7 +24,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeItemNode implements Node, QuotesAware
+final class ArrayShapeItemNode implements Indentable, Node, Quotable
 {
     use HasIndent;
     use HasQuotes;
@@ -42,10 +43,6 @@ final class ArrayShapeItemNode implements Node, QuotesAware
 
     public function toString(): string
     {
-        if ($this->valueNode instanceof QuotesAware && $this->quotes) {
-            $this->valueNode->setQuotes($this->quotes);
-        }
-
         if (!$this->keyNode) {
             return sprintf(
                 '%s%s,' . PHP_EOL,

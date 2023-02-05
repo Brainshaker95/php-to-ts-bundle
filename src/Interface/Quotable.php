@@ -9,7 +9,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 /**
  * @internal
  */
-interface QuotesAware
+interface Quotable
 {
-    public function setQuotes(?Quotes $quotes): self;
+    public function setQuotes(Quotes $quotes): self;
 }

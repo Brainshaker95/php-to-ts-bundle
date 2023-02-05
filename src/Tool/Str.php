@@ -69,6 +69,17 @@ abstract class Str
         return u($string)->length();
     }
 
+    final public static function afterLast(
+        string $string,
+        string $eeedle,
+        bool $indcludeNeedle = false,
+    ): string {
+        return u($string)
+            ->afterLast($eeedle, $indcludeNeedle)
+            ->toString()
+        ;
+    }
+
     /**
      * @return string[]
      */
