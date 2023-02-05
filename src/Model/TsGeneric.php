@@ -13,6 +13,9 @@ use Stringable;
 use function array_filter;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final class TsGeneric implements Stringable
 {
     public function __construct(
