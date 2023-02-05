@@ -106,9 +106,9 @@ abstract class DumpCommand extends Command
         $sortStrategies = Assert::nonEmptyStringArrayNullable($sortStrategies);
 
         return PartialConfig::fromArray([
-            C::OUTPUT_DIR_KEY         => Assert::nonEmptyStringNullable($outputDir),
-            C::FILE_TYPE_KEY          => Assert::nonEmptyStringNullable($fileType),
-            C::INDENT_KEY             => ($indentStyle !== null || $indentCount !== null) ? [
+            C::OUTPUT_DIR_KEY => Assert::nonEmptyStringNullable($outputDir),
+            C::FILE_TYPE_KEY  => Assert::nonEmptyStringNullable($fileType),
+            C::INDENT_KEY     => ($indentStyle !== null || $indentCount !== null) ? [
                 C::INDENT_STYLE_KEY => $indentStyle,
                 C::INDENT_COUNT_KEY => $indentCount,
             ] : null,
