@@ -49,9 +49,9 @@ use Brainshaker95\PhpToTsBundle\Interface\TypeScriptable;
 /**
  * This is a class description
  * 
- * @deprecated
+ * @deprecated use MyOtherClass instead
  */
-class MyClass extends MyParentClass implements TypeScriptable
+final class MyClass extends MyParentClass implements TypeScriptable
 {
     /**
      * @param non-empty-list<array{
@@ -100,15 +100,18 @@ A TypeScript interface like this will be generated:
  */
 
 import type { Bar } from './bar';
+import type { Baz } from './baz';
 import type { Foo } from './foo';
 import type { MyParentClass } from './my-parent-class';
 
 /**
  * This is a class description
  * 
- * @deprecated 
+ * @deprecated use MyOtherClass instead
  */
-export interface MyClass<T extends ('foo' | 'bar' | 'baz') = 'bar'> extends MyParentClass {
+export interface MyClass<
+  T extends ('foo' | 'bar' | 'baz') = 'bar',
+> extends MyParentClass {
   readonly bar1: (Foo & Bar);
   /**
    * This is a property description
@@ -256,7 +259,7 @@ use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
+final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
@@ -305,7 +308,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Service\Dumper;
 use Symfony\Contracts\Service\Attribute\Required;
 
-class MyService
+final class MyService
 {
     #[Required]
     public Dumper $dumper;

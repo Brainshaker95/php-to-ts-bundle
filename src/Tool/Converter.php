@@ -339,6 +339,7 @@ abstract class Converter
                 name: $node->name,
                 bound: $node->bound ? PhpStan::toNode($node->bound) : null,
                 default: $node->default ? PhpStan::toNode($node->default) : null,
+                description: $node->description,
             ),
             $templateNodes,
         );
