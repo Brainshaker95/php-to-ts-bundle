@@ -40,6 +40,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use function array_filter;
 use function array_map;
 use function array_unique;
+use function current;
 use function end;
 use function get_debug_type;
 use function implode;
@@ -183,8 +184,12 @@ abstract class Converter
             )['rootNode'];
         }
 
+        $generics = isset($data['templateNodes'])
+            ? self::getGenerics($data['templateNodes'])
+            : [];
+
         $classIdentifiers = $data['rootNode']
-            ? array_unique(self::getClassIdentifiers([$data['rootNode']]))
+            ? array_unique(self::getClassIdentifiers([$data['rootNode']], $generics))
             : [];
 
         return new TsProperty(
@@ -193,7 +198,7 @@ abstract class Converter
             isReadonly: $isReadonly,
             isConstructorProperty: $property instanceof Param,
             classIdentifiers: $classIdentifiers,
-            generics: isset($data['templateNodes']) ? self::getGenerics($data['templateNodes']) : [],
+            generics: $generics,
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode'])
                 ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
@@ -208,7 +213,7 @@ abstract class Converter
         array $nodes,
         Indent $indent,
         Quotes $quotes,
-        int $depth = 1,
+        int $depth = 2,
     ): void {
         foreach ($nodes as $node) {
             if ($node instanceof Quotable) {
@@ -341,11 +346,12 @@ abstract class Converter
 
     /**
      * @param Node[] $nodes
+     * @param TsGeneric[] $generics
      * @param string[] $identifiers
      *
      * @return string[]
      */
-    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
+    private static function getClassIdentifiers(array $nodes, array $generics, array $identifiers = []): array
     {
         foreach ($nodes as $node) {
             $isArrayOrNullableType = self::isArrayOrNullableNode($node);
@@ -356,7 +362,8 @@ abstract class Converter
                 $isArrayOrNullableType && self::isClassIdentifierNode($node->type) => $node->type->name,
             };
 
-            if ($newIdentifier) {
+            if ($newIdentifier
+                && !current(array_filter($generics, static fn (TsGeneric $generic) => $generic->name === $newIdentifier))) {
                 $identifiers[] = $newIdentifier;
             }
 
@@ -375,7 +382,7 @@ abstract class Converter
             };
 
             if (!empty($nextLevelNodes)) {
-                $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
+                $identifiers = self::getClassIdentifiers($nextLevelNodes, $generics, $identifiers);
             }
         }
 

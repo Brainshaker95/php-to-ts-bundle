@@ -52,7 +52,7 @@ final class TsProperty implements Stringable
     public function toString(Indent $indent = new Indent(), Quotes $quotes = new Quotes()): string
     {
         if ($this->type instanceof Node) {
-            Converter::applyIndentAndQuotes([$this->type], $indent, $quotes, 2);
+            Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
 
         return sprintf(

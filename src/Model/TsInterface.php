@@ -63,7 +63,7 @@ final class TsInterface implements Stringable
         string $fileNameStrategy = C::FILE_NAME_STRATEGY_DEFAULT,
     ): string {
         $isModule = $fileType === FileType::TYPE_MODULE;
-        $generics = $this->getGenerics($indent, $quotes);
+        $generics = $this->getGenerics($indent, $quotes, $sortStrategies);
         $imports  = $isModule ? $this->getImports($fileNameStrategy, $quotes) : [];
 
         return '/*' . PHP_EOL
@@ -76,7 +76,7 @@ final class TsInterface implements Stringable
                 '%s interface %s%s%s {' . PHP_EOL . '%s' . PHP_EOL . '}',
                 $isModule ? 'export' : 'declare',
                 $this->name,
-                !empty($generics) ? '<' . implode(', ', $generics) . '>' : '',
+                !empty($generics) ? '<' . PHP_EOL . implode(',' . PHP_EOL, $generics) . ',' . PHP_EOL . '>' : '',
                 $this->parentName ? ' extends ' . $this->parentName : '',
                 implode(PHP_EOL, array_map(
                     static fn (TsProperty $property) => $property->toString($indent, $quotes),
@@ -146,16 +146,22 @@ final class TsInterface implements Stringable
     }
 
     /**
+     * @param class-string<SortStrategy>[] $sortStrategies
+     *
      * @return string[]
      */
-    private function getGenerics(Indent $indent, Quotes $quotes): array
-    {
+    private function getGenerics(
+        Indent $indent,
+        Quotes $quotes,
+        array $sortStrategies,
+    ): array {
         $generics                     = [];
         $genericNames                 = [];
         $usedNames                    = [];
         $constructorPropertiesHandled = false;
+        $properties                   = self::getSortedProperties($sortStrategies);
 
-        foreach ($this->properties as $property) {
+        foreach ($properties as $property) {
             if ($property->isConstructorProperty) {
                 if ($constructorPropertiesHandled) {
                     continue;
@@ -171,7 +177,7 @@ final class TsInterface implements Stringable
 
         $constructorPropertiesHandled = false;
 
-        foreach ($this->properties as $property) {
+        foreach ($properties as $property) {
             if ($property->isConstructorProperty) {
                 if ($constructorPropertiesHandled) {
                     continue;
@@ -197,7 +203,7 @@ final class TsInterface implements Stringable
                     $quotes,
                 );
 
-                $generics[] = $genericString;
+                $generics[] = $indent->toString() . $genericString;
             }
         }
 
