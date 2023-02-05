@@ -194,16 +194,12 @@ final class TsInterface implements Stringable
                     static fn (string $genericName) => $genericName === $name,
                 ));
 
-                $usedNames[$name] ??= 0;
-                $usedNames[$name] += 1;
+                if ($usageCount !== 1) {
+                    $usedNames[$name] = ($usedNames[$name] ?? 0) + 1;
+                    $generic->name    = $name . $usedNames[$name];
+                }
 
-                $genericString = $generic->toString(
-                    $usageCount === 1 ? $name : $name . $usedNames[$name],
-                    $indent,
-                    $quotes,
-                );
-
-                $generics[] = $indent->toString() . $genericString;
+                $generics[] = $indent->toString() . $generic->toString($indent, $quotes);
             }
         }
 

@@ -28,7 +28,6 @@ final class TsGeneric implements Stringable
     }
 
     public function toString(
-        ?string $name = null,
         Indent $indent = new Indent(),
         Quotes $quotes = new Quotes(),
     ): string {
@@ -36,7 +35,7 @@ final class TsGeneric implements Stringable
 
         return sprintf(
             '%s%s%s',
-            $name ?? $this->name,
+            $this->name,
             $this->bound ? ' extends ' . $this->bound->toString() : '',
             $this->default ? ' = ' . $this->default->toString() : '',
         );
