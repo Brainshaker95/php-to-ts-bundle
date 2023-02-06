@@ -65,6 +65,42 @@ final class TsProperty implements Stringable
         );
     }
 
+    /**
+     * @param ?Node[] $nodes
+     */
+    public function applyNewGenericName(string $oldName, string $newName, ?array $nodes = null): void
+    {
+        if (!$this->type instanceof Node) {
+            return;
+        }
+
+        $nodes ??= [$this->type];
+
+        foreach ($nodes as $node) {
+            $isArrayOrNullableType = Converter::isArrayOrNullableNode($node);
+
+            $classIdentifierNode = match (true) {
+                default                                                                 => null,
+                Converter::isClassIdentifierNode($node)                                 => $node,
+                $isArrayOrNullableType && Converter::isClassIdentifierNode($node->type) => $node->type,
+            };
+
+            if ($classIdentifierNode) {
+                foreach ($this->generics as $generic) {
+                    if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
+                        $classIdentifierNode->name = $generic->name;
+                    }
+                }
+            }
+
+            $nextLevelNodes = Converter::getNextLevelNodes($node);
+
+            if (!empty($nextLevelNodes)) {
+                self::applyNewGenericName($oldName, $newName, $nextLevelNodes);
+            }
+        }
+    }
+
     private function getDocComment(Indent $indent): string
     {
         if (!$this->description && !$this->deprecation) {

@@ -15,9 +15,9 @@ use Stringable;
 
 use const PHP_EOL;
 
+use function array_count_values;
 use function array_filter;
 use function array_map;
-use function count;
 use function implode;
 use function in_array;
 use function sort;
@@ -62,10 +62,11 @@ final class TsInterface implements Stringable
         array $sortStrategies = C::SORT_STRATEGIES_DEFAULT,
         string $fileNameStrategy = C::FILE_NAME_STRATEGY_DEFAULT,
     ): string {
-        $isModule         = $fileType === FileType::TYPE_MODULE;
-        $imports          = $isModule ? $this->getImports($fileNameStrategy, $quotes) : [];
         $sortedProperties = self::getSortedProperties($sortStrategies);
-        $generics         = $this->getGenerics($sortedProperties);
+        $generics         = TsGeneric::reduceFromProperties($sortedProperties);
+        $isModule         = $fileType === FileType::TYPE_MODULE;
+        $imports          = $isModule ? $this->getImports($generics, $fileNameStrategy, $quotes) : [];
+        $generics         = $this->renameGenerics($generics, $sortedProperties);
 
         $importsString = !empty($imports)
             ? implode(PHP_EOL, $imports) . PHP_EOL . PHP_EOL
@@ -169,57 +170,35 @@ final class TsInterface implements Stringable
     }
 
     /**
+     * @param TsGeneric[] $generics
      * @param TsProperty[] $properties
      *
      * @return TsGeneric[]
      */
-    private function getGenerics(array $properties): array
+    private function renameGenerics(array $generics, array $properties): array
     {
-        $generics                     = [];
-        $genericNames                 = [];
-        $usedNames                    = [];
-        $constructorPropertiesHandled = false;
+        $usedNames          = [];
+        $usageCounts        = array_count_values(TsGeneric::getNames($generics));
+        $constructorHandled = false;
 
         foreach ($properties as $property) {
-            if ($property->isConstructorProperty) {
-                if ($constructorPropertiesHandled) {
-                    continue;
-                }
-
-                $constructorPropertiesHandled = true;
-            }
-
-            foreach ($property->generics as $generic) {
-                $genericNames[] = $generic->name;
-            }
-        }
-
-        $constructorPropertiesHandled = false;
-
-        foreach ($properties as $property) {
-            if ($property->isConstructorProperty) {
-                if ($constructorPropertiesHandled) {
-                    continue;
-                }
-
-                $constructorPropertiesHandled = true;
-            }
-
             foreach ($property->generics as $generic) {
                 $name = $generic->name;
 
-                $usageCount = count(array_filter(
-                    $genericNames,
-                    static fn (string $genericName) => $genericName === $name,
-                ));
-
-                if ($usageCount !== 1) {
-                    $usedNames[$name] = ($usedNames[$name] ?? 0) + 1;
-                    $generic->name    = $name . $usedNames[$name];
+                if ($usageCounts[$name] === 1) {
+                    continue;
                 }
 
-                $generics[] = $generic;
+                if (!$property->isConstructorProperty || !$constructorHandled) {
+                    $usedNames[$name] = ($usedNames[$name] ?? 0) + 1;
+                }
+
+                $generic->name = $name . $usedNames[$name];
+
+                $property->applyNewGenericName(oldName: $name, newName: $generic->name);
             }
+
+            $constructorHandled = true;
         }
 
         usort($generics, static fn (TsGeneric $generic) => $generic->default ? 1 : -1);
@@ -228,13 +207,15 @@ final class TsInterface implements Stringable
     }
 
     /**
+     * @param TsGeneric[] $generics
      * @param class-string<FileNameStrategy> $fileNameStrategy
      *
      * @return string[]
      */
-    private function getImports(string $fileNameStrategy, Quotes $quotes): array
+    private function getImports(array $generics, string $fileNameStrategy, Quotes $quotes): array
     {
-        $imports = $this->parentName ? [$this->parentName] : [];
+        $imports      = $this->parentName ? [$this->parentName] : [];
+        $genericNames = TsGeneric::getNames($generics);
 
         foreach ($this->properties as $property) {
             if (empty($property->classIdentifiers)) {
@@ -242,7 +223,8 @@ final class TsInterface implements Stringable
             }
 
             foreach ($property->classIdentifiers as $classIdentifier) {
-                if (!in_array($classIdentifier, $imports, true)) {
+                if (!in_array($classIdentifier, $imports, true)
+                    && !in_array($classIdentifier, $genericNames, true)) {
                     $imports[] = $classIdentifier;
                 }
             }

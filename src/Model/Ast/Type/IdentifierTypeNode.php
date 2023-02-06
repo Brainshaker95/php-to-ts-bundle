@@ -28,7 +28,7 @@ final class IdentifierTypeNode implements Node
      * @phpstan-param self::TYPE_* $type
      */
     public function __construct(
-        public readonly string $name,
+        public string $name,
         public readonly string $type,
     ) {
     }
@@ -69,7 +69,7 @@ final class IdentifierTypeNode implements Node
 
     private static function isInterpretedAsClass(string $name): bool
     {
-        return $name[0] === Str::toUpper($name[0]) && Str::length($name) > 1;
+        return $name[0] === Str::toUpper($name[0]);
     }
 
     private static function getShortClassName(string $name): string

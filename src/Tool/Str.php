@@ -64,11 +64,6 @@ abstract class Str
         ;
     }
 
-    final public static function length(string $string): int
-    {
-        return u($string)->length();
-    }
-
     final public static function afterLast(
         string $string,
         string $eeedle,
