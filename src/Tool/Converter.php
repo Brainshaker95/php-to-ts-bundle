@@ -46,7 +46,6 @@ use function get_debug_type;
 use function implode;
 use function is_string;
 use function sprintf;
-use function trim;
 
 /**
  * @internal
@@ -137,22 +136,21 @@ abstract class Converter
         Assert::nonEmptyStringNonNullable($name);
 
         $docComment     = $node->getDocComment();
-        $textNode       = null;
+        $description    = null;
         $deprecatedNode = null;
 
         if ($docComment) {
             $docNode        = PhpStan::getDocNode($docComment);
-            $textNode       = PhpStan::getTextNode($docNode);
+            $textNodes      = PhpStan::getTextNodes($docNode);
+            $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
         }
 
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
-            description: $textNode ? trim($textNode->text) : null,
-            deprecation: $deprecatedNode
-                ? implode(' ', ['@deprecated', $deprecatedNode->description])
-                : null,
+            description: $description ?: null,
+            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
     }
 
@@ -200,9 +198,7 @@ abstract class Converter
             classIdentifiers: $classIdentifiers,
             generics: $generics,
             description: $data['description'] ?? null,
-            deprecation: isset($data['deprecatedNode'])
-                ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
-                : null,
+            deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
         );
     }
 
@@ -319,9 +315,9 @@ abstract class Converter
             ? PhpStan::toNode($rawNode->type)
             : null;
 
-        $description = $property instanceof Property
-            ? trim(PhpStan::getTextNode($docNode)?->text ?? '')
-            : trim($rawNode?->description ?? '');
+        $description = $property instanceof Param
+            ? $rawNode?->description
+            : PhpStan::textNodesToString(PhpStan::getTextNodes($docNode));
 
         return [
             'rootNode'       => $rootNode,

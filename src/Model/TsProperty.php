@@ -8,12 +8,10 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
-use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
 use const PHP_EOL;
 
-use function implode;
 use function sprintf;
 
 final class TsProperty implements Stringable
@@ -31,6 +29,7 @@ final class TsProperty implements Stringable
      * @param self::TYPE_UNKNOWN|Node $type
      * @param TsGeneric[] $generics
      * @param string[] $classIdentifiers
+     * @param true|string|null $deprecation
      */
     public function __construct(
         public string $name,
@@ -40,7 +39,7 @@ final class TsProperty implements Stringable
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
         public readonly ?string $description = null,
-        public readonly ?string $deprecation = null,
+        public bool|string|null $deprecation = null,
     ) {
     }
 
@@ -55,10 +54,14 @@ final class TsProperty implements Stringable
             Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
 
+        $docComment = (new TsDocComment(
+            description: $this->description,
+            deprecation: $this->deprecation,
+        ))->toString($indent);
+
         return sprintf(
-            '%s%s%s%s: %s;',
-            $indent->toString(),
-            $this->getDocComment($indent),
+            '%s%s%s: %s;',
+            $docComment ? ($docComment . PHP_EOL . $indent->toString()) : $indent->toString(),
             $this->isReadonly ? 'readonly ' : '',
             $this->name,
             $this->type,
@@ -99,34 +102,5 @@ final class TsProperty implements Stringable
                 self::applyNewGenericName($oldName, $newName, $nextLevelNodes);
             }
         }
-    }
-
-    private function getDocComment(Indent $indent): string
-    {
-        if (!$this->description && !$this->deprecation) {
-            return '';
-        }
-
-        $docComment       = '/**' . PHP_EOL;
-        $linePrefix       = $indent->toString() . ' * ';
-        $descriptionLines = $this->description ? Str::splitByNewLines($this->description, $linePrefix) : null;
-        $hasDescription   = !empty($descriptionLines);
-
-        if ($hasDescription) {
-            $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
-        }
-
-        if ($this->deprecation) {
-            if ($hasDescription) {
-                $docComment .= $linePrefix . PHP_EOL;
-            }
-
-            $docComment .= $linePrefix . $this->deprecation . PHP_EOL;
-        }
-
-        $docComment .= $indent->toString() . ' */' . PHP_EOL
-            . $indent->toString();
-
-        return $docComment;
     }
 }
