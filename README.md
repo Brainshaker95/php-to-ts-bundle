@@ -44,14 +44,15 @@ Given a PHP class like this:
 
 namespace App\Model\TypeScriptables;
 
-use Brainshaker95\PhpToTsBundle\Interface\TypeScriptable;
+use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
  * This is a class description
  * 
  * @deprecated use MyOtherClass instead
  */
-final class MyClass extends MyParentClass implements TypeScriptable
+#[AsTypeScriptable]
+final class MyClass extends MyParentClass
 {
     /**
      * @param non-empty-list<array{

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Service;
 
+use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
-use Brainshaker95\PhpToTsBundle\Interface\TypeScriptable;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PhpParser\Comment\Doc;
@@ -15,27 +15,26 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
-use PhpParser\Node\Stmt\UseUse;
-use PhpParser\NodeVisitorAbstract;
+use PhpParser\NodeVisitor\NameResolver;
 use ReflectionClass;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 use function array_filter;
 use function array_map;
-use function end;
+use function class_exists;
+use function current;
+use function implode;
 
 /**
  * @internal
  */
-final class Visitor extends NodeVisitorAbstract
+final class Visitor extends NameResolver
 {
     #[Required]
     public EventDispatcherInterface $eventDispatcher;
 
     private bool $isTypeScriptable;
-
-    private ?string $typeScriptableAlias;
 
     private ?TsInterface $currentTsInterface;
 
@@ -51,10 +50,11 @@ final class Visitor extends NodeVisitorAbstract
      */
     public function beforeTraverse(array $nodes)
     {
-        $this->isTypeScriptable    = false;
-        $this->typeScriptableAlias = null;
-        $this->currentTsInterface  = null;
-        $this->tsInterfaces        = [];
+        parent::beforeTraverse($nodes);
+
+        $this->isTypeScriptable   = false;
+        $this->currentTsInterface = null;
+        $this->tsInterfaces       = [];
 
         return null;
     }
@@ -64,24 +64,11 @@ final class Visitor extends NodeVisitorAbstract
      */
     public function enterNode(Node $node)
     {
-        if ($node instanceof UseUse
-            && !$this->typeScriptableAlias
-            && $node->alias
-            && $this->endsWithTypeScriptable($node->name->parts)) {
-            $this->typeScriptableAlias = $node->alias->name;
-        }
+        parent::enterNode($node);
 
-        if ($node instanceof Class_ && !$this->isTypeScriptable) {
-            foreach ($node->implements as $implement) {
-                if (!$this->endsWithTypeScriptable($implement->parts)) {
-                    return null;
-                }
-
-                $this->isTypeScriptable   = true;
-                $this->currentTsInterface = Converter::toInterface($node);
-
-                break;
-            }
+        if ($node instanceof Class_ && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
+            $this->isTypeScriptable   = true;
+            $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
         }
 
         if (!$this->currentTsInterface) {
@@ -120,6 +107,8 @@ final class Visitor extends NodeVisitorAbstract
      */
     public function leaveNode(Node $node)
     {
+        parent::leaveNode($node);
+
         if (!$node instanceof Class_) {
             return null;
         }
@@ -167,14 +156,14 @@ final class Visitor extends NodeVisitorAbstract
         }
     }
 
-    /**
-     * @param string[] $parts
-     */
-    private function endsWithTypeScriptable(array $parts): bool
+    private static function isTypeScriptable(Class_ $node): bool
     {
-        $lastPart = end($parts);
+        $fcqn = $node->namespacedName
+            ? implode('\\', $node->namespacedName->parts)
+            : $node->name?->name;
 
-        return $lastPart === (new ReflectionClass(TypeScriptable::class))->getShortName()
-            || $lastPart === $this->typeScriptableAlias;
+        return ($fcqn && class_exists($fcqn))
+            ? (bool) current((new ReflectionClass($fcqn))->getAttributes(AsTypeScriptable::class))
+            : false;
     }
 }
