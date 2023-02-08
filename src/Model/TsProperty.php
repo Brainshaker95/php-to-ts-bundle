@@ -8,12 +8,10 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
-use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
 
 use const PHP_EOL;
 
-use function implode;
 use function sprintf;
 
 final class TsProperty implements Stringable
@@ -31,6 +29,7 @@ final class TsProperty implements Stringable
      * @param self::TYPE_UNKNOWN|Node $type
      * @param TsGeneric[] $generics
      * @param string[] $classIdentifiers
+     * @param true|string|null $deprecation
      */
     public function __construct(
         public string $name,
@@ -40,7 +39,7 @@ final class TsProperty implements Stringable
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
         public readonly ?string $description = null,
-        public readonly ?string $deprecation = null,
+        public bool|string|null $deprecation = null,
     ) {
     }
 
@@ -55,42 +54,53 @@ final class TsProperty implements Stringable
             Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
 
+        $docComment = (new TsDocComment(
+            description: $this->description,
+            deprecation: $this->deprecation,
+        ))->toString($indent);
+
         return sprintf(
-            '%s%s%s%s: %s;',
-            $indent->toString(),
-            $this->getDocComment($indent),
+            '%s%s%s: %s;',
+            $docComment ? ($docComment . PHP_EOL . $indent->toString()) : $indent->toString(),
             $this->isReadonly ? 'readonly ' : '',
             $this->name,
             $this->type,
         );
     }
 
-    private function getDocComment(Indent $indent): string
+    /**
+     * @param ?Node[] $nodes
+     */
+    public function applyNewGenericName(string $oldName, string $newName, ?array $nodes = null): void
     {
-        if (!$this->description && !$this->deprecation) {
-            return '';
+        if (!$this->type instanceof Node) {
+            return;
         }
 
-        $docComment       = '/**' . PHP_EOL;
-        $linePrefix       = $indent->toString() . ' * ';
-        $descriptionLines = $this->description ? Str::splitByNewLines($this->description, $linePrefix) : null;
-        $hasDescription   = !empty($descriptionLines);
+        $nodes ??= [$this->type];
 
-        if ($hasDescription) {
-            $docComment .= implode(PHP_EOL, $descriptionLines) . PHP_EOL;
-        }
+        foreach ($nodes as $node) {
+            $isArrayOrNullableType = Converter::isArrayOrNullableNode($node);
 
-        if ($this->deprecation) {
-            if ($hasDescription) {
-                $docComment .= $linePrefix . PHP_EOL;
+            $classIdentifierNode = match (true) {
+                default                                                                 => null,
+                Converter::isClassIdentifierNode($node)                                 => $node,
+                $isArrayOrNullableType && Converter::isClassIdentifierNode($node->type) => $node->type,
+            };
+
+            if ($classIdentifierNode) {
+                foreach ($this->generics as $generic) {
+                    if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
+                        $classIdentifierNode->name = $generic->name;
+                    }
+                }
             }
 
-            $docComment .= $linePrefix . $this->deprecation . PHP_EOL;
+            $nextLevelNodes = Converter::getNextLevelNodes($node);
+
+            if (!empty($nextLevelNodes)) {
+                self::applyNewGenericName($oldName, $newName, $nextLevelNodes);
+            }
         }
-
-        $docComment .= $indent->toString() . ' */' . PHP_EOL
-            . $indent->toString();
-
-        return $docComment;
     }
 }

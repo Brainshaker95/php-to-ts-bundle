@@ -46,7 +46,6 @@ use function get_debug_type;
 use function implode;
 use function is_string;
 use function sprintf;
-use function trim;
 
 /**
  * @internal
@@ -130,29 +129,29 @@ abstract class Converter
         self::TYPE_NON_EMPTY_LIST,
     ];
 
-    final public static function toInterface(Class_ $node): TsInterface
+    final public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
     {
         $name = $node->name?->name;
 
         Assert::nonEmptyStringNonNullable($name);
 
         $docComment     = $node->getDocComment();
-        $textNode       = null;
+        $description    = null;
         $deprecatedNode = null;
 
         if ($docComment) {
             $docNode        = PhpStan::getDocNode($docComment);
-            $textNode       = PhpStan::getTextNode($docNode);
+            $textNodes      = PhpStan::getTextNodes($docNode);
+            $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
         }
 
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
-            description: $textNode ? trim($textNode->text) : null,
-            deprecation: $deprecatedNode
-                ? implode(' ', ['@deprecated', $deprecatedNode->description])
-                : null,
+            isReadonly: $isReadonly,
+            description: $description ?: null,
+            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
     }
 
@@ -200,9 +199,7 @@ abstract class Converter
             classIdentifiers: $classIdentifiers,
             generics: $generics,
             description: $data['description'] ?? null,
-            deprecation: isset($data['deprecatedNode'])
-                ? implode(' ', ['@deprecated', $data['deprecatedNode']->description])
-                : null,
+            deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
         );
     }
 
@@ -252,6 +249,50 @@ abstract class Converter
     }
 
     /**
+     * @return Node[]
+     */
+    final public static function getNextLevelNodes(Node $node): array
+    {
+        return match (true) {
+            default                                => [],
+            $node instanceof ArrayShapeNode        => $node->items,
+            $node instanceof ArrayShapeItemNode    => [$node->valueNode],
+            $node instanceof GenericTypeNode       => $node->genericTypes,
+            self::isUnionOrIntersectionNode($node) => $node->types,
+            self::isArrayOrNullableNode($node)     => match (true) {
+                default                                      => [],
+                $node->type instanceof ArrayShapeNode        => $node->type->items,
+                $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
+                self::isUnionOrIntersectionNode($node->type) => $node->type->types,
+            },
+        };
+    }
+
+    /**
+     * @phpstan-assert-if-true IdentifierTypeNode $node
+     */
+    final public static function isClassIdentifierNode(Node $node): bool
+    {
+        return $node instanceof IdentifierTypeNode && $node->type === IdentifierTypeNode::TYPE_CLASS;
+    }
+
+    /**
+     * @phpstan-assert-if-true ArrayTypeNode|NullableTypeNode $node
+     */
+    final public static function isArrayOrNullableNode(Node $node): bool
+    {
+        return $node instanceof ArrayTypeNode || $node instanceof NullableTypeNode;
+    }
+
+    /**
+     * @phpstan-assert-if-true UnionTypeNode|IntersectionTypeNode $node
+     */
+    final public static function isUnionOrIntersectionNode(Node $node): bool
+    {
+        return $node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode;
+    }
+
+    /**
      * @return array{
      *     rootNode: ?Node,
      *     description: ?string,
@@ -275,9 +316,9 @@ abstract class Converter
             ? PhpStan::toNode($rawNode->type)
             : null;
 
-        $description = $property instanceof Property
-            ? trim(PhpStan::getTextNode($docNode)?->text ?? '')
-            : trim($rawNode?->description ?? '');
+        $description = $property instanceof Param
+            ? $rawNode?->description
+            : PhpStan::textNodesToString(PhpStan::getTextNodes($docNode));
 
         return [
             'rootNode'       => $rootNode,
@@ -355,12 +396,10 @@ abstract class Converter
     private static function getClassIdentifiers(array $nodes, array $generics, array $identifiers = []): array
     {
         foreach ($nodes as $node) {
-            $isArrayOrNullableType = self::isArrayOrNullableNode($node);
-
             $newIdentifier = match (true) {
-                default                                                            => null,
-                self::isClassIdentifierNode($node)                                 => $node->name,
-                $isArrayOrNullableType && self::isClassIdentifierNode($node->type) => $node->type->name,
+                default                                                                        => null,
+                self::isClassIdentifierNode($node)                                             => $node->name,
+                self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type->name,
             };
 
             if ($newIdentifier
@@ -368,19 +407,7 @@ abstract class Converter
                 $identifiers[] = $newIdentifier;
             }
 
-            $nextLevelNodes = match (true) {
-                default                                => [],
-                $node instanceof ArrayShapeNode        => $node->items,
-                $node instanceof ArrayShapeItemNode    => [$node->valueNode],
-                $node instanceof GenericTypeNode       => $node->genericTypes,
-                self::isUnionOrIntersectionNode($node) => $node->types,
-                $isArrayOrNullableType                 => match (true) {
-                    default                                      => [],
-                    $node->type instanceof ArrayShapeNode        => $node->type->items,
-                    $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
-                    self::isUnionOrIntersectionNode($node->type) => $node->type->types,
-                },
-            };
+            $nextLevelNodes = self::getNextLevelNodes($node);
 
             if (!empty($nextLevelNodes)) {
                 $identifiers = self::getClassIdentifiers($nextLevelNodes, $generics, $identifiers);
@@ -388,30 +415,6 @@ abstract class Converter
         }
 
         return $identifiers;
-    }
-
-    /**
-     * @phpstan-assert-if-true IdentifierTypeNode $node
-     */
-    private static function isClassIdentifierNode(Node $node): bool
-    {
-        return $node instanceof IdentifierTypeNode && $node->type === IdentifierTypeNode::TYPE_CLASS;
-    }
-
-    /**
-     * @phpstan-assert-if-true ArrayTypeNode|NullableTypeNode $node
-     */
-    private static function isArrayOrNullableNode(Node $node): bool
-    {
-        return $node instanceof ArrayTypeNode || $node instanceof NullableTypeNode;
-    }
-
-    /**
-     * @phpstan-assert-if-true UnionTypeNode|IntersectionTypeNode $node
-     */
-    private static function isUnionOrIntersectionNode(Node $node): bool
-    {
-        return $node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode;
     }
 
     /**

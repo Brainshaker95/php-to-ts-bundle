@@ -6,7 +6,10 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use function array_filter;
 use function array_map;
+use function count;
 use function preg_split;
+use function range;
+use function rtrim;
 use function Symfony\Component\String\u;
 
 /**
@@ -64,11 +67,6 @@ abstract class Str
         ;
     }
 
-    final public static function length(string $string): int
-    {
-        return u($string)->length();
-    }
-
     final public static function afterLast(
         string $string,
         string $eeedle,
@@ -81,13 +79,28 @@ abstract class Str
     }
 
     /**
+     * @param callable(string $line, int $index): string $lineCallback
+     *
      * @return string[]
      */
-    final public static function splitByNewLines(string $string, string $linePrefix = ''): array
-    {
+    final public static function splitByNewLines(
+        string $string,
+        string $linePrefix = '',
+        ?callable $lineCallback = null,
+    ): array {
+        $lines = array_filter(preg_split('/\n/', $string) ?: []);
+
+        if (empty($lines)) {
+            return [];
+        }
+
         return array_map(
-            static fn (string $line) => $linePrefix . $line,
-            array_filter(preg_split('/\n/', $string) ?: []),
+            static fn (
+                string $line,
+                int $index,
+            ) => rtrim($lineCallback ? $lineCallback($line, $index) : ($linePrefix . $line)),
+            $lines,
+            range(0, count($lines) - 1),
         );
     }
 }

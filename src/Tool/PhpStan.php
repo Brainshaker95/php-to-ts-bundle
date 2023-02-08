@@ -27,7 +27,9 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 
 use function array_filter;
+use function array_map;
 use function current;
+use function implode;
 use function sprintf;
 
 /**
@@ -136,11 +138,25 @@ abstract class PhpStan
         ];
     }
 
-    final public static function getTextNode(PhpDocNode $docNode): ?PhpDocTextNode
+    /**
+     * @return PhpDocTextNode[]
+     */
+    final public static function getTextNodes(PhpDocNode $docNode): array
     {
-        return current(array_filter(
+        return array_filter(
             $docNode->children,
-            static fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode,
-        )) ?: null;
+            static fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode && $childNode->text,
+        );
+    }
+
+    /**
+     * @param PhpDocTextNode[] $textNodes
+     */
+    final public static function textNodesToString(array $textNodes): string
+    {
+        return implode("\n", array_map(
+            static fn (PhpDocTextNode $textNode) => $textNode->text,
+            $textNodes,
+        ));
     }
 }
