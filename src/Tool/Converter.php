@@ -129,7 +129,7 @@ abstract class Converter
         self::TYPE_NON_EMPTY_LIST,
     ];
 
-    final public static function toInterface(Class_ $node): TsInterface
+    final public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
     {
         $name = $node->name?->name;
 
@@ -149,6 +149,7 @@ abstract class Converter
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
+            isReadonly: $isReadonly,
             description: $description ?: null,
             deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );

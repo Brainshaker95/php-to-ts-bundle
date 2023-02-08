@@ -78,7 +78,11 @@ final class Visitor extends NameResolver
         $docComment = $node->getDocComment();
 
         if ($node instanceof Property && $node->isPublic()) {
-            $this->addTsProperty($node, $node->isReadonly(), $docComment);
+            $this->addTsProperty(
+                property: $node,
+                isReadonly: $this->currentTsInterface->isReadonly ? true : $node->isReadonly(),
+                docComment: $docComment,
+            );
         }
 
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
@@ -93,7 +97,11 @@ final class Visitor extends NameResolver
             );
 
             array_map(
-                fn (Param $param, bool $isReadonly) => $this->addTsProperty($param, $isReadonly, $docComment),
+                fn (Param $param, bool $isReadonly) => $this->addTsProperty(
+                    property: $param,
+                    isReadonly: $this->currentTsInterface?->isReadonly ? true : $isReadonly,
+                    docComment: $docComment,
+                ),
                 $publicParams,
                 $readonlyStates,
             );
