@@ -6,7 +6,6 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use ReflectionClass;
-use Stringable;
 
 use const FILTER_VALIDATE_INT;
 
@@ -19,6 +18,7 @@ use function is_a;
 use function is_array;
 use function is_iterable;
 use function is_numeric;
+use function is_object;
 use function is_scalar;
 use function is_string;
 use function iterator_to_array;
@@ -264,18 +264,29 @@ abstract class Assert
         return self::interfaceClassStringArrayNonNullable($value, $class);
     }
 
+    final public static function existingAttribute(mixed $value, string $attribute): void
+    {
+        if ((!is_string($value) && !is_object($value)) || !Attribute::exists($value, $attribute)) {
+            throw new AssertionFailedException(sprintf(
+                'Expected value for parameter "typeScriptable" to be an instance of a class tagged with the "%s" attribute, "%s" given.',
+                $attribute,
+                self::mixedToString($value),
+            ));
+        }
+    }
+
     private static function mixedToString(mixed $value): string
     {
-        if ($value instanceof Stringable) {
-            return $value->__toString();
-        }
-
         if ($value === null) {
             return '<null>';
         }
 
         if (is_scalar($value)) {
             return (string) $value;
+        }
+
+        if (is_object($value)) {
+            return $value::class;
         }
 
         if (is_iterable($value)) {

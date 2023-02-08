@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
@@ -16,14 +17,11 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\NodeVisitor\NameResolver;
-use ReflectionClass;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 use function array_filter;
 use function array_map;
-use function class_exists;
-use function current;
 use function implode;
 
 /**
@@ -170,8 +168,8 @@ final class Visitor extends NameResolver
             ? implode('\\', $node->namespacedName->parts)
             : $node->name?->name;
 
-        return ($fcqn && class_exists($fcqn))
-            ? (bool) current((new ReflectionClass($fcqn))->getAttributes(AsTypeScriptable::class))
+        return $fcqn
+            ? Attribute::exists($fcqn, AsTypeScriptable::class)
             : false;
     }
 }
