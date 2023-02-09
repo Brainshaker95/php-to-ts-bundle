@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -76,6 +77,18 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
             valueNode: PhpStan::toNode($node->valueType),
             keyNode: $node->keyName ? PhpStan::toNode($node->keyName) : null,
             isOptional: $node->optional,
+        );
+    }
+
+    public static function createUnsealedItem(bool $hasKeys): self
+    {
+        return new self(
+            keyNode: $hasKeys
+                ? new IdentifierTypeNode(sprintf('[key: %s]', TsProperty::TYPE_STRING))
+                : null,
+            valueNode: new IdentifierTypeNode(
+                ($hasKeys ? '' : '...') . TsProperty::TYPE_UNKNOWN . ($hasKeys ? '' : '[]'),
+            ),
         );
     }
 }

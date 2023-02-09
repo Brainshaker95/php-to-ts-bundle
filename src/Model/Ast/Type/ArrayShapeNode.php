@@ -10,7 +10,6 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
-use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
@@ -65,16 +64,8 @@ final class ArrayShapeNode implements Indentable, Node, Quotable
         );
 
         if (!$node->sealed) {
-            $hasKeys = self::hasKeys($items);
-
-            $unsealedNode = new ArrayShapeItemNode(
-                keyNode: $hasKeys
-                    ? new IdentifierTypeNode(sprintf('[key: %s]', TsProperty::TYPE_STRING))
-                    : null,
-                valueNode: new IdentifierTypeNode(
-                    ($hasKeys ? '' : '...') . TsProperty::TYPE_UNKNOWN . ($hasKeys ? '' : '[]'),
-                ),
-            );
+            $hasKeys      = self::hasKeys($items);
+            $unsealedNode = ArrayShapeItemNode::createUnsealedItem($hasKeys);
 
             if ($hasKeys) {
                 array_unshift($items, $unsealedNode);
