@@ -29,7 +29,7 @@ final class IdentifierTypeNode implements Node
      */
     public function __construct(
         public string $name,
-        public readonly string $type,
+        public readonly string $type = self::TYPE_DEFAULT,
     ) {
     }
 
