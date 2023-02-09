@@ -56,7 +56,7 @@ final class ArrayShapeNode implements Indentable, Node, Quotable
         }
 
         return $openingBracket . PHP_EOL
-            . implode('', $this->items)
+            . implode(PHP_EOL, $this->items) . PHP_EOL
             . ($this->indent?->toString() ?? '') . $closingBracket;
     }
 

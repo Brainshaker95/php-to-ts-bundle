@@ -16,8 +16,6 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 
-use const PHP_EOL;
-
 use function is_numeric;
 use function sprintf;
 
@@ -45,7 +43,7 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
     {
         if (!$this->keyNode) {
             return sprintf(
-                '%s%s,' . PHP_EOL,
+                '%s%s,',
                 $this->indent?->toString() ?? '',
                 (string) $this->valueNode,
             );
@@ -62,7 +60,7 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
         }
 
         return sprintf(
-            '%s%s%s: %s;' . PHP_EOL,
+            '%s%s%s: %s;',
             $this->indent?->toString() ?? '',
             $key,
             $this->isOptional ? '?' : '',
