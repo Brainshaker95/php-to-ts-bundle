@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
+use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
@@ -92,13 +93,20 @@ final class ArrayShapeNode implements Indentable, Node, Quotable
      */
     private static function hasKeys(array $items): bool
     {
+        $hasKeys = false;
+
         foreach ($items as $item) {
             if (($item instanceof ArrayShapeItemNode && $item->keyNode)
                 || ($item instanceof PHPStanArrayShapeItemNode && $item->keyName)) {
-                return true;
+                $hasKeys = true;
+            } elseif ($hasKeys) {
+                throw new UnsupportedNodeException(sprintf(
+                    'Invalid item "%s". All array shape properties either have to have keys or not. Mixing is not allowed.',
+                    $item->__toString(),
+                ));
             }
         }
 
-        return false;
+        return $hasKeys;
     }
 }
