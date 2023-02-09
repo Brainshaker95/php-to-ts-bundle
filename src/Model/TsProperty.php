@@ -80,13 +80,7 @@ final class TsProperty implements Stringable
         $nodes ??= [$this->type];
 
         foreach ($nodes as $node) {
-            $isArrayOrNullableType = Converter::isArrayOrNullableNode($node);
-
-            $classIdentifierNode = match (true) {
-                default                                                                 => null,
-                Converter::isClassIdentifierNode($node)                                 => $node,
-                $isArrayOrNullableType && Converter::isClassIdentifierNode($node->type) => $node->type,
-            };
+            $classIdentifierNode = Converter::getClassIdentifierNode($node);
 
             if ($classIdentifierNode) {
                 foreach ($this->generics as $generic) {

@@ -268,10 +268,19 @@ abstract class Converter
         };
     }
 
+    final public static function getClassIdentifierNode(Node $node): ?IdentifierTypeNode
+    {
+        return match (true) {
+            default                                                                        => null,
+            self::isClassIdentifierNode($node)                                             => $node,
+            self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type,
+        };
+    }
+
     /**
      * @phpstan-assert-if-true IdentifierTypeNode $node
      */
-    final public static function isClassIdentifierNode(Node $node): bool
+    private static function isClassIdentifierNode(Node $node): bool
     {
         return $node instanceof IdentifierTypeNode && $node->type === IdentifierTypeNode::TYPE_CLASS;
     }
@@ -279,7 +288,7 @@ abstract class Converter
     /**
      * @phpstan-assert-if-true ArrayTypeNode|NullableTypeNode $node
      */
-    final public static function isArrayOrNullableNode(Node $node): bool
+    private static function isArrayOrNullableNode(Node $node): bool
     {
         return $node instanceof ArrayTypeNode || $node instanceof NullableTypeNode;
     }
@@ -287,7 +296,7 @@ abstract class Converter
     /**
      * @phpstan-assert-if-true UnionTypeNode|IntersectionTypeNode $node
      */
-    final public static function isUnionOrIntersectionNode(Node $node): bool
+    private static function isUnionOrIntersectionNode(Node $node): bool
     {
         return $node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode;
     }
@@ -396,11 +405,7 @@ abstract class Converter
     private static function getClassIdentifiers(array $nodes, array $generics, array $identifiers = []): array
     {
         foreach ($nodes as $node) {
-            $newIdentifier = match (true) {
-                default                                                                        => null,
-                self::isClassIdentifierNode($node)                                             => $node->name,
-                self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type->name,
-            };
+            $newIdentifier = self::getClassIdentifierNode($node)?->name;
 
             if ($newIdentifier
                 && !current(array_filter($generics, static fn (TsGeneric $generic) => $generic->name === $newIdentifier))) {
