@@ -28,9 +28,9 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
     use HasQuotes;
 
     public function __construct(
-        public readonly ?Node $keyNode,
-        public readonly bool $isOptional,
         public readonly Node $valueNode,
+        public readonly ?Node $keyNode,
+        public readonly bool $isOptional = false,
     ) {
     }
 
@@ -73,9 +73,9 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
         Assert::instanceOf($node, PHPStanArrayShapeItemNode::class);
 
         return new self(
+            valueNode: PhpStan::toNode($node->valueType),
             keyNode: $node->keyName ? PhpStan::toNode($node->keyName) : null,
             isOptional: $node->optional,
-            valueNode: PhpStan::toNode($node->valueType),
         );
     }
 }
