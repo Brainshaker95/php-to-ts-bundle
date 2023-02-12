@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
@@ -45,12 +46,18 @@ final class ArrayShapeNode implements Indentable, Node, Quotable
 
     public function toString(): string
     {
+        $items = implode(PHP_EOL, $this->items);
+
+        if (!$items) {
+            return TsProperty::TYPE_UNKNOWN . '[]';
+        }
+
         $hasKeys        = self::hasKeys($this->items);
         $openingBracket = $hasKeys ? '{' : '[';
         $closingBracket = $hasKeys ? '}' : ']';
 
         return $openingBracket . PHP_EOL
-            . implode(PHP_EOL, $this->items) . PHP_EOL
+            . $items . PHP_EOL
             . ($this->indent?->toString() ?? '') . $closingBracket;
     }
 
