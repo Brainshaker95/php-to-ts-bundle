@@ -40,10 +40,10 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use function array_filter;
 use function array_map;
 use function array_unique;
-use function current;
 use function end;
 use function get_debug_type;
 use function implode;
+use function in_array;
 use function is_string;
 use function sprintf;
 
@@ -183,13 +183,25 @@ abstract class Converter
             )['rootNode'];
         }
 
-        $generics = isset($data['templateNodes'])
-            ? self::getGenerics($data['templateNodes'])
+        $classIdentifiers = $data['rootNode']
+            ? array_unique(self::getClassIdentifiers([$data['rootNode']]))
             : [];
 
-        $classIdentifiers = $data['rootNode']
-            ? array_unique(self::getClassIdentifiers([$data['rootNode']], $generics))
-            : [];
+        $generics = [];
+
+        if (isset($data['templateNodes'])) {
+            $generics = array_filter(
+                self::getGenerics($data['templateNodes']),
+                static fn (TsGeneric $generic) => in_array($generic->name, $classIdentifiers, true),
+            );
+        }
+
+        $genericNames = TsGeneric::getNames($generics);
+
+        $classIdentifiers = array_filter(
+            $classIdentifiers,
+            static fn (string $classIdentifier) => !in_array($classIdentifier, $genericNames, true),
+        );
 
         return new TsProperty(
             name: $name,
@@ -397,25 +409,23 @@ abstract class Converter
 
     /**
      * @param Node[] $nodes
-     * @param TsGeneric[] $generics
      * @param string[] $identifiers
      *
      * @return string[]
      */
-    private static function getClassIdentifiers(array $nodes, array $generics, array $identifiers = []): array
+    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
     {
         foreach ($nodes as $node) {
-            $newIdentifier = self::getClassIdentifierNode($node)?->name;
+            $identifier = self::getClassIdentifierNode($node)?->name;
 
-            if ($newIdentifier
-                && !current(array_filter($generics, static fn (TsGeneric $generic) => $generic->name === $newIdentifier))) {
-                $identifiers[] = $newIdentifier;
+            if ($identifier) {
+                $identifiers[] = $identifier;
             }
 
             $nextLevelNodes = self::getNextLevelNodes($node);
 
             if (!empty($nextLevelNodes)) {
-                $identifiers = self::getClassIdentifiers($nextLevelNodes, $generics, $identifiers);
+                $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
             }
         }
 
