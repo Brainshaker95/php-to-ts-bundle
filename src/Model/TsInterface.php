@@ -25,6 +25,7 @@ use function usort;
 final class TsInterface implements Stringable
 {
     /**
+     * @param TsGeneric[] $generics
      * @param TsProperty[] $properties
      * @param true|string|null $deprecation
      */
@@ -32,6 +33,7 @@ final class TsInterface implements Stringable
         public string $name,
         public ?string $parentName = null,
         public readonly bool $isReadonly = false,
+        public readonly array $generics = [],
         public ?string $description = null,
         public bool|string|null $deprecation = null,
         public array $properties = [],

@@ -136,6 +136,7 @@ abstract class Converter
         Assert::nonEmptyStringNonNullable($name);
 
         $docComment     = $node->getDocComment();
+        $generics       = [];
         $description    = null;
         $deprecatedNode = null;
 
@@ -144,12 +145,14 @@ abstract class Converter
             $textNodes      = PhpStan::getTextNodes($docNode);
             $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+            $generics       = self::getGenerics(PhpStan::getTemplateNodes($docNode));
         }
 
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
             isReadonly: $isReadonly,
+            generics: $generics,
             description: $description ?: null,
             deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
