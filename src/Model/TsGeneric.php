@@ -14,7 +14,6 @@ use const PHP_EOL;
 
 use function array_filter;
 use function array_map;
-use function array_reduce;
 use function implode;
 use function sprintf;
 
@@ -23,11 +22,15 @@ use function sprintf;
  */
 final class TsGeneric implements Stringable
 {
+    /**
+     * @param TsProperty[] $properties
+     */
     public function __construct(
         public string $name,
         public ?Node $bound = null,
         public ?Node $default = null,
         public ?string $description = null,
+        public array $properties = [],
     ) {
     }
 
@@ -90,34 +93,5 @@ final class TsGeneric implements Stringable
                 $generics,
             )) . ',' . PHP_EOL
             . '>';
-    }
-
-    /**
-     * @param TsProperty[] $properties
-     *
-     * @return self[]
-     */
-    public static function reduceFromProperties(array $properties): array
-    {
-        $constructorHandled = false;
-
-        return array_reduce(
-            $properties,
-            static function (array $currentGenerics, TsProperty $property) use (&$constructorHandled) {
-                if ($property->isConstructorProperty) {
-                    if ($constructorHandled) {
-                        return $currentGenerics;
-                    }
-
-                    $constructorHandled = true;
-                }
-
-                return [
-                    ...$currentGenerics,
-                    ...$property->generics,
-                ];
-            },
-            [],
-        );
     }
 }
