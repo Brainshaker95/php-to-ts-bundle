@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
-use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
@@ -83,13 +82,7 @@ final class GenericTypeNode implements Node, Quotable
 
         $type = PhpStan::toNode($node->type);
 
-        if (!$type instanceof IdentifierTypeNode) {
-            throw new AssertionFailedException(sprintf(
-                'Expected node to be an instance of "%s", "%s" given.',
-                IdentifierTypeNode::class,
-                $type::class,
-            ));
-        }
+        Assert::instanceOf($type, IdentifierTypeNode::class);
 
         return new self(
             type: $type,

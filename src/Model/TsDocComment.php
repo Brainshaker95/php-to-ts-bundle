@@ -26,7 +26,7 @@ final class TsDocComment implements Stringable
      */
     public function __construct(
         public readonly ?string $description = null,
-        public bool|string|null $deprecation = null,
+        public readonly bool|string|null $deprecation = null,
         public readonly array $generics = [],
     ) {
     }

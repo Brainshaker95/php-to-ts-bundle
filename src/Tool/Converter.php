@@ -40,10 +40,10 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use function array_filter;
 use function array_map;
 use function array_unique;
-use function current;
 use function end;
 use function get_debug_type;
 use function implode;
+use function in_array;
 use function is_string;
 use function sprintf;
 
@@ -136,6 +136,7 @@ abstract class Converter
         Assert::nonEmptyStringNonNullable($name);
 
         $docComment     = $node->getDocComment();
+        $generics       = [];
         $description    = null;
         $deprecatedNode = null;
 
@@ -144,12 +145,14 @@ abstract class Converter
             $textNodes      = PhpStan::getTextNodes($docNode);
             $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+            $generics       = self::getGenerics(PhpStan::getTemplateNodes($docNode));
         }
 
         return new TsInterface(
             name: $name,
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
             isReadonly: $isReadonly,
+            generics: $generics,
             description: $description ?: null,
             deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
@@ -183,13 +186,25 @@ abstract class Converter
             )['rootNode'];
         }
 
-        $generics = isset($data['templateNodes'])
-            ? self::getGenerics($data['templateNodes'])
+        $classIdentifiers = $data['rootNode']
+            ? array_unique(self::getClassIdentifiers([$data['rootNode']]))
             : [];
 
-        $classIdentifiers = $data['rootNode']
-            ? array_unique(self::getClassIdentifiers([$data['rootNode']], $generics))
-            : [];
+        $generics = [];
+
+        if (isset($data['templateNodes'])) {
+            $generics = array_filter(
+                self::getGenerics($data['templateNodes']),
+                static fn (TsGeneric $generic) => in_array($generic->name, $classIdentifiers, true),
+            );
+        }
+
+        $genericNames = TsGeneric::getNames($generics);
+
+        $classIdentifiers = array_filter(
+            $classIdentifiers,
+            static fn (string $classIdentifier) => !in_array($classIdentifier, $genericNames, true),
+        );
 
         return new TsProperty(
             name: $name,
@@ -268,10 +283,19 @@ abstract class Converter
         };
     }
 
+    final public static function getClassIdentifierNode(Node $node): ?IdentifierTypeNode
+    {
+        return match (true) {
+            default                                                                        => null,
+            self::isClassIdentifierNode($node)                                             => $node,
+            self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type,
+        };
+    }
+
     /**
      * @phpstan-assert-if-true IdentifierTypeNode $node
      */
-    final public static function isClassIdentifierNode(Node $node): bool
+    private static function isClassIdentifierNode(Node $node): bool
     {
         return $node instanceof IdentifierTypeNode && $node->type === IdentifierTypeNode::TYPE_CLASS;
     }
@@ -279,7 +303,7 @@ abstract class Converter
     /**
      * @phpstan-assert-if-true ArrayTypeNode|NullableTypeNode $node
      */
-    final public static function isArrayOrNullableNode(Node $node): bool
+    private static function isArrayOrNullableNode(Node $node): bool
     {
         return $node instanceof ArrayTypeNode || $node instanceof NullableTypeNode;
     }
@@ -287,7 +311,7 @@ abstract class Converter
     /**
      * @phpstan-assert-if-true UnionTypeNode|IntersectionTypeNode $node
      */
-    final public static function isUnionOrIntersectionNode(Node $node): bool
+    private static function isUnionOrIntersectionNode(Node $node): bool
     {
         return $node instanceof UnionTypeNode || $node instanceof IntersectionTypeNode;
     }
@@ -388,29 +412,23 @@ abstract class Converter
 
     /**
      * @param Node[] $nodes
-     * @param TsGeneric[] $generics
      * @param string[] $identifiers
      *
      * @return string[]
      */
-    private static function getClassIdentifiers(array $nodes, array $generics, array $identifiers = []): array
+    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
     {
         foreach ($nodes as $node) {
-            $newIdentifier = match (true) {
-                default                                                                        => null,
-                self::isClassIdentifierNode($node)                                             => $node->name,
-                self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type->name,
-            };
+            $identifier = self::getClassIdentifierNode($node)?->name;
 
-            if ($newIdentifier
-                && !current(array_filter($generics, static fn (TsGeneric $generic) => $generic->name === $newIdentifier))) {
-                $identifiers[] = $newIdentifier;
+            if ($identifier) {
+                $identifiers[] = $identifier;
             }
 
             $nextLevelNodes = self::getNextLevelNodes($node);
 
             if (!empty($nextLevelNodes)) {
-                $identifiers = self::getClassIdentifiers($nextLevelNodes, $generics, $identifiers);
+                $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
             }
         }
 

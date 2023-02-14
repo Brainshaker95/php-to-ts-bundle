@@ -11,12 +11,11 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
-
-use const PHP_EOL;
 
 use function is_numeric;
 use function sprintf;
@@ -30,9 +29,9 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
     use HasQuotes;
 
     public function __construct(
-        public readonly ?Node $keyNode,
-        public readonly bool $isOptional,
         public readonly Node $valueNode,
+        public readonly ?Node $keyNode,
+        public readonly bool $isOptional = false,
     ) {
     }
 
@@ -45,7 +44,7 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
     {
         if (!$this->keyNode) {
             return sprintf(
-                '%s%s,' . PHP_EOL,
+                '%s%s,',
                 $this->indent?->toString() ?? '',
                 (string) $this->valueNode,
             );
@@ -62,7 +61,7 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
         }
 
         return sprintf(
-            '%s%s%s: %s;' . PHP_EOL,
+            '%s%s%s: %s;',
             $this->indent?->toString() ?? '',
             $key,
             $this->isOptional ? '?' : '',
@@ -75,9 +74,21 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
         Assert::instanceOf($node, PHPStanArrayShapeItemNode::class);
 
         return new self(
+            valueNode: PhpStan::toNode($node->valueType),
             keyNode: $node->keyName ? PhpStan::toNode($node->keyName) : null,
             isOptional: $node->optional,
-            valueNode: PhpStan::toNode($node->valueType),
+        );
+    }
+
+    public static function createUnsealedItem(bool $hasKeys): self
+    {
+        return new self(
+            keyNode: $hasKeys
+                ? new IdentifierTypeNode(sprintf('[key: %s]', TsProperty::TYPE_STRING))
+                : null,
+            valueNode: new IdentifierTypeNode(
+                ($hasKeys ? '' : '...') . TsProperty::TYPE_UNKNOWN . ($hasKeys ? '' : '[]'),
+            ),
         );
     }
 }

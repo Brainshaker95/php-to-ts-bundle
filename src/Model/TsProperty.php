@@ -69,10 +69,15 @@ final class TsProperty implements Stringable
     }
 
     /**
+     * @param TsGeneric[] $generics
      * @param ?Node[] $nodes
      */
-    public function applyNewGenericName(string $oldName, string $newName, ?array $nodes = null): void
-    {
+    public function applyNewGenericName(
+        string $oldName,
+        string $newName,
+        array $generics,
+        ?array $nodes = null,
+    ): void {
         if (!$this->type instanceof Node) {
             return;
         }
@@ -80,16 +85,10 @@ final class TsProperty implements Stringable
         $nodes ??= [$this->type];
 
         foreach ($nodes as $node) {
-            $isArrayOrNullableType = Converter::isArrayOrNullableNode($node);
-
-            $classIdentifierNode = match (true) {
-                default                                                                 => null,
-                Converter::isClassIdentifierNode($node)                                 => $node,
-                $isArrayOrNullableType && Converter::isClassIdentifierNode($node->type) => $node->type,
-            };
+            $classIdentifierNode = Converter::getClassIdentifierNode($node);
 
             if ($classIdentifierNode) {
-                foreach ($this->generics as $generic) {
+                foreach ($generics as $generic) {
                     if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
                         $classIdentifierNode->name = $generic->name;
                     }
@@ -99,7 +98,7 @@ final class TsProperty implements Stringable
             $nextLevelNodes = Converter::getNextLevelNodes($node);
 
             if (!empty($nextLevelNodes)) {
-                self::applyNewGenericName($oldName, $newName, $nextLevelNodes);
+                self::applyNewGenericName($oldName, $newName, $generics, $nextLevelNodes);
             }
         }
     }
