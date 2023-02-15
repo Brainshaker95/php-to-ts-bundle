@@ -114,22 +114,13 @@ final class Dumper
             return;
         }
 
-        $config           = $this->config->merge($config);
-        $fileType         = $config->getFileType();
-        $fileNameStrategy = $config->getFileNameStrategy();
-        $pathPrefix       = $config->getOutputDir() . DIRECTORY_SEPARATOR;
+        $pathPrefix = $config->getOutputDir() . DIRECTORY_SEPARATOR;
 
         foreach ($tsInterfaces as $tsInterface) {
-            $fileName = $tsInterface->getFileName($fileType, $fileNameStrategy);
+            $fileName = $tsInterface->getFileName();
             $path     = $this->filesystem->makeAbsolute($pathPrefix . $fileName);
 
-            $this->filesystem->dumpFile($path, $tsInterface->toString(
-                fileType: $fileType,
-                indent: $config->getIndent(),
-                quotes: $config->getQuotes(),
-                sortStrategies: $config->getSortStrategies(),
-                fileNameStrategy: $config->getFileNameStrategy(),
-            ) . PHP_EOL);
+            $this->filesystem->dumpFile($path, $tsInterface->toString() . PHP_EOL);
 
             if ($successCallback) {
                 $successCallback($path, $tsInterface);
