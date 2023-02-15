@@ -56,26 +56,39 @@ interface Config
 
     public function getInputDir(): ?string;
 
+    public function setInputDir(string $inputDir): self;
+
     public function getOutputDir(): ?string;
+
+    public function setOutputDir(string $outputDir): self;
 
     /**
      * @phpstan-return FileType::TYPE_*
      */
     public function getFileType(): ?string;
 
+    public function setFileType(string $fileType): self;
+
     public function getIndent(): ?Indent;
 
+    public function setIndent(Indent $indent): self;
+
     public function getQuotes(): ?Quotes;
+
+    public function setQuotes(Quotes $quotes): self;
 
     /**
      * @return class-string<SortStrategy>[]
      */
     public function getSortStrategies(): ?array;
 
+    public function setSortStrategies(array $sortStrategies): self;
     /**
      * @return class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
+
+    public function setFileNameStrategy(string $fileNameStrategy): self;
 
     /**
      * @param array{
