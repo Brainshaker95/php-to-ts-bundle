@@ -13,6 +13,7 @@ final class PartialConfig implements C
 {
     /**
      * @phpstan-param ?FileType::TYPE_* $fileType
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
      * @param ?class-string<SortStrategy>[] $sortStrategies
      * @param ?class-string<FileNameStrategy> $fileNameStrategy
      */
@@ -20,6 +21,7 @@ final class PartialConfig implements C
         private ?string $inputDir = null,
         private ?string $outputDir = null,
         private ?string $fileType = null,
+        private ?string $typeDefinitionType = null,
         private ?Indent $indent = null,
         private ?Quotes $quotes = null,
         private ?array $sortStrategies = null,
@@ -65,6 +67,24 @@ final class PartialConfig implements C
     public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    /**
+     * @phpstan-return ?TypeDefinitionType::TYPE_*
+     */
+    public function getTypeDefinitionType(): ?string
+    {
+        return $this->typeDefinitionType;
+    }
+
+    /**
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
+     */
+    public function setTypeDefinitionType(string $typeDefinitionType): self
+    {
+        $this->typeDefinitionType = $typeDefinitionType;
 
         return $this;
     }
@@ -134,6 +154,7 @@ final class PartialConfig implements C
      *     input_dir?: ?string,
      *     output_dir?: ?string,
      *     file_type?: ?string,
+     *     type_definition_type?: ?string,
      *     indent?: ?array{
      *         style: ?string,
      *         count: ?int<0,max>,
@@ -149,6 +170,13 @@ final class PartialConfig implements C
             ? Assert::inStringArrayNullable(
                 $values[C::FILE_TYPE_KEY],
                 C::FILE_TYPE_VALID_VALUES,
+            )
+            : null;
+
+        $typeDefinitionType = isset($values[C::TYPE_DEFINITION_TYPE_KEY])
+            ? Assert::inStringArrayNullable(
+                $values[C::TYPE_DEFINITION_TYPE_KEY],
+                C::TYPE_DEFINITION_TYPE_VALID_VALUES,
             )
             : null;
 
@@ -184,6 +212,7 @@ final class PartialConfig implements C
             inputDir: $values[C::INPUT_DIR_KEY] ?? null,
             outputDir: $values[C::OUTPUT_DIR_KEY] ?? null,
             fileType: $fileType,
+            typeDefinitionType: $typeDefinitionType,
             indent: isset($values[C::INDENT_KEY]) ? new Indent(
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,

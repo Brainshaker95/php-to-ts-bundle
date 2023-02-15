@@ -194,6 +194,9 @@ php_to_ts:
   # File type to use for TypeScript interfaces
   file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
 
+  # Type definition type to use for TypeScript interfaces
+  type_definition_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType::TYPE_INTERFACE
+
   # Indentation used for generated TypeScript interfaces
   indent:
     # Indent style used for TypeScript interfaces
