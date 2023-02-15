@@ -72,39 +72,4 @@ final class TsProperty implements Stringable
             $this->type,
         );
     }
-
-    /**
-     * @param TsGeneric[] $generics
-     * @param ?Node[] $nodes
-     */
-    public function applyNewGenericName(
-        string $oldName,
-        string $newName,
-        array $generics,
-        ?array $nodes = null,
-    ): void {
-        if (!$this->type instanceof Node) {
-            return;
-        }
-
-        $nodes ??= [$this->type];
-
-        foreach ($nodes as $node) {
-            $classIdentifierNode = Converter::getClassIdentifierNode($node);
-
-            if ($classIdentifierNode) {
-                foreach ($generics as $generic) {
-                    if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
-                        $classIdentifierNode->name = $generic->name;
-                    }
-                }
-            }
-
-            $nextLevelNodes = Converter::getNextLevelNodes($node);
-
-            if (!empty($nextLevelNodes)) {
-                self::applyNewGenericName($oldName, $newName, $generics, $nextLevelNodes);
-            }
-        }
-    }
 }

@@ -228,10 +228,53 @@ final class TsInterface implements Stringable
             $generic->name    = $name . $usedNames[$name];
 
             foreach ($generic->properties as $property) {
-                $property->applyNewGenericName(
+                self::applyNewGenericNameToProperty(
+                    property: $property,
                     oldName: $name,
                     newName: $generic->name,
                     generics: $generics,
+                );
+            }
+        }
+    }
+
+    /**
+     * @param TsGeneric[] $generics
+     * @param ?Node[] $nodes
+     */
+    private static function applyNewGenericNameToProperty(
+        TsProperty $property,
+        string $oldName,
+        string $newName,
+        array $generics,
+        ?array $nodes = null,
+    ): void {
+        if (!$property->type instanceof Node) {
+            return;
+        }
+
+        $nodes ??= [$property->type];
+
+        foreach ($nodes as $node) {
+            $classIdentifierNode = Converter::getClassIdentifierNode($node);
+
+            if ($classIdentifierNode) {
+                foreach ($generics as $generic) {
+                    if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
+                        $classIdentifierNode->name = $generic->name;
+                    }
+                }
+            }
+
+            $nextLevelNodes = Converter::getNextLevelNodes($node);
+
+            if (!empty($nextLevelNodes)) {
+                self::applyNewGenericNameToProperty(
+                    property: $property,
+                    oldName: $oldName,
+                    newName: $newName,
+                    generics: $generics,
+                    nodes: $nextLevelNodes,
                 );
             }
         }
