@@ -63,10 +63,13 @@ interface Config
     public function setOutputDir(string $outputDir): self;
 
     /**
-     * @phpstan-return FileType::TYPE_*
+     * @phpstan-return ?FileType::TYPE_*
      */
     public function getFileType(): ?string;
 
+    /**
+     * @phpstan-param FileType::TYPE_* $fileType
+     */
     public function setFileType(string $fileType): self;
 
     public function getIndent(): ?Indent;
@@ -78,16 +81,23 @@ interface Config
     public function setQuotes(Quotes $quotes): self;
 
     /**
-     * @return class-string<SortStrategy>[]
+     * @return ?class-string<SortStrategy>[]
      */
     public function getSortStrategies(): ?array;
 
-    public function setSortStrategies(array $sortStrategies): self;
     /**
-     * @return class-string<FileNameStrategy>
+     * @param class-string<SortStrategy>[] $sortStrategies
+     */
+    public function setSortStrategies(array $sortStrategies): self;
+
+    /**
+     * @return ?class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
 
+    /**
+     * @param class-string<FileNameStrategy> $fileNameStrategy
+     */
     public function setFileNameStrategy(string $fileNameStrategy): self;
 
     /**
