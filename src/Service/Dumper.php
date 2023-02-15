@@ -107,7 +107,8 @@ final class Dumper
         ?Config $config = null,
         ?callable $successCallback = null,
     ): void {
-        $tsInterfaces = $this->getTsInterfacesFromFile($file);
+        $config       = $this->config->merge($config);
+        $tsInterfaces = $this->getTsInterfacesFromFile($file, $config);
 
         if (!$tsInterfaces) {
             return;
@@ -146,7 +147,7 @@ final class Dumper
      * @throws Error
      * @throws FileNotFoundException
      */
-    public function getTsInterfacesFromFile(SplFileInfo|string $file): ?array
+    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): ?array
     {
         $file = $this->filesystem->getSplFileInfo($file);
 
@@ -162,7 +163,8 @@ final class Dumper
             return null;
         }
 
-        $traverser = new NodeTraverser();
+        $this->visitor->config = $config;
+        $traverser             = new NodeTraverser();
 
         $traverser->addVisitor($this->visitor);
         $traverser->traverse($statements);
