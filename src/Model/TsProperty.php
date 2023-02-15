@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
+use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
@@ -40,6 +41,7 @@ final class TsProperty implements Stringable
         public readonly array $generics = [],
         public readonly ?string $description = null,
         public bool|string|null $deprecation = null,
+        public ?Config $config = null,
     ) {
     }
 
@@ -48,8 +50,11 @@ final class TsProperty implements Stringable
         return $this->toString();
     }
 
-    public function toString(Indent $indent = new Indent(), Quotes $quotes = new Quotes()): string
+    public function toString(): string
     {
+        $indent = $this->config?->getIndent() ?? new Indent();
+        $quotes = $this->config?->getQuotes() ?? new Quotes();
+
         if ($this->type instanceof Node) {
             Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
