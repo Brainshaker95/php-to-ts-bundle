@@ -13,6 +13,7 @@ final class FullConfig implements C
 {
     /**
      * @phpstan-param FileType::TYPE_* $fileType
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
      * @param class-string<SortStrategy>[] $sortStrategies
      * @param class-string<FileNameStrategy> $fileNameStrategy
      */
@@ -20,6 +21,7 @@ final class FullConfig implements C
         private string $inputDir,
         private string $outputDir,
         private string $fileType,
+        private string $typeDefinitionType,
         private Indent $indent,
         private Quotes $quotes,
         private array $sortStrategies,
@@ -65,6 +67,24 @@ final class FullConfig implements C
     public function setFileType(string $fileType): self
     {
         $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    /**
+     * @phpstan-return TypeDefinitionType::TYPE_*
+     */
+    public function getTypeDefinitionType(): string
+    {
+        return $this->typeDefinitionType;
+    }
+
+    /**
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
+     */
+    public function setTypeDefinitionType(string $typeDefinitionType): self
+    {
+        $this->typeDefinitionType = $typeDefinitionType;
 
         return $this;
     }
@@ -134,6 +154,7 @@ final class FullConfig implements C
      *     input_dir: string,
      *     output_dir: string,
      *     file_type: string,
+     *     type_definition_type: string,
      *     indent: array{
      *         style: ?string,
      *         count: ?int<0,max>,
@@ -148,6 +169,11 @@ final class FullConfig implements C
         $fileType = Assert::inStringArrayNonNullable(
             $values[C::FILE_TYPE_KEY],
             C::FILE_TYPE_VALID_VALUES,
+        );
+
+        $typeDefinitionType = Assert::inStringArrayNonNullable(
+            $values[C::TYPE_DEFINITION_TYPE_KEY],
+            C::TYPE_DEFINITION_TYPE_VALID_VALUES,
         );
 
         $indentStyle = Assert::inStringArrayNullable(
@@ -174,6 +200,7 @@ final class FullConfig implements C
             inputDir: $values[C::INPUT_DIR_KEY],
             outputDir: $values[C::OUTPUT_DIR_KEY],
             fileType: $fileType,
+            typeDefinitionType: $typeDefinitionType,
             indent: new Indent(
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
                 count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,

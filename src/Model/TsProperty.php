@@ -13,7 +13,7 @@ use Stringable;
 
 use const PHP_EOL;
 
-use function sprintf;
+use function Symfony\Component\String\u;
 
 final class TsProperty implements Stringable
 {
@@ -64,12 +64,12 @@ final class TsProperty implements Stringable
             deprecation: $this->deprecation,
         ))->toString($indent);
 
-        return sprintf(
-            '%s%s%s: %s;',
-            $docComment ? ($docComment . PHP_EOL . $indent->toString()) : $indent->toString(),
-            $this->isReadonly ? 'readonly ' : '',
-            $this->name,
-            $this->type,
-        );
+        return u($docComment ? ($docComment . PHP_EOL) : '')
+            ->append($indent->toString())
+            ->append($this->isReadonly ? 'readonly ' : '')
+            ->append($this->name . ': ')
+            ->append((string) $this->type . ';')
+            ->toString()
+        ;
     }
 }

@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst;
+use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 
 interface Config
 {
@@ -26,6 +27,11 @@ interface Config
     public const FILE_TYPE_DEFAULT      = FileType::TYPE_MODULE;
     public const FILE_TYPE_DESC         = 'File type to use for TypeScript interfaces';
     public const FILE_TYPE_VALID_VALUES = [FileType::TYPE_DECLARATION, FileType::TYPE_MODULE];
+
+    public const TYPE_DEFINITION_TYPE_KEY          = 'type_definition_type';
+    public const TYPE_DEFINITION_TYPE_DEFAULT      = TypeDefinitionType::TYPE_INTERFACE;
+    public const TYPE_DEFINITION_TYPE_DESC         = 'Type definition type to use for TypeScript interfaces';
+    public const TYPE_DEFINITION_TYPE_VALID_VALUES = [TypeDefinitionType::TYPE_INTERFACE, TypeDefinitionType::TYPE_TYPE_ALIAS];
 
     public const INDENT_KEY                = 'indent';
     public const INDENT_DESC               = 'Indentation used for generated TypeScript interfaces';
@@ -72,6 +78,16 @@ interface Config
      */
     public function setFileType(string $fileType): self;
 
+    /**
+     * @phpstan-return ?TypeDefinitionType::TYPE_*
+     */
+    public function getTypeDefinitionType(): ?string;
+
+    /**
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
+     */
+    public function setTypeDefinitionType(string $typeDefinitionType): self;
+
     public function getIndent(): ?Indent;
 
     public function setIndent(Indent $indent): self;
@@ -105,6 +121,7 @@ interface Config
      *     input_dir?: ?string,
      *     output_dir?: ?string,
      *     file_type?: ?string,
+     *     type_definition_type?: ?string,
      *     indent?: ?array{
      *         style: ?string,
      *         count: ?int<0,max>,

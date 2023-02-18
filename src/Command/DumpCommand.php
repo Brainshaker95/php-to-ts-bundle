@@ -56,6 +56,12 @@ abstract class DumpCommand extends Command
                 name: Str::toKebab(C::FILE_TYPE_KEY),
                 description: C::FILE_TYPE_DESC,
                 mode: InputOption::VALUE_REQUIRED,
+                shortcut: 'f',
+            )
+            ->addOption(
+                name: Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY),
+                description: C::TYPE_DEFINITION_TYPE_DESC,
+                mode: InputOption::VALUE_REQUIRED,
                 shortcut: 't',
             )
             ->addOption(
@@ -86,29 +92,31 @@ abstract class DumpCommand extends Command
                 name: Str::toKebab(C::FILE_NAME_STRATEGY_KEY),
                 description: C::FILE_NAME_STRATEGY_DESC,
                 mode: InputOption::VALUE_REQUIRED,
-                shortcut: 'f',
+                shortcut: 'w',
             )
         ;
     }
 
     protected function getConfig(): C
     {
-        $outputDir        = $this->input->getOption(Str::toKebab(C::OUTPUT_DIR_KEY));
-        $fileType         = $this->input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
-        $indentStyle      = $this->input->getOption(self::INDENT_STYLE_KEY);
-        $indentCount      = $this->input->getOption(self::INDENT_COUNT_KEY);
-        $quotes           = $this->input->getOption(Str::toKebab(C::QUOTES_KEY));
-        $sortStrategies   = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
-        $fileNameStrategy = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
+        $outputDir          = $this->input->getOption(Str::toKebab(C::OUTPUT_DIR_KEY));
+        $fileType           = $this->input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
+        $typeDefinitionType = $this->input->getOption(Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY));
+        $indentStyle        = $this->input->getOption(self::INDENT_STYLE_KEY);
+        $indentCount        = $this->input->getOption(self::INDENT_COUNT_KEY);
+        $quotes             = $this->input->getOption(Str::toKebab(C::QUOTES_KEY));
+        $sortStrategies     = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
+        $fileNameStrategy   = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
         $indentStyle    = Assert::nonEmptyStringNullable($indentStyle);
         $indentCount    = Assert::nonNegativeIntegerNullable($indentCount);
         $sortStrategies = Assert::nonEmptyStringArrayNullable($sortStrategies);
 
         return PartialConfig::fromArray([
-            C::OUTPUT_DIR_KEY => Assert::nonEmptyStringNullable($outputDir),
-            C::FILE_TYPE_KEY  => Assert::nonEmptyStringNullable($fileType),
-            C::INDENT_KEY     => ($indentStyle !== null || $indentCount !== null) ? [
+            C::OUTPUT_DIR_KEY           => Assert::nonEmptyStringNullable($outputDir),
+            C::FILE_TYPE_KEY            => Assert::nonEmptyStringNullable($fileType),
+            C::TYPE_DEFINITION_TYPE_KEY => Assert::nonEmptyStringNullable($typeDefinitionType),
+            C::INDENT_KEY               => ($indentStyle !== null || $indentCount !== null) ? [
                 C::INDENT_STYLE_KEY => $indentStyle,
                 C::INDENT_COUNT_KEY => $indentCount,
             ] : null,

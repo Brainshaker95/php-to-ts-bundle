@@ -450,10 +450,8 @@ abstract class Converter
 
     private static function getTypeName(Identifier|Name $node): ?string
     {
-        if ($node instanceof Name) {
-            return end($node->parts) ?: null;
-        }
-
-        return $node->name;
+        return $node instanceof Name
+            ? (end($node->parts) ?: null)
+            : $node->name;
     }
 }

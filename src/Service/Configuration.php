@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 
 /**
  * @internal
@@ -24,6 +25,7 @@ final class Configuration
      *     input_dir: string,
      *     output_dir: string,
      *     file_type: FileType::TYPE_*,
+     *     type_definition_type: TypeDefinitionType::TYPE_*,
      *     indent: array{
      *         style: Indent::STYLE_*,
      *         count: int<0,max>,
@@ -65,6 +67,7 @@ final class Configuration
             inputDir: $config->getInputDir() ?? $this->config->getInputDir(),
             outputDir: $config->getOutputDir() ?? $this->config->getOutputDir(),
             fileType: $config->getFileType() ?? $this->config->getFileType(),
+            typeDefinitionType: $config->getTypeDefinitionType() ?? $this->config->getTypeDefinitionType(),
             indent: $config->getIndent() ?? $this->config->getIndent(),
             quotes: $config->getQuotes() ?? $this->config->getQuotes(),
             sortStrategies: $config->getSortStrategies() ?? $this->config->getSortStrategies(),
