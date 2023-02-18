@@ -10,10 +10,13 @@ use Stringable;
 
 use const PHP_EOL;
 
+use function array_merge;
+use function array_reduce;
+use function count;
 use function implode;
 use function is_string;
 use function rtrim;
-use function trim;
+use function Symfony\Component\String\u;
 
 /**
  * @internal
@@ -38,10 +41,13 @@ final class TsDocComment implements Stringable
 
     public function toString(?Indent $indent = null): string
     {
-        $linePrefix       = ' * ';
-        $descriptionLines = Str::splitByNewLines($this->description ?? '', $linePrefix);
-        $content          = self::linesToString($descriptionLines, $linePrefix, false, $indent);
-        $templateTagLines = [];
+        $linePrefix = ' * ';
+
+        $content = u(self::linesToString(
+            lines: Str::splitByNewLines($this->description ?? '', $linePrefix),
+            linePrefix: $linePrefix,
+            indent: $indent,
+        ));
 
         $deprecationLines = match (true) {
             default                       => [],
@@ -55,24 +61,42 @@ final class TsDocComment implements Stringable
             ),
         };
 
-        $content .= self::linesToString($deprecationLines, $linePrefix, (bool) trim($content), $indent);
+        $content = $content->append(self::linesToString(
+            lines: $deprecationLines,
+            linePrefix: $linePrefix,
+            hasPreviousLines: (bool) $content->trim()->length(),
+            indent: $indent,
+        ));
 
-        foreach ($this->generics as $generic) {
-            $templateTagLines = [
-                ...$templateTagLines,
-                ...Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
-            ];
-        }
+        $templateTagLines = array_reduce(
+            $this->generics,
+            static fn ($lines, $generic) => array_merge(
+                $lines,
+                Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
+            ),
+            [],
+        );
 
-        $content .= self::linesToString($templateTagLines, $linePrefix, (bool) trim($content), $indent);
+        $content = $content->append(self::linesToString(
+            lines: $templateTagLines,
+            linePrefix: $linePrefix,
+            hasPreviousLines: (bool) $content->trim()->length(),
+            indent: $indent,
+        ));
 
-        if (!trim($content)) {
+        if (!$content->trim()->length()) {
             return '';
         }
 
-        return $indent?->toString() . '/**' . PHP_EOL
-            . $content . PHP_EOL
-            . $indent?->toString() . ' */';
+        return u($indent?->toString() ?? '')
+            ->append('/**')
+            ->append(PHP_EOL)
+            ->append($content->toString())
+            ->append(PHP_EOL)
+            ->append($indent?->toString() ?? '')
+            ->append('*/')
+            ->toString()
+        ;
     }
 
     /**
@@ -81,13 +105,13 @@ final class TsDocComment implements Stringable
     private static function linesToString(
         array $lines,
         string $linePrefix,
-        bool $hasPreviousLines,
-        ?Indent $indent = null,
+        ?Indent $indent,
+        bool $hasPreviousLines = false,
     ): string {
         $linesString = rtrim($indent?->toString() . implode(PHP_EOL . $indent?->toString(), $lines));
 
-        return $hasPreviousLines && !empty($lines)
-            ? PHP_EOL . $indent?->toString() . $linePrefix . PHP_EOL . $linesString
+        return $hasPreviousLines && count($lines)
+            ? (PHP_EOL . $indent?->toString() . $linePrefix . PHP_EOL . $linesString)
             : $linesString;
     }
 }

@@ -9,10 +9,14 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
+/**
+ * @phpstan-import-type ConfigArray from C
+ */
 final class PartialConfig implements C
 {
     /**
      * @phpstan-param ?FileType::TYPE_* $fileType
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
      * @param ?class-string<SortStrategy>[] $sortStrategies
      * @param ?class-string<FileNameStrategy> $fileNameStrategy
      */
@@ -20,6 +24,7 @@ final class PartialConfig implements C
         private ?string $inputDir = null,
         private ?string $outputDir = null,
         private ?string $fileType = null,
+        private ?string $typeDefinitionType = null,
         private ?Indent $indent = null,
         private ?Quotes $quotes = null,
         private ?array $sortStrategies = null,
@@ -65,6 +70,24 @@ final class PartialConfig implements C
     public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
+
+        return $this;
+    }
+
+    /**
+     * @phpstan-return ?TypeDefinitionType::TYPE_*
+     */
+    public function getTypeDefinitionType(): ?string
+    {
+        return $this->typeDefinitionType;
+    }
+
+    /**
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
+     */
+    public function setTypeDefinitionType(string $typeDefinitionType): self
+    {
+        $this->typeDefinitionType = $typeDefinitionType;
 
         return $this;
     }
@@ -130,63 +153,60 @@ final class PartialConfig implements C
     }
 
     /**
-     * @param array{
-     *     input_dir?: ?string,
-     *     output_dir?: ?string,
-     *     file_type?: ?string,
-     *     indent?: ?array{
-     *         style: ?string,
-     *         count: ?int<0,max>,
-     *     },
-     *     quotes: ?string,
-     *     sort_strategies?: ?non-empty-string[],
-     *     file_name_strategy?: ?string,
-     * } $values
+     * @phpstan-param ConfigArray $array
      */
-    public static function fromArray(array $values): self
+    public static function fromArray(array $array): self
     {
-        $fileType = isset($values[C::FILE_TYPE_KEY])
+        $fileType = isset($array[C::FILE_TYPE_KEY])
             ? Assert::inStringArrayNullable(
-                $values[C::FILE_TYPE_KEY],
+                $array[C::FILE_TYPE_KEY],
                 C::FILE_TYPE_VALID_VALUES,
             )
             : null;
 
-        $indentStyle = isset($values[C::INDENT_KEY][C::INDENT_STYLE_KEY])
+        $typeDefinitionType = isset($array[C::TYPE_DEFINITION_TYPE_KEY])
             ? Assert::inStringArrayNullable(
-                $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
+                $array[C::TYPE_DEFINITION_TYPE_KEY],
+                C::TYPE_DEFINITION_TYPE_VALID_VALUES,
+            )
+            : null;
+
+        $indentStyle = isset($array[C::INDENT_KEY][C::INDENT_STYLE_KEY])
+            ? Assert::inStringArrayNullable(
+                $array[C::INDENT_KEY][C::INDENT_STYLE_KEY],
                 C::INDENT_STYLE_VALID_VALUES,
             )
             : null;
 
-        $quotes = isset($values[C::QUOTES_KEY])
+        $quotes = isset($array[C::QUOTES_KEY])
             ? Assert::inStringArrayNullable(
-                $values[C::QUOTES_KEY],
+                $array[C::QUOTES_KEY],
                 C::QUOTES_VALID_VALUES,
             )
             : null;
 
-        $sortStrategies = isset($values[C::SORT_STRATEGIES_KEY])
+        $sortStrategies = isset($array[C::SORT_STRATEGIES_KEY])
             ? Assert::interfaceClassStringArrayNullable(
-                $values[C::SORT_STRATEGIES_KEY],
+                $array[C::SORT_STRATEGIES_KEY],
                 SortStrategy::class,
             )
             : null;
 
-        $fileNameStrategy = isset($values[C::FILE_NAME_STRATEGY_KEY])
+        $fileNameStrategy = isset($array[C::FILE_NAME_STRATEGY_KEY])
             ? Assert::interfaceClassStringNullable(
-                $values[C::FILE_NAME_STRATEGY_KEY],
+                $array[C::FILE_NAME_STRATEGY_KEY],
                 FileNameStrategy::class,
             )
             : null;
 
         return new self(
-            inputDir: $values[C::INPUT_DIR_KEY] ?? null,
-            outputDir: $values[C::OUTPUT_DIR_KEY] ?? null,
+            inputDir: $array[C::INPUT_DIR_KEY] ?? null,
+            outputDir: $array[C::OUTPUT_DIR_KEY] ?? null,
             fileType: $fileType,
-            indent: isset($values[C::INDENT_KEY]) ? new Indent(
+            typeDefinitionType: $typeDefinitionType,
+            indent: isset($array[C::INDENT_KEY]) ? new Indent(
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
-                count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
+                count: $array[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ) : null,
             quotes: $quotes ? new Quotes($quotes) : null,
             sortStrategies: $sortStrategies,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
+use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
@@ -12,7 +13,7 @@ use Stringable;
 
 use const PHP_EOL;
 
-use function sprintf;
+use function Symfony\Component\String\u;
 
 final class TsProperty implements Stringable
 {
@@ -40,6 +41,7 @@ final class TsProperty implements Stringable
         public readonly array $generics = [],
         public readonly ?string $description = null,
         public bool|string|null $deprecation = null,
+        public ?Config $config = null,
     ) {
     }
 
@@ -48,8 +50,11 @@ final class TsProperty implements Stringable
         return $this->toString();
     }
 
-    public function toString(Indent $indent = new Indent(), Quotes $quotes = new Quotes()): string
+    public function toString(): string
     {
+        $indent = $this->config?->getIndent() ?? new Indent();
+        $quotes = $this->config?->getQuotes() ?? new Quotes();
+
         if ($this->type instanceof Node) {
             Converter::applyIndentAndQuotes([$this->type], $indent, $quotes);
         }
@@ -59,47 +64,12 @@ final class TsProperty implements Stringable
             deprecation: $this->deprecation,
         ))->toString($indent);
 
-        return sprintf(
-            '%s%s%s: %s;',
-            $docComment ? ($docComment . PHP_EOL . $indent->toString()) : $indent->toString(),
-            $this->isReadonly ? 'readonly ' : '',
-            $this->name,
-            $this->type,
-        );
-    }
-
-    /**
-     * @param TsGeneric[] $generics
-     * @param ?Node[] $nodes
-     */
-    public function applyNewGenericName(
-        string $oldName,
-        string $newName,
-        array $generics,
-        ?array $nodes = null,
-    ): void {
-        if (!$this->type instanceof Node) {
-            return;
-        }
-
-        $nodes ??= [$this->type];
-
-        foreach ($nodes as $node) {
-            $classIdentifierNode = Converter::getClassIdentifierNode($node);
-
-            if ($classIdentifierNode) {
-                foreach ($generics as $generic) {
-                    if ($generic->name === $newName && $classIdentifierNode->name === $oldName) {
-                        $classIdentifierNode->name = $generic->name;
-                    }
-                }
-            }
-
-            $nextLevelNodes = Converter::getNextLevelNodes($node);
-
-            if (!empty($nextLevelNodes)) {
-                self::applyNewGenericName($oldName, $newName, $generics, $nextLevelNodes);
-            }
-        }
+        return u($docComment ? ($docComment . PHP_EOL) : '')
+            ->append($indent->toString())
+            ->append($this->isReadonly ? 'readonly ' : '')
+            ->append($this->name . ': ')
+            ->append((string) $this->type . ';')
+            ->toString()
+        ;
     }
 }

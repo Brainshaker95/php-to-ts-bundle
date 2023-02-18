@@ -107,28 +107,20 @@ final class Dumper
         ?Config $config = null,
         ?callable $successCallback = null,
     ): void {
-        $tsInterfaces = $this->getTsInterfacesFromFile($file);
+        $config       = $this->config->merge($config);
+        $tsInterfaces = $this->getTsInterfacesFromFile($file, $config);
 
         if (!$tsInterfaces) {
             return;
         }
 
-        $config           = $this->config->merge($config);
-        $fileType         = $config->getFileType();
-        $fileNameStrategy = $config->getFileNameStrategy();
-        $pathPrefix       = $config->getOutputDir() . DIRECTORY_SEPARATOR;
+        $pathPrefix = $config->getOutputDir() . DIRECTORY_SEPARATOR;
 
         foreach ($tsInterfaces as $tsInterface) {
-            $fileName = $tsInterface->getFileName($fileType, $fileNameStrategy);
+            $fileName = $tsInterface->getFileName();
             $path     = $this->filesystem->makeAbsolute($pathPrefix . $fileName);
 
-            $this->filesystem->dumpFile($path, $tsInterface->toString(
-                fileType: $fileType,
-                indent: $config->getIndent(),
-                quotes: $config->getQuotes(),
-                sortStrategies: $config->getSortStrategies(),
-                fileNameStrategy: $config->getFileNameStrategy(),
-            ) . PHP_EOL);
+            $this->filesystem->dumpFile($path, $tsInterface->toString() . PHP_EOL);
 
             if ($successCallback) {
                 $successCallback($path, $tsInterface);
@@ -146,7 +138,7 @@ final class Dumper
      * @throws Error
      * @throws FileNotFoundException
      */
-    public function getTsInterfacesFromFile(SplFileInfo|string $file): ?array
+    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): ?array
     {
         $file = $this->filesystem->getSplFileInfo($file);
 
@@ -162,7 +154,8 @@ final class Dumper
             return null;
         }
 
-        $traverser = new NodeTraverser();
+        $this->visitor->config = $config;
+        $traverser             = new NodeTraverser();
 
         $traverser->addVisitor($this->visitor);
         $traverser->traverse($statements);

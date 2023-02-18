@@ -14,8 +14,9 @@ use const PHP_EOL;
 
 use function array_filter;
 use function array_map;
+use function count;
 use function implode;
-use function sprintf;
+use function Symfony\Component\String\u;
 
 /**
  * @internal
@@ -45,12 +46,11 @@ final class TsGeneric implements Stringable
     ): string {
         Converter::applyIndentAndQuotes(array_filter([$this->bound, $this->default]), $indent, $quotes);
 
-        return sprintf(
-            '%s%s%s',
-            $this->name,
-            $this->bound ? ' extends ' . $this->bound->toString() : '',
-            $this->default ? ' = ' . $this->default->toString() : '',
-        );
+        return u($this->name)
+            ->append($this->bound ? ' extends ' . $this->bound->toString() : '')
+            ->append($this->default ? ' = ' . $this->default->toString() : '')
+            ->toString()
+        ;
     }
 
     public function getTemplateTag(): string
@@ -83,15 +83,22 @@ final class TsGeneric implements Stringable
         Indent $indent = new Indent(),
         Quotes $quotes = new Quotes(),
     ): string {
-        if (empty($generics)) {
+        if (!count($generics)) {
             return '';
         }
 
-        return '<' . PHP_EOL
-            . implode(',' . PHP_EOL, array_map(
-                static fn (TsGeneric $generic) => $indent->toString() . $generic->toString($indent, $quotes),
-                $generics,
-            )) . ',' . PHP_EOL
-            . '>';
+        $genericLines = array_map(
+            static fn (TsGeneric $generic) => $indent->toString() . $generic->toString($indent, $quotes),
+            $generics,
+        );
+
+        return u('<')
+            ->append(PHP_EOL)
+            ->append(implode(',' . PHP_EOL, $genericLines))
+            ->append(',')
+            ->append(PHP_EOL)
+            ->append('>')
+            ->toString()
+        ;
     }
 }

@@ -11,7 +11,23 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst;
+use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 
+/**
+ * @phpstan-type ConfigArray array{
+ *     input_dir?: ?string,
+ *     output_dir?: ?string,
+ *     file_type?: ?string,
+ *     type_definition_type?: ?string,
+ *     indent?: ?array{
+ *         style: ?string,
+ *         count: ?int<0,max>,
+ *     },
+ *     quotes: ?string,
+ *     sort_strategies?: ?non-empty-string[],
+ *     file_name_strategy?: ?string,
+ * }
+ */
 interface Config
 {
     public const OUTPUT_DIR_KEY     = 'output_dir';
@@ -26,6 +42,11 @@ interface Config
     public const FILE_TYPE_DEFAULT      = FileType::TYPE_MODULE;
     public const FILE_TYPE_DESC         = 'File type to use for TypeScript interfaces';
     public const FILE_TYPE_VALID_VALUES = [FileType::TYPE_DECLARATION, FileType::TYPE_MODULE];
+
+    public const TYPE_DEFINITION_TYPE_KEY          = 'type_definition_type';
+    public const TYPE_DEFINITION_TYPE_DEFAULT      = TypeDefinitionType::TYPE_INTERFACE;
+    public const TYPE_DEFINITION_TYPE_DESC         = 'Type definition type to use for TypeScript interfaces';
+    public const TYPE_DEFINITION_TYPE_VALID_VALUES = [TypeDefinitionType::TYPE_INTERFACE, TypeDefinitionType::TYPE_TYPE_ALIAS];
 
     public const INDENT_KEY                = 'indent';
     public const INDENT_DESC               = 'Indentation used for generated TypeScript interfaces';
@@ -56,39 +77,62 @@ interface Config
 
     public function getInputDir(): ?string;
 
+    public function setInputDir(string $inputDir): self;
+
     public function getOutputDir(): ?string;
 
+    public function setOutputDir(string $outputDir): self;
+
     /**
-     * @phpstan-return FileType::TYPE_*
+     * @phpstan-return ?FileType::TYPE_*
      */
     public function getFileType(): ?string;
 
+    /**
+     * @phpstan-param FileType::TYPE_* $fileType
+     */
+    public function setFileType(string $fileType): self;
+
+    /**
+     * @phpstan-return ?TypeDefinitionType::TYPE_*
+     */
+    public function getTypeDefinitionType(): ?string;
+
+    /**
+     * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
+     */
+    public function setTypeDefinitionType(string $typeDefinitionType): self;
+
     public function getIndent(): ?Indent;
+
+    public function setIndent(Indent $indent): self;
 
     public function getQuotes(): ?Quotes;
 
+    public function setQuotes(Quotes $quotes): self;
+
     /**
-     * @return class-string<SortStrategy>[]
+     * @return ?class-string<SortStrategy>[]
      */
     public function getSortStrategies(): ?array;
 
     /**
-     * @return class-string<FileNameStrategy>
+     * @param class-string<SortStrategy>[] $sortStrategies
+     */
+    public function setSortStrategies(array $sortStrategies): self;
+
+    /**
+     * @return ?class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
 
     /**
-     * @param array{
-     *     input_dir?: ?string,
-     *     output_dir?: ?string,
-     *     file_type?: ?string,
-     *     indent?: ?array{
-     *         style: ?string,
-     *         count: ?int<0,max>,
-     *     },
-     *     sort_strategies?: ?non-empty-string[],
-     *     file_name_strategy?: ?string,
-     * } $values
+     * @param class-string<FileNameStrategy> $fileNameStrategy
      */
-    public static function fromArray(array $values): self;
+    public function setFileNameStrategy(string $fileNameStrategy): self;
+
+    /**
+     * @phpstan-param ConfigArray $array
+     */
+    public static function fromArray(array $array): self;
 }

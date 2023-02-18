@@ -11,5 +11,5 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
  */
 interface Quotable
 {
-    public function setQuotes(Quotes $quotes): self;
+    public function setQuotes(Quotes $quotes): static;
 }

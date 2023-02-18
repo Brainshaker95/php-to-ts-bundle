@@ -1,4 +1,133 @@
 parameters:
-  level: 9
+  level: max
   paths:
     - src
+  strictRules:
+    booleansInConditions: false
+  ignoreErrors:
+    - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
+
+includes:
+  - vendor/phpstan/phpstan-strict-rules/rules.neon
+  - vendor/symplify/phpstan-rules/config/services/services.neon
+
+rules:
+  - Symplify\PHPStanRules\Rules\BoolishClassMethodPrefixRule
+  - Symplify\PHPStanRules\Rules\CheckAttributteArgumentClassExistsRule
+  - Symplify\PHPStanRules\Rules\CheckClassNamespaceFollowPsr4Rule
+  - Symplify\PHPStanRules\Rules\CheckNotTestsNamespaceOutsideTestsDirectoryRule
+  - Symplify\PHPStanRules\Rules\CheckTypehintCallerTypeRule
+  - Symplify\PHPStanRules\Rules\Complexity\ForbiddenSameNamedNewInstanceRule
+  - Symplify\PHPStanRules\Rules\Complexity\NoDuplicatedTraitMethodNameRule
+  - Symplify\PHPStanRules\Rules\Domain\ForbiddenAlwaysSetterCallRule
+  - Symplify\PHPStanRules\Rules\Domain\NoDuplicatedRegexRule
+  - Symplify\PHPStanRules\Rules\Domain\RequireAttributeNamespaceRule
+  - Symplify\PHPStanRules\Rules\Domain\RequireExceptionNamespaceRule
+  - Symplify\PHPStanRules\Rules\Enum\RequireUniqueEnumConstantRule
+  - Symplify\PHPStanRules\Rules\Explicit\NoGetterAndPropertyRule
+  - Symplify\PHPStanRules\Rules\Explicit\NoMixedCallableRule
+  - Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
+  - Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
+  - Symplify\PHPStanRules\Rules\Explicit\NoRelativeFilePathRule
+  - Symplify\PHPStanRules\Rules\ForbiddenAnonymousClassRule
+  - Symplify\PHPStanRules\Rules\ForbiddenExtendOfNonAbstractClassRule
+  - Symplify\PHPStanRules\Rules\ForbiddenMultipleClassLikeInOneFileRule
+  - Symplify\PHPStanRules\Rules\ForbiddenNestedCallInAssertMethodCallRule
+  - Symplify\PHPStanRules\Rules\ForbiddenParamTypeRemovalRule
+  - Symplify\PHPStanRules\Rules\ForbiddenTestsNamespaceOutsideTestsDirectoryRule
+  - Symplify\PHPStanRules\Rules\NarrowType\NarrowPublicClassMethodParamTypeByCallerTypeRule
+  - Symplify\PHPStanRules\Rules\NoAbstractMethodRule
+  - Symplify\PHPStanRules\Rules\NoArrayAccessOnObjectRule
+  - Symplify\PHPStanRules\Rules\NoConstructorInTestRule
+  - Symplify\PHPStanRules\Rules\NoDefaultExceptionRule
+  - Symplify\PHPStanRules\Rules\NoDynamicNameRule
+  - Symplify\PHPStanRules\Rules\NoEmptyClassRule
+  - Symplify\PHPStanRules\Rules\NoInlineStringRegexRule
+  - Symplify\PHPStanRules\Rules\NoIssetOnObjectRule
+  - Symplify\PHPStanRules\Rules\NoMissingDirPathRule
+  - Symplify\PHPStanRules\Rules\NoNullableArrayPropertyRule
+  - Symplify\PHPStanRules\Rules\NoParentMethodCallOnNoOverrideProcessRule
+  - Symplify\PHPStanRules\Rules\NoReferenceRule
+  - Symplify\PHPStanRules\Rules\NoVoidGetterMethodRule
+  - Symplify\PHPStanRules\Rules\PHPUnit\NoRightPHPUnitAssertScalarRule
+  - Symplify\PHPStanRules\Rules\PreventParentMethodVisibilityOverrideRule
+  - Symplify\PHPStanRules\Rules\RegexSuffixInRegexConstantRule
+  - Symplify\PHPStanRules\Rules\RequireAttributeNameRule
+  - Symplify\PHPStanRules\Rules\RequiredAbstractClassKeywordRule
+  - Symplify\PHPStanRules\Rules\RequireThisCallOnLocalMethodRule
+  - Symplify\PHPStanRules\Rules\UppercaseConstantRule
+  - Symplify\PHPStanRules\Symfony\Rules\PreventDoubleSetParameterRule
+
+services:
+  - Symplify\PHPStanRules\Symfony\NodeAnalyzer\SymfonyPhpConfigClosureAnalyzer
+
+  -
+    class: Symplify\PHPStanRules\Rules\NoDuplicatedShortClassNameRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      toleratedNestingLevel: 3
+
+  -
+    class: Symplify\PHPStanRules\Rules\PreventDuplicateClassMethodRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      minimumLineCount: 4
+
+  # required for "PreventDuplicateClassMethodRule"
+  -
+    class: Symplify\PHPStanRules\Collector\ClassMethod\ClassMethodContentCollector
+    tags: [phpstan.collector]
+
+  -
+    class: Symplify\PHPStanRules\ObjectCalisthenics\Rules\NoShortNameRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      minNameLength: 3
+      allowedShortNames: ['fd', 'i', 'io', 'j', 'x', 'y']
+
+  -
+    class: Symplify\PHPStanRules\Rules\ForbiddenNodeRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      forbiddenNodes:
+        - PhpParser\Node\Expr\Empty_
+        - PhpParser\Node\Stmt\Switch_
+        - PhpParser\Node\Expr\ErrorSuppress
+        - PhpParser\Node\Scalar\Encapsed
+        - PhpParser\Node\Scalar\EncapsedStringPart
+        - PhpParser\Node\Expr\PostInc
+        - PhpParser\Node\Expr\PostDec
+
+  -
+    class: Symplify\PHPStanRules\Rules\PreferredClassRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      oldToPreferredClasses:
+        Carbon\Carbon: Carbon\CarbonImmutable
+        DateTime: DateTimeImmutable
+        PhpCsFixer\Finder: Symfony\Component\Finder
+
+  -
+    class: Symplify\PHPStanRules\Rules\ForbiddenFuncCallRule
+    tags: [phpstan.rules.rule]
+    arguments:
+      forbiddenFunctions:
+        curl_*: 'Use Symfony\Contracts\HttpClient\HttpClientInterface instead'
+        d: 'Please remove all debug functions, use a logger instead'
+        dd: 'Please remove all debug functions, use a logger instead'
+        dump: 'Please remove all debug functions, use a logger instead'
+        file_get_contents: 'Use Symfony\\Component\\Finder\\SplFileInfo::getContents() instead'
+        file_put_contents: 'Use Symfony\\Component\\Filesystem::dumpFile() or Symfony\\Component\\Filesystem::appendToFile() instead'
+        json_decode: 'Use Symfony\\Component\\Serializer\\Encoder\\JsonEncoder::decode() instead'
+        json_encode: 'Use Symfony\\Component\\Serializer\\Encoder\\JsonEncoder::encode() instead'
+        method_exists: 'Create an interface instead and add an instanceof check here'
+        preg_match_all: 'Use Symfony\\Component\\String\\UnicodeString::match() instead'
+        preg_match: 'Use Symfony\\Component\\String\\UnicodeString::match() instead'
+        preg_replace_callback: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
+        preg_replace: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
+        preg_split: 'Use Symfony\\Component\\String\\UnicodeString::split() instead'
+        property_exists: 'Only access known properties'
+        spl_autoload_register: 'Don''t try to handle autoloading yourself'
+        spl_autoload_unregister: 'Don''t try to handle autoloading yourself'
+        str_replace: 'Use Symfony\\Component\\String\\UnicodeString::replace() instead'
+        var_dump: 'Please remove all debug functions, use a logger instead'

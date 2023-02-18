@@ -7,6 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Service;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
@@ -32,6 +33,8 @@ final class Visitor extends NameResolver
     #[Required]
     public EventDispatcherInterface $eventDispatcher;
 
+    public ?Config $config = null;
+
     private bool $isTypeScriptable;
 
     private ?TsInterface $currentTsInterface;
@@ -39,7 +42,7 @@ final class Visitor extends NameResolver
     /**
      * @var TsInterface[]
      */
-    private ?array $tsInterfaces;
+    private array $tsInterfaces;
 
     /**
      * @param Node[] $nodes
@@ -122,6 +125,8 @@ final class Visitor extends NameResolver
         $this->isTypeScriptable = false;
 
         if ($this->currentTsInterface) {
+            $this->currentTsInterface->config = $this->config;
+
             $event = $this->eventDispatcher->dispatch(new TsInterfaceGeneratedEvent(
                 tsInterface: $this->currentTsInterface,
                 classNode: $node,
@@ -140,7 +145,7 @@ final class Visitor extends NameResolver
      *
      * @return TsInterface[]
      */
-    public function getTsInterfaces(): ?array
+    public function getTsInterfaces(): array
     {
         return $this->tsInterfaces;
     }
@@ -150,7 +155,8 @@ final class Visitor extends NameResolver
         bool $isReadonly,
         ?Doc $docComment,
     ): void {
-        $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
+        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment);
+        $tsProperty->config = $this->config;
 
         $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(
             tsProperty: $tsProperty,

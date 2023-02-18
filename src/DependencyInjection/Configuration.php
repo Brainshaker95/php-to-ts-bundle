@@ -28,6 +28,7 @@ final class Configuration implements ConfigurationInterface
             ->inputDir()
             ->outputDir()
             ->fileType()
+            ->typeDefinitionType()
             ->indent()
             ->quotes()
             ->sortStrategies()
@@ -73,6 +74,17 @@ final class Configuration implements ConfigurationInterface
             ->info(C::FILE_TYPE_DESC)
             ->defaultValue(C::FILE_TYPE_DEFAULT)
             ->values(C::FILE_TYPE_VALID_VALUES)
+        ;
+
+        return $this;
+    }
+
+    private function typeDefinitionType(): self
+    {
+        $this->nodeBuilder->enumNode(C::TYPE_DEFINITION_TYPE_KEY)
+            ->info(C::TYPE_DEFINITION_TYPE_DESC)
+            ->defaultValue(C::TYPE_DEFINITION_TYPE_DEFAULT)
+            ->values(C::TYPE_DEFINITION_TYPE_VALID_VALUES)
         ;
 
         return $this;
