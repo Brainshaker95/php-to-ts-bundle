@@ -14,6 +14,7 @@ use const PHP_EOL;
 
 use function array_filter;
 use function array_map;
+use function count;
 use function implode;
 use function Symfony\Component\String\u;
 
@@ -82,7 +83,7 @@ final class TsGeneric implements Stringable
         Indent $indent = new Indent(),
         Quotes $quotes = new Quotes(),
     ): string {
-        if (empty($generics)) {
+        if (!count($generics)) {
             return '';
         }
 

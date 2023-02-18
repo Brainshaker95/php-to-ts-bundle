@@ -11,5 +11,5 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
  */
 interface Indentable
 {
-    public function setIndent(Indent $indent): self;
+    public function setIndent(Indent $indent): static;
 }

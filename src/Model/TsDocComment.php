@@ -12,6 +12,7 @@ use const PHP_EOL;
 
 use function array_merge;
 use function array_reduce;
+use function count;
 use function implode;
 use function is_string;
 use function rtrim;
@@ -109,7 +110,7 @@ final class TsDocComment implements Stringable
     ): string {
         $linesString = rtrim($indent?->toString() . implode(PHP_EOL . $indent?->toString(), $lines));
 
-        return $hasPreviousLines && !empty($lines)
+        return $hasPreviousLines && count($lines)
             ? (PHP_EOL . $indent?->toString() . $linePrefix . PHP_EOL . $linesString)
             : $linesString;
     }

@@ -19,6 +19,7 @@ use function array_count_values;
 use function array_filter;
 use function array_map;
 use function array_unshift;
+use function count;
 use function current;
 use function implode;
 use function in_array;
@@ -91,7 +92,7 @@ final class TsInterface implements Stringable
             ->append(PHP_EOL)
         ;
 
-        if (!empty($imports)) {
+        if (count($imports)) {
             $string = $string
                 ->append(implode(PHP_EOL, $imports))
                 ->append(PHP_EOL)
@@ -232,7 +233,7 @@ final class TsInterface implements Stringable
                 static fn (TsProperty $property) => in_array($generic->name, $property->classIdentifiers, true),
             );
 
-            if (empty($propertiesWithGeneric)) {
+            if (!count($propertiesWithGeneric)) {
                 continue;
             }
 
@@ -255,6 +256,7 @@ final class TsInterface implements Stringable
     private static function renameGenerics(array $generics): void
     {
         $usageCounts = array_count_values(TsGeneric::getNames($generics));
+        $usedNames   = [];
 
         foreach ($generics as $generic) {
             $name = $generic->name;
@@ -307,7 +309,7 @@ final class TsInterface implements Stringable
 
             $nextLevelNodes = Converter::getNextLevelNodes($node);
 
-            if (!empty($nextLevelNodes)) {
+            if (count($nextLevelNodes)) {
                 self::applyNewGenericNameToProperty(
                     property: $property,
                     oldName: $oldName,

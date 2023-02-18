@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Tool;
 
+use Symfony\Component\String\UnicodeString;
+
 use function array_filter;
 use function array_map;
 use function count;
-use function preg_split;
 use function range;
 use function rtrim;
 use function Symfony\Component\String\u;
@@ -88,19 +89,20 @@ abstract class Str
         string $linePrefix = '',
         ?callable $lineCallback = null,
     ): array {
-        $lines = array_filter(preg_split('/\n/', $string) ?: []);
+        $lines     = array_filter(u($string)->split("\n"), static fn (UnicodeString $line) => $line->length());
+        $lineCount = count($lines);
 
-        if (empty($lines)) {
+        if (!$lineCount) {
             return [];
         }
 
         return array_map(
             static fn (
-                string $line,
+                UnicodeString $line,
                 int $index,
-            ) => rtrim($lineCallback ? $lineCallback($line, $index) : ($linePrefix . $line)),
+            ) => rtrim($lineCallback ? $lineCallback($line->toString(), $index) : ($linePrefix . $line->toString())),
             $lines,
-            range(0, count($lines) - 1),
+            range(0, $lineCount - 1),
         );
     }
 }

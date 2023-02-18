@@ -17,7 +17,9 @@
     ],
     "require-dev": {
       "friendsofphp/php-cs-fixer": "3.14.4",
-      "phpstan/phpstan": "1.9.17"
+      "phpstan/phpstan": "1.9.18",
+      "phpstan/phpstan-strict-rules": "1.4.5",
+      "symplify/phpstan-rules": "11.2.4.72"
     },
     "require": {
       "php": ">=8.1",

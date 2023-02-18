@@ -40,6 +40,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use function array_filter;
 use function array_map;
 use function array_unique;
+use function count;
 use function end;
 use function get_debug_type;
 use function implode;
@@ -257,7 +258,7 @@ abstract class Converter
                 },
             };
 
-            if (!empty($nextLevelNodes)) {
+            if (count($nextLevelNodes)) {
                 self::applyIndentAndQuotes($nextLevelNodes, $indent, $quotes, $depth);
             }
         }
@@ -384,7 +385,7 @@ abstract class Converter
         } elseif ($property->type instanceof IntersectionType || $property->type instanceof UnionType) {
             $subTypes = self::getSubTypes($property->type);
 
-            if (!empty($subTypes)) {
+            if (count($subTypes)) {
                 $type = '(' . implode($property->type instanceof UnionType ? ' | ' : ' & ', $subTypes) . ')';
             }
         }
@@ -427,7 +428,7 @@ abstract class Converter
 
             $nextLevelNodes = self::getNextLevelNodes($node);
 
-            if (!empty($nextLevelNodes)) {
+            if (count($nextLevelNodes)) {
                 $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
             }
         }

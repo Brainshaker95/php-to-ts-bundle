@@ -42,7 +42,7 @@ final class Visitor extends NameResolver
     /**
      * @var TsInterface[]
      */
-    private ?array $tsInterfaces;
+    private array $tsInterfaces;
 
     /**
      * @param Node[] $nodes
@@ -145,7 +145,7 @@ final class Visitor extends NameResolver
      *
      * @return TsInterface[]
      */
-    public function getTsInterfaces(): ?array
+    public function getTsInterfaces(): array
     {
         return $this->tsInterfaces;
     }

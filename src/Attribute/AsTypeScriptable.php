@@ -6,7 +6,7 @@ namespace Brainshaker95\PhpToTsBundle\Attribute;
 
 use Attribute;
 
-#[Attribute(Attribute::TARGET_CLASS)]
+#[Attribute(flags: Attribute::TARGET_CLASS)]
 final class AsTypeScriptable
 {
 }

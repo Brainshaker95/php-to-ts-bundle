@@ -108,9 +108,8 @@ abstract class DumpCommand extends Command
         $sortStrategies     = $this->input->getOption(Str::toKebab(C::SORT_STRATEGIES_KEY));
         $fileNameStrategy   = $this->input->getOption(Str::toKebab(C::FILE_NAME_STRATEGY_KEY));
 
-        $indentStyle    = Assert::nonEmptyStringNullable($indentStyle);
-        $indentCount    = Assert::nonNegativeIntegerNullable($indentCount);
-        $sortStrategies = Assert::nonEmptyStringArrayNullable($sortStrategies);
+        $indentStyle = Assert::nonEmptyStringNullable($indentStyle);
+        $indentCount = Assert::nonNegativeIntegerNullable($indentCount);
 
         return PartialConfig::fromArray([
             C::OUTPUT_DIR_KEY           => Assert::nonEmptyStringNullable($outputDir),
@@ -121,7 +120,7 @@ abstract class DumpCommand extends Command
                 C::INDENT_COUNT_KEY => $indentCount,
             ] : null,
             C::QUOTES_KEY             => Assert::nonEmptyStringNullable($quotes),
-            C::SORT_STRATEGIES_KEY    => !empty($sortStrategies) ? $sortStrategies : null,
+            C::SORT_STRATEGIES_KEY    => Assert::nonEmptyStringArrayNullable($sortStrategies),
             C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyStringNullable($fileNameStrategy),
         ]);
     }

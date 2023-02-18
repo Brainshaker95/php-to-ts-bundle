@@ -13,6 +13,21 @@ use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 
+/**
+ * @phpstan-type ConfigArray array{
+ *     input_dir?: ?string,
+ *     output_dir?: ?string,
+ *     file_type?: ?string,
+ *     type_definition_type?: ?string,
+ *     indent?: ?array{
+ *         style: ?string,
+ *         count: ?int<0,max>,
+ *     },
+ *     quotes: ?string,
+ *     sort_strategies?: ?non-empty-string[],
+ *     file_name_strategy?: ?string,
+ * }
+ */
 interface Config
 {
     public const OUTPUT_DIR_KEY     = 'output_dir';
@@ -117,18 +132,7 @@ interface Config
     public function setFileNameStrategy(string $fileNameStrategy): self;
 
     /**
-     * @param array{
-     *     input_dir?: ?string,
-     *     output_dir?: ?string,
-     *     file_type?: ?string,
-     *     type_definition_type?: ?string,
-     *     indent?: ?array{
-     *         style: ?string,
-     *         count: ?int<0,max>,
-     *     },
-     *     sort_strategies?: ?non-empty-string[],
-     *     file_name_strategy?: ?string,
-     * } $values
+     * @phpstan-param ConfigArray $array
      */
-    public static function fromArray(array $values): self;
+    public static function fromArray(array $array): self;
 }

@@ -9,6 +9,9 @@ use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 
+/**
+ * @phpstan-import-type ConfigArray from C
+ */
 final class FullConfig implements C
 {
     /**
@@ -150,60 +153,48 @@ final class FullConfig implements C
     }
 
     /**
-     * @param array{
-     *     input_dir: string,
-     *     output_dir: string,
-     *     file_type: string,
-     *     type_definition_type: string,
-     *     indent: array{
-     *         style: ?string,
-     *         count: ?int<0,max>,
-     *     },
-     *     quotes: string,
-     *     sort_strategies: non-empty-string[],
-     *     file_name_strategy: string,
-     * } $values
+     * @phpstan-param ConfigArray $array
      */
-    public static function fromArray(array $values): self
+    public static function fromArray(array $array): self
     {
         $fileType = Assert::inStringArrayNonNullable(
-            $values[C::FILE_TYPE_KEY],
+            $array[C::FILE_TYPE_KEY] ?? null,
             C::FILE_TYPE_VALID_VALUES,
         );
 
         $typeDefinitionType = Assert::inStringArrayNonNullable(
-            $values[C::TYPE_DEFINITION_TYPE_KEY],
+            $array[C::TYPE_DEFINITION_TYPE_KEY] ?? null,
             C::TYPE_DEFINITION_TYPE_VALID_VALUES,
         );
 
         $indentStyle = Assert::inStringArrayNullable(
-            $values[C::INDENT_KEY][C::INDENT_STYLE_KEY],
+            $array[C::INDENT_KEY][C::INDENT_STYLE_KEY] ?? null,
             C::INDENT_STYLE_VALID_VALUES,
         );
 
         $quotes = Assert::inStringArrayNonNullable(
-            $values[C::QUOTES_KEY],
+            $array[C::QUOTES_KEY] ?? null,
             C::QUOTES_VALID_VALUES,
         );
 
         $sortStrategies = Assert::interfaceClassStringArrayNonNullable(
-            $values[C::SORT_STRATEGIES_KEY],
+            $array[C::SORT_STRATEGIES_KEY] ?? null,
             SortStrategy::class,
         );
 
         $fileNameStrategy = Assert::interfaceClassStringNonNullable(
-            $values[C::FILE_NAME_STRATEGY_KEY],
+            $array[C::FILE_NAME_STRATEGY_KEY] ?? null,
             FileNameStrategy::class,
         );
 
         return new self(
-            inputDir: $values[C::INPUT_DIR_KEY],
-            outputDir: $values[C::OUTPUT_DIR_KEY],
+            inputDir: $array[C::INPUT_DIR_KEY] ?? C::INPUT_DIR_DEFAULT,
+            outputDir: $array[C::OUTPUT_DIR_KEY] ?? C::OUTPUT_DIR_DEFAULT,
             fileType: $fileType,
             typeDefinitionType: $typeDefinitionType,
             indent: new Indent(
                 style: $indentStyle ?? C::INDENT_STYLE_DEFAULT,
-                count: $values[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
+                count: $array[C::INDENT_KEY][C::INDENT_COUNT_KEY] ?? C::INDENT_COUNT_DEFAULT,
             ),
             quotes: new Quotes($quotes),
             sortStrategies: $sortStrategies,

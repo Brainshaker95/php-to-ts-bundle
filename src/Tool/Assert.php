@@ -11,6 +11,7 @@ use const FILTER_VALIDATE_INT;
 
 use function array_filter;
 use function array_map;
+use function count;
 use function filter_var;
 use function implode;
 use function in_array;
@@ -101,7 +102,7 @@ abstract class Assert
     final public static function nonEmptyStringArrayNonNullable(mixed $value): array
     {
         if (!is_array($value)
-            || !empty(array_filter($value, static fn (mixed $v) => !is_string($v) || (is_string($v) && !$v)))) {
+            || count(array_filter($value, static fn (mixed $val) => !is_string($val) || !$val))) {
             throw new AssertionFailedException(sprintf(
                 'Expected value "%s" to be a non empty string array.',
                 self::mixedToString($value),
@@ -241,7 +242,7 @@ abstract class Assert
     final public static function interfaceClassStringArrayNonNullable(mixed $value, string $class): array
     {
         return array_map(
-            static fn (string $v) => self::interfaceClassStringNonNullable($v, $class),
+            static fn (string $val) => self::interfaceClassStringNonNullable($val, $class),
             self::nonEmptyStringArrayNonNullable($value),
         );
     }
@@ -290,6 +291,12 @@ abstract class Assert
         }
 
         if (is_iterable($value)) {
+            /**
+             * Call to function is_array() with array will always evaluate to true.
+             * This is not the case since $value could also be a Traversable.
+             *
+             * @phpstan-ignore-next-line
+             */
             $value = !is_array($value) ? iterator_to_array($value) : $value;
 
             return '[' . implode(', ', $value) . ']';
