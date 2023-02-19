@@ -186,7 +186,7 @@ packages\php_to_ts.yaml
 
 php_to_ts:
   # Directory in which to look for models to include
-  input_dir: src/Model/TypeScriptables
+  input_dir: src/Model
   
   # Directory in which to dump generated TypeScript interfaces
   output_dir: assets/ts/types/php-to-ts

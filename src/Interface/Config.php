@@ -35,7 +35,7 @@ interface Config
     public const OUTPUT_DIR_DESC    = 'Directory in which to dump generated TypeScript interfaces';
 
     public const INPUT_DIR_KEY     = 'input_dir';
-    public const INPUT_DIR_DEFAULT = 'src/Model/TypeScriptables';
+    public const INPUT_DIR_DEFAULT = 'src/Model';
     public const INPUT_DIR_DESC    = 'Directory in which to look for models to include';
 
     public const FILE_TYPE_KEY          = 'file_type';
