@@ -5,6 +5,7 @@ parameters:
   strictRules:
     booleansInConditions: false
   ignoreErrors:
+    # Since it is not possible to disable single subrule of `DisallowedConstructs` the errors thrown by `DisallowedShortTernaryRule` are just ignored
     - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
 
 includes:
