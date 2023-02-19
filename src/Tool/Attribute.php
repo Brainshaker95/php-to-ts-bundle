@@ -15,7 +15,10 @@ use function is_string;
  */
 abstract class Attribute
 {
-    final public static function exists(object|string $class, string $attribute): bool
+    /**
+     * @param object|class-string $class
+     */
+    final public static function existsOnClass(string $attribute, object|string $class): bool
     {
         return (is_string($class) && !class_exists($class))
             ? false

@@ -170,12 +170,15 @@ final class Visitor extends NameResolver
 
     private static function isTypeScriptable(Class_ $node): bool
     {
+        /**
+         * @var ?class-string
+         */
         $fcqn = $node->namespacedName
             ? implode('\\', $node->namespacedName->parts)
             : $node->name?->name;
 
         return $fcqn
-            ? Attribute::exists($fcqn, AsTypeScriptable::class)
+            ? Attribute::existsOnClass(AsTypeScriptable::class, $fcqn)
             : false;
     }
 }

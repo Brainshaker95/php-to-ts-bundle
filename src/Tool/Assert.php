@@ -265,13 +265,16 @@ abstract class Assert
         return self::interfaceClassStringArrayNonNullable($value, $class);
     }
 
-    final public static function existingAttribute(mixed $value, string $attribute): void
+    /**
+     * @param object|class-string $class
+     */
+    final public static function existingClassAttribute(object|string $class, string $attribute): void
     {
-        if ((!is_string($value) && !is_object($value)) || !Attribute::exists($value, $attribute)) {
+        if (!Attribute::existsOnClass($attribute, $class)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value for parameter "typeScriptable" to be an instance of a class tagged with the "%s" attribute, "%s" given.',
+                'Expected instance of class "%s" to be tagged with attribute "%s".',
+                self::mixedToString($class),
                 $attribute,
-                self::mixedToString($value),
             ));
         }
     }
