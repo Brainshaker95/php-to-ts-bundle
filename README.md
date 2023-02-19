@@ -247,7 +247,7 @@ bin/console phptots:dump:file <input-file> [options]
 
 ### 🤝 Events
 
-Each time a TsInterface or TsProperty is generated during the dumping process an [event](src/Event) is dispatched.  
+Each time a TsInterface or TsProperty instance is generated during the dumping process an [event](src/Event) is dispatched.  
 You can subscribe to these events if it is necessary to modify the output right before dumping.
 
 Example implementation:
@@ -276,20 +276,17 @@ final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
     public function onGeneratedTsInterface(TsInterfaceGeneratedEvent $event): void
     {
         $tsInterface = $event->tsInterface;
+        $classNode   = $event->classNode;
 
-        // Filter out all constructor properties
-        $tsInterface->properties = array_filter(
-            $tsInterface->properties,
-            fn (TsProperty $tsProperty) => !$tsProperty->isConstructorProperty,
-        );
+        // ...
     }
 
     public function onGeneratedTsProperty(TsPropertyGeneratedEvent $event): void
     {
-        // Hide all properties with `@phptots-hide` in their doc comment
-        if (str_contains($event->propertyNode->getDocComment(), '@phptots-hide')) {
-            $event->tsProperty = null;
-        }
+        $tsProperty   = $event->tsProperty;
+        $propertyNode = $event->propertyNode;
+
+        // ...
     }
 }
 ```
