@@ -5,6 +5,7 @@ parameters:
   strictRules:
     booleansInConditions: false
   ignoreErrors:
+    # Since it is not possible to disable single subrule of `DisallowedConstructs` the errors thrown by `DisallowedShortTernaryRule` are just ignored
     - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
 
 includes:
@@ -113,9 +114,9 @@ services:
     arguments:
       forbiddenFunctions:
         curl_*: 'Use Symfony\Contracts\HttpClient\HttpClientInterface instead'
-        d: 'Please remove all debug functions, use a logger instead'
-        dd: 'Please remove all debug functions, use a logger instead'
-        dump: 'Please remove all debug functions, use a logger instead'
+        d: 'Please remove all debug functions, use a logger if needed'
+        dd: 'Please remove all debug functions, use a logger if needed'
+        dump: 'Please remove all debug functions, use a logger if needed'
         file_get_contents: 'Use Symfony\\Component\\Finder\\SplFileInfo::getContents() instead'
         file_put_contents: 'Use Symfony\\Component\\Filesystem::dumpFile() or Symfony\\Component\\Filesystem::appendToFile() instead'
         json_decode: 'Use Symfony\\Component\\Serializer\\Encoder\\JsonEncoder::decode() instead'
@@ -126,8 +127,7 @@ services:
         preg_replace_callback: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
         preg_replace: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
         preg_split: 'Use Symfony\\Component\\String\\UnicodeString::split() instead'
-        property_exists: 'Only access known properties'
         spl_autoload_register: 'Don''t try to handle autoloading yourself'
         spl_autoload_unregister: 'Don''t try to handle autoloading yourself'
         str_replace: 'Use Symfony\\Component\\String\\UnicodeString::replace() instead'
-        var_dump: 'Please remove all debug functions, use a logger instead'
+        var_dump: 'Please remove all debug functions, use a logger if needed'
