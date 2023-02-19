@@ -24,4 +24,22 @@ abstract class Attribute
             ? false
             : (bool) current((new ReflectionClass($class))->getAttributes($attribute));
     }
+
+    /**
+     * @param object|class-string $class
+     */
+    final public static function existsOnProperty(string $attribute, object|string $class, string $propertyName): bool
+    {
+        if (is_string($class) && !class_exists($class)) {
+            return false;
+        }
+
+        if (!property_exists($class, $propertyName)) {
+            return false;
+        }
+
+        $property = (new ReflectionClass($class))->getProperty($propertyName);
+
+        return (bool) current($property->getAttributes($attribute));
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
+use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Interface\Config;
@@ -37,6 +38,11 @@ final class Visitor extends NameResolver
 
     private bool $isTypeScriptable;
 
+    /**
+     * @var ?class-string
+     */
+    private ?string $currentClassName;
+
     private ?TsInterface $currentTsInterface;
 
     /**
@@ -54,6 +60,7 @@ final class Visitor extends NameResolver
         parent::beforeTraverse($nodes);
 
         $this->isTypeScriptable   = false;
+        $this->currentClassName   = null;
         $this->currentTsInterface = null;
         $this->tsInterfaces       = [];
 
@@ -69,6 +76,7 @@ final class Visitor extends NameResolver
 
         if ($node instanceof Class_ && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
             $this->isTypeScriptable   = true;
+            $this->currentClassName   = self::getFqcn($node);
             $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
         }
 
@@ -157,7 +165,13 @@ final class Visitor extends NameResolver
         bool $isReadonly,
         ?Doc $docComment,
     ): void {
-        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment);
+        $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
+
+        if ($this->currentClassName
+            && Attribute::existsOnProperty(Hidden::class, $this->currentClassName, $tsProperty->name)) {
+            return;
+        }
+
         $tsProperty->config = $this->config;
 
         $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(
