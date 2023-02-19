@@ -330,6 +330,7 @@ final class MyService
 ## 🔨 TODOs / Roadmap
 
 - Document example TypeScriptable class
+- Document usage of Hidden attribute
 - Document TsController usage
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
