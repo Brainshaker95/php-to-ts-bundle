@@ -84,6 +84,8 @@ final class Visitor extends NameResolver
                 isReadonly: $this->currentTsInterface->isReadonly ? true : $node->isReadonly(),
                 docComment: $docComment,
             );
+
+            return null;
         }
 
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
@@ -100,7 +102,7 @@ final class Visitor extends NameResolver
             array_map(
                 fn (Param $param, bool $isReadonly) => $this->addTsProperty(
                     property: $param,
-                    isReadonly: $this->currentTsInterface?->isReadonly ? true : $isReadonly,
+                    isReadonly: $this->currentTsInterface->isReadonly ? true : $isReadonly,
                     docComment: $docComment,
                 ),
                 $publicParams,
