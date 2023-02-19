@@ -126,7 +126,6 @@ services:
         preg_replace_callback: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
         preg_replace: 'Use Symfony\\Component\\String\\UnicodeString::replaceMatches() instead'
         preg_split: 'Use Symfony\\Component\\String\\UnicodeString::split() instead'
-        property_exists: 'Only access known properties'
         spl_autoload_register: 'Don''t try to handle autoloading yourself'
         spl_autoload_unregister: 'Don''t try to handle autoloading yourself'
         str_replace: 'Use Symfony\\Component\\String\\UnicodeString::replace() instead'
