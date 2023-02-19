@@ -9,6 +9,7 @@ use ReflectionClass;
 use function class_exists;
 use function current;
 use function is_string;
+use function property_exists;
 
 /**
  * @internal
