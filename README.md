@@ -186,7 +186,7 @@ packages\php_to_ts.yaml
 
 php_to_ts:
   # Directory in which to look for models to include
-  input_dir: src/Model/TypeScriptables
+  input_dir: src/Model
   
   # Directory in which to dump generated TypeScript interfaces
   output_dir: assets/ts/types/php-to-ts
@@ -247,7 +247,7 @@ bin/console phptots:dump:file <input-file> [options]
 
 ### 🤝 Events
 
-Each time a TsInterface or TsProperty is generated during the dumping process an [event](src/Event) is dispatched.  
+Each time a TsInterface or TsProperty instance is generated during the dumping process an [event](src/Event) is dispatched.  
 You can subscribe to these events if it is necessary to modify the output right before dumping.
 
 Example implementation:
@@ -276,20 +276,17 @@ final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
     public function onGeneratedTsInterface(TsInterfaceGeneratedEvent $event): void
     {
         $tsInterface = $event->tsInterface;
+        $classNode   = $event->classNode;
 
-        // Filter out all constructor properties
-        $tsInterface->properties = array_filter(
-            $tsInterface->properties,
-            fn (TsProperty $tsProperty) => !$tsProperty->isConstructorProperty,
-        );
+        // ...
     }
 
     public function onGeneratedTsProperty(TsPropertyGeneratedEvent $event): void
     {
-        // Hide all properties with `@phptots-hide` in their doc comment
-        if (str_contains($event->propertyNode->getDocComment(), '@phptots-hide')) {
-            $event->tsProperty = null;
-        }
+        $tsProperty   = $event->tsProperty;
+        $propertyNode = $event->propertyNode;
+
+        // ...
     }
 }
 ```
@@ -333,6 +330,7 @@ final class MyService
 ## 🔨 TODOs / Roadmap
 
 - Document example TypeScriptable class
+- Document usage of Hidden attribute
 - Document TsController usage
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
@@ -346,7 +344,7 @@ Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch => `git checkout -b feature/my-new-feature`
-3. Commit your Changes => `git commit -m 'feat(my-new-feature): adds some awesome new feature'`
+3. Commit your Changes => `git commit -m 'feat(my-new-feature): add some awesome new feature'`
 4. Push to the Branch => `git push origin feature/my-new-feature`
 5. Open a Pull Request
 

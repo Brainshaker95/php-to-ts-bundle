@@ -15,25 +15,27 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 
 /**
  * @internal
+ *
+ * @phpstan-type ConfigurationArray array{
+ *     input_dir: string,
+ *     output_dir: string,
+ *     file_type: FileType::TYPE_*,
+ *     type_definition_type: TypeDefinitionType::TYPE_*,
+ *     indent: array{
+ *         style: Indent::STYLE_*,
+ *         count: int<0,max>,
+ *     },
+ *     quotes: Quotes::STYLE_*,
+ *     sort_strategies: class-string<SortStrategy>[],
+ *     file_name_strategy: class-string<FileNameStrategy>,
+ * }
  */
 final class Configuration
 {
     private FullConfig $config;
 
     /**
-     * @param array{
-     *     input_dir: string,
-     *     output_dir: string,
-     *     file_type: FileType::TYPE_*,
-     *     type_definition_type: TypeDefinitionType::TYPE_*,
-     *     indent: array{
-     *         style: Indent::STYLE_*,
-     *         count: int<0,max>,
-     *     },
-     *     quotes: Quotes::STYLE_*,
-     *     sort_strategies: class-string<SortStrategy>[],
-     *     file_name_strategy: class-string<FileNameStrategy>,
-     * } $config
+     * @phpstan-param ConfigurationArray $config
      */
     public function __construct(array $config)
     {

@@ -94,7 +94,7 @@ final class TsDocComment implements Stringable
             ->append($content->toString())
             ->append(PHP_EOL)
             ->append($indent?->toString() ?? '')
-            ->append('*/')
+            ->append(' */')
             ->toString()
         ;
     }

@@ -1,0 +1,22 @@
+parameters:
+  php_to_ts:
+    input_dir: src/Model
+
+    output_dir: assets/ts/types/php-to-ts
+
+    file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
+
+    type_definition_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType::TYPE_INTERFACE
+
+    indent:
+      style: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Indent::STYLE_SPACE
+      count: 2
+
+    quotes: !php/const Brainshaker95\PhpToTsBundle\Model\Config\Quotes::STYLE_SINGLE
+
+    sort_strategies:
+      - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc
+      - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst
+      - Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyFirst
+
+    file_name_strategy: Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase

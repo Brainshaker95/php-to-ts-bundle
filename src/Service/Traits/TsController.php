@@ -38,7 +38,7 @@ trait TsController
         array $headers = [],
         array $context = [],
     ): JsonResponse {
-        Assert::existingAttribute($typeScriptable, AsTypeScriptable::class);
+        Assert::existingClassAttribute($typeScriptable, AsTypeScriptable::class);
 
         $json = $this->serializer->serialize($typeScriptable, 'json', array_merge([
             'json_encode_options' => JsonResponse::DEFAULT_ENCODING_OPTIONS,
