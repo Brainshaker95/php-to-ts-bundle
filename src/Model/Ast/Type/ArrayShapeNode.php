@@ -7,9 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
-use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -26,10 +24,9 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Indentable, Node, Quotable
+final class ArrayShapeNode implements Indentable, Node
 {
     use HasIndent;
-    use HasQuotes;
 
     /**
      * @param ArrayShapeItemNode[] $items

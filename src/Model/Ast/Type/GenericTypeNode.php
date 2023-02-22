@@ -6,8 +6,6 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
-use Brainshaker95\PhpToTsBundle\Interface\Quotable;
-use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
@@ -25,10 +23,8 @@ use function sprintf;
 /**
  * @internal
  */
-final class GenericTypeNode implements Node, Quotable
+final class GenericTypeNode implements Node
 {
-    use HasQuotes;
-
     /**
      * @param Node[] $genericTypes
      */
