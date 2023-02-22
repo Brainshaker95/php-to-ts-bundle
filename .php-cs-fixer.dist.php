@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-$finder = PhpCsFixer\Finder::create()->in(__DIR__ . '/src');
+$finder = PhpCsFixer\Finder::create()->in([
+    'src',
+    'tests',
+]);
 
 return (new PhpCsFixer\Config())
     ->setFinder($finder)
