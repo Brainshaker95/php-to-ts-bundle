@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
@@ -246,16 +247,18 @@ abstract class Converter
             }
 
             $nextLevelNodes = match (true) {
-                default                                => [],
+                $node instanceof ConstTypeNode         => [$node->constExpr],
                 $node instanceof ArrayShapeNode        => $node->items,
                 $node instanceof GenericTypeNode       => $node->genericTypes,
                 self::isUnionOrIntersectionNode($node) => $node->types,
                 self::isArrayOrNullableNode($node)     => match (true) {
+                    $node->type instanceof ConstTypeNode,
+                    $node->type instanceof ArrayShapeNode,
+                    $node->type instanceof GenericTypeNode,
+                    self::isUnionOrIntersectionNode($node->type) => [$node->type],
                     default                                      => [],
-                    $node->type instanceof ArrayShapeNode        => $node->type->items,
-                    $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
-                    self::isUnionOrIntersectionNode($node->type) => $node->type->types,
                 },
+                default => [],
             };
 
             if (count($nextLevelNodes)) {
