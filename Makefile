@@ -15,5 +15,8 @@ phpstan-raw: ## runs phpstan with raw output
 php-cs-fix: ## runs php-cs-fixer fix
 	bash -c 'vendor/bin/php-cs-fixer fix -v ${ARGS}'
 
+test: ## runs tests
+	bash -c 'vendor/bin/phpunit ${ARGS}'
+
 %:
 	@:
