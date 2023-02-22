@@ -5,7 +5,7 @@ parameters:
   strictRules:
     booleansInConditions: false
   ignoreErrors:
-    # Since it is not possible to disable single subrule of `DisallowedConstructs` the errors thrown by `DisallowedShortTernaryRule` are just ignored
+    # Since it is not possible to disable single subrule of "DisallowedConstructs" the errors thrown by "DisallowedShortTernaryRule" are just ignored
     - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
 
 includes:
@@ -113,10 +113,11 @@ services:
     tags: [phpstan.rules.rule]
     arguments:
       forbiddenFunctions:
+        compact: 'Explictly assign to keys in the array'
         curl_*: 'Use Symfony\Contracts\HttpClient\HttpClientInterface instead'
-        d: 'Please remove all debug functions, use a logger if needed'
         dd: 'Please remove all debug functions, use a logger if needed'
         dump: 'Please remove all debug functions, use a logger if needed'
+        extract: 'Explictly define variables for the values in the array'
         file_get_contents: 'Use Symfony\\Component\\Finder\\SplFileInfo::getContents() instead'
         file_put_contents: 'Use Symfony\\Component\\Filesystem::dumpFile() or Symfony\\Component\\Filesystem::appendToFile() instead'
         json_decode: 'Use Symfony\\Component\\Serializer\\Encoder\\JsonEncoder::decode() instead'
