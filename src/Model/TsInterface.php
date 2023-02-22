@@ -6,9 +6,11 @@ namespace Brainshaker95\PhpToTsBundle\Model;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Stringable;
@@ -147,12 +149,14 @@ final class TsInterface implements Stringable
     /**
      * Gets the properties based on the configured sort strategy.
      *
+     * @param ?class-string<SortStrategy>[] $sortStrategies
+     *
      * @return TsProperty[]
      */
-    public function getSortedProperties(): array
+    public function getSortedProperties(?array $sortStrategies = null): array
     {
-        $sortStrategies = $this->config?->getSortStrategies() ?? C::SORT_STRATEGIES_DEFAULT;
-        $properties     = $this->properties;
+        $sortStrategies ??= $this->config?->getSortStrategies() ?? C::SORT_STRATEGIES_DEFAULT;
+        $properties = $this->properties;
 
         foreach ($sortStrategies as $sortStrategy) {
             usort(
@@ -204,26 +208,22 @@ final class TsInterface implements Stringable
     {
         $generics = [];
 
-        foreach ($this->getSortedProperties() as $property) {
+        foreach ($this->getSortedProperties([ConstructorFirst::class]) as $property) {
             foreach ($property->generics as $generic) {
-                if (!$property->isConstructorProperty) {
-                    $generics[]          = $generic;
-                    $generic->properties = [...$generic->properties, $property];
-
-                    continue;
-                }
-
-                $alreadyAddedGeneric = current(array_filter(
-                    $generics,
-                    static fn (TsGeneric $referenceGeneric) => $referenceGeneric->name === $generic->name,
-                ));
+                $alreadyAddedGeneric = $property->isConstructorProperty
+                    ? current(array_filter(
+                        $generics,
+                        static fn (TsGeneric $referenceGeneric) => $referenceGeneric->name === $generic->name,
+                    ))
+                    : false;
 
                 if ($alreadyAddedGeneric) {
-                    $alreadyAddedGeneric->properties = [...$alreadyAddedGeneric->properties, $property];
+                    $generic = $alreadyAddedGeneric;
                 } else {
-                    $generics[]          = $generic;
-                    $generic->properties = [...$generic->properties, $property];
+                    $generics[] = $generic;
                 }
+
+                $generic->properties = [...$generic->properties, $property];
             }
         }
 
