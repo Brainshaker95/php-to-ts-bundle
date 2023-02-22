@@ -46,7 +46,7 @@ final class Dumper
      *
      * @param Config|string|null $configOrDir directory to dump or config used for dumping
      * @param ?Config $config config used for dumping
-     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
@@ -72,7 +72,7 @@ final class Dumper
      *
      * @param array<SplFileInfo|string> $files array of files to dump
      * @param ?Config $config config used for dumping
-     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
@@ -97,7 +97,7 @@ final class Dumper
      *
      * @param SplFileInfo|string $file file to dump
      * @param ?Config $config config used for dumping
-     * @param ?callable(string, TsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws Error
      * @throws FileNotFoundException
