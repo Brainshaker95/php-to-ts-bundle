@@ -14,7 +14,6 @@ use PhpParser\ParserFactory;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Contracts\Service\Attribute\Required;
 
 use const DIRECTORY_SEPARATOR;
 use const PHP_EOL;
@@ -24,19 +23,13 @@ use function is_string;
 
 final class Dumper
 {
-    #[Required]
-    public Configuration $config;
-
-    #[Required]
-    public Filesystem $filesystem;
-
-    #[Required]
-    public Visitor $visitor;
-
     private Parser $parser;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly Configuration $config,
+        private readonly Filesystem $filesystem,
+        private readonly Visitor $visitor,
+    ) {
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
     }
 

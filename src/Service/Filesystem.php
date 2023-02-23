@@ -19,8 +19,9 @@ use function sprintf;
  */
 final class Filesystem extends SymfonyFilesystem
 {
-    public function __construct(private string $projectDir)
-    {
+    public function __construct(
+        private readonly string $projectDir,
+    ) {
     }
 
     /**

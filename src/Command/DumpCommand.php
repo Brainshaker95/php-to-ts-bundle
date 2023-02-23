@@ -7,7 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
-use Brainshaker95\PhpToTsBundle\Service\Dumper;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasDumper;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Command\Command;
@@ -15,17 +15,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Contracts\Service\Attribute\Required;
 
 use function sprintf;
 
 abstract class DumpCommand extends Command
 {
+    use HasDumper;
+
     private const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
     private const INDENT_COUNT_KEY = C::INDENT_KEY . '-' . C::INDENT_COUNT_KEY;
-
-    #[Required]
-    public Dumper $dumper;
 
     protected InputInterface $input;
 

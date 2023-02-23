@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PhpParser\Comment\Doc;
@@ -19,8 +20,6 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\NodeVisitor\NameResolver;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\Service\Attribute\Required;
 
 use function array_filter;
 use function array_map;
@@ -31,8 +30,7 @@ use function implode;
  */
 final class Visitor extends NameResolver
 {
-    #[Required]
-    public EventDispatcherInterface $eventDispatcher;
+    use HasEventDispatcher;
 
     public ?Config $config = null;
 

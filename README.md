@@ -311,8 +311,10 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 final class MyService
 {
-    #[Required]
-    public Dumper $dumper;
+    public function __construct(
+        private readonly Dumper $dumper,
+    ) {
+    }
     
     public function doTheThingsAndStuff(): void
     { 
