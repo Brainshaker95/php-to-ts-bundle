@@ -1,8 +1,8 @@
 parameters:
   php_to_ts:
-    input_dir: src/Model
+    input_dir: tests/Fixture/Input
 
-    output_dir: assets/ts/types/php-to-ts
+    output_dir: tests/Fixture/Output/tmp
 
     file_type: !php/const Brainshaker95\PhpToTsBundle\Model\Config\FileType::TYPE_MODULE
 
