@@ -48,7 +48,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpDir(
@@ -74,7 +73,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpFiles(
@@ -99,7 +97,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpFile(
@@ -135,7 +132,6 @@ final class Dumper
      *
      * @return TsInterface[]
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): ?array
@@ -148,7 +144,13 @@ final class Dumper
             return null;
         }
 
-        $statements = $this->parser->parse($file->getContents());
+        $statements = null;
+
+        try {
+            $statements = $this->parser->parse($file->getContents());
+        } catch (Error) {
+            return null;
+        }
 
         if (!is_array($statements)) {
             return null;
