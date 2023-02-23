@@ -3,7 +3,7 @@ name: PHPUnit
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:

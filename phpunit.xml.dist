@@ -19,4 +19,14 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
+
+	<coverage>
+		<include>
+			<directory suffix=".php">src</directory>
+		</include>
+
+		<report>
+			<text outputFile="php://stdout" showUncoveredFiles="true"/>
+		</report>
+	</coverage>
 </phpunit>
