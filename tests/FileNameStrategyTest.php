@@ -17,7 +17,12 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
- * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\CamelCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\LowerCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\UpperCase
  */
 final class FileNameStrategyTest extends TestCase
 {
