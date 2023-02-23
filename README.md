@@ -265,7 +265,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TsInterfaceGeneratedEvent::class => 'onGeneratedTsInterface',
