@@ -84,7 +84,7 @@ final class Dumper
     ): void {
         foreach ($this->filesystem->getSplFileInfoArray($files) as $file) {
             if ($file->isDir()) {
-                $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config, $successCallback);
+                $this->dumpFiles([...(new Finder())->depth(0)->in($file->getPathname())], $config, $successCallback);
             } else {
                 $this->dumpFile($file, $config, $successCallback);
             }
