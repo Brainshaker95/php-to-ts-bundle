@@ -7,6 +7,8 @@ namespace App\Tests\Fixture\Input;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
+ * @internal
+ *
  * This is a class description.
  */
 #[AsTypeScriptable]

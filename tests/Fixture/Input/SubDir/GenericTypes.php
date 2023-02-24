@@ -8,6 +8,8 @@ use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 
 /**
+ * @internal
+ *
  * @template T of string class level generic
  *
  * @deprecated because of reasons
