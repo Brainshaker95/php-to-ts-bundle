@@ -11,19 +11,19 @@ use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\LowerCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\UpperCase;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ *
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\CamelCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\LowerCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\UpperCase
  */
-#[CoversClass(className: CamelCase::class)]
-#[CoversClass(className: KebabCase::class)]
-#[CoversClass(className: LowerCase::class)]
-#[CoversClass(className: PascalCase::class)]
-#[CoversClass(className: SnakeCase::class)]
-#[CoversClass(className: UpperCase::class)]
 final class FileNameStrategyTest extends TestCase
 {
     /**
