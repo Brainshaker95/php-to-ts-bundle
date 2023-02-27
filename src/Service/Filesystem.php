@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Service;
 
+use RuntimeException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Filesystem\Path;
@@ -69,6 +70,17 @@ final class Filesystem extends SymfonyFilesystem
         $name      = Path::getFilenameWithoutExtension($path) . $extension;
 
         return new SplFileInfo($path, '', $name);
+    }
+
+    /**
+     * Gets the content of a file.
+     *
+     * @throws FileNotFoundException
+     * @throws RuntimeException
+     */
+    public function getContent(SplFileInfo|string $file): string
+    {
+        return $this->getSplFileInfo($file)->getContents();
     }
 
     /**

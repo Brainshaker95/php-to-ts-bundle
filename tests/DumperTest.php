@@ -279,20 +279,11 @@ final class DumperTest extends KernelTestCase
 
     private function loadExpectedOutput(string $file): string
     {
-        return $this->loadFile(self::EXPECTED_OUTPUT_DIR . '/' . $file);
+        return $this->filesystem->getContent(self::EXPECTED_OUTPUT_DIR . '/' . $file);
     }
 
     private function loadActualOutput(string $outputDir, string $file): string
     {
-        return $this->loadFile($outputDir . '/' . $file);
-    }
-
-    private function loadFile(string $file): string
-    {
-        return $this
-            ->filesystem
-            ->getSplFileInfo($file)
-            ->getContents()
-        ;
+        return $this->filesystem->getContent($outputDir . '/' . $file);
     }
 }
