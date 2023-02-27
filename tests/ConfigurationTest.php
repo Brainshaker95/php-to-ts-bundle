@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyLast;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 use function array_diff;
@@ -38,12 +39,17 @@ final class ConfigurationTest extends KernelTestCase
         $config    = $container->get(Configuration::class);
 
         /**
-         * @var ConfigurationArray
+         * @phpstan-var ConfigurationArray
          */
         $phpToTs = $container->getParameter('php_to_ts');
 
         self::assertInstanceOf(Configuration::class, $config);
         self::assertIsArray($phpToTs);
+
+        self::assertSame(
+            count($phpToTs),
+            (new ReflectionClass($config->get()::class))->getConstructor()?->getNumberOfParameters(),
+        );
 
         $this->config  = $config;
         $this->phpToTs = $phpToTs;
