@@ -4,7 +4,7 @@
  */
 
 /**
- * This is a class description.
+ * This is a class description
  */
 declare type IterableTypes = {
 			testProperty7: {

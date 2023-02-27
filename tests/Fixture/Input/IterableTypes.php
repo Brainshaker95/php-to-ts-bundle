@@ -9,7 +9,7 @@ use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 /**
  * @internal
  *
- * This is a class description.
+ * This is a class description
  */
 #[AsTypeScriptable]
 final class IterableTypes
