@@ -7,6 +7,9 @@ namespace App\Tests\Fixture\Input;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 
+/**
+ * @internal
+ */
 #[AsTypeScriptable]
 final class NativeTypes
 {

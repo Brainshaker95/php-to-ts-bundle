@@ -4,7 +4,7 @@
  */
 
 /**
- * This is a class description.
+ * This is a class description
  */
 export interface IterableTypes {
   testProperty1: string[];
