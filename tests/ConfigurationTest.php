@@ -20,6 +20,8 @@ use function count;
 /**
  * @internal
  *
+ * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\Configuration
+ * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\PhpToTsExtension
  * @covers \Brainshaker95\PhpToTsBundle\Service\Configuration
  *
  * @phpstan-import-type ConfigurationArray from Configuration
