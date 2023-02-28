@@ -80,9 +80,7 @@ final class DumperTest extends KernelTestCase
                 typeDefinitionType: TypeDefinitionType::TYPE_TYPE_ALIAS,
                 indent: new Indent(Indent::STYLE_TAB, 3),
                 quotes: new Quotes(Quotes::STYLE_DOUBLE),
-                sortStrategies: [
-                    AlphabeticalDesc::class,
-                ],
+                sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
             successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
@@ -177,9 +175,7 @@ final class DumperTest extends KernelTestCase
                 typeDefinitionType: TypeDefinitionType::TYPE_TYPE_ALIAS,
                 indent: new Indent(Indent::STYLE_TAB, 3),
                 quotes: new Quotes(Quotes::STYLE_DOUBLE),
-                sortStrategies: [
-                    AlphabeticalDesc::class,
-                ],
+                sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
             successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
@@ -233,9 +229,7 @@ final class DumperTest extends KernelTestCase
                 typeDefinitionType: TypeDefinitionType::TYPE_TYPE_ALIAS,
                 indent: new Indent(Indent::STYLE_TAB, 3),
                 quotes: new Quotes(Quotes::STYLE_DOUBLE),
-                sortStrategies: [
-                    AlphabeticalDesc::class,
-                ],
+                sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
             successCallback: function (string $path) use (&$fileCounter): void {
