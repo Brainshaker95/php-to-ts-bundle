@@ -30,6 +30,7 @@ use function sprintf;
 /**
  * @internal
  *
+ * @covers \Brainshaker95\PhpToTsBundle\Command\DumpCommand
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpDirCommand
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFileCommand
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFilesCommand
