@@ -19,6 +19,7 @@ use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
+use function array_key_exists;
 use function sprintf;
 
 /**
@@ -145,16 +146,21 @@ final class DumperTest extends KernelTestCase
     public function testDumpFilesWithADirectoryAsInput(): void
     {
         $fileCounter = 0;
+        $paths       = [];
 
         $this->dumper->dumpFiles(
             files: [
                 $this->inputDir,
                 $this->inputDir . '/SubDir/GenericTypes.php',
             ],
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
+            successCallback: function (string $path) use (&$fileCounter, &$paths): void {
+                if (array_key_exists($path, $paths)) {
+                    $fileCounter += 1;
+                } else {
+                    $paths[$path] = true;
+                }
 
-                self::assertTrue($fileCounter <= 4, 'Expected 4 dumped files.');
+                self::assertTrue($fileCounter <= 3, 'Expected 3 dumped files.');
                 $this->successCallback($this->outputDir, $path);
             },
         );
