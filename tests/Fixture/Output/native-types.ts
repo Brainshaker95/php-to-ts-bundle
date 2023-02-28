@@ -10,7 +10,7 @@ export interface NativeTypes {
   readonly testProperty2: string;
   /**
    * This is the description for testProperty1
-   * 
+   *
    * @deprecated
    */
   testProperty1: string;
@@ -29,13 +29,13 @@ export interface NativeTypes {
   testProperty11: unknown;
   /**
    * This is the description for testProperty12.
-   * 
+   *
    * @deprecated
    */
   testProperty12: unknown;
   /**
    * This is the description for testProperty13.
-   * 
+   *
    * @deprecated it is also deprecated
    */
   testProperty13: (number | null);

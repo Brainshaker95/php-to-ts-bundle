@@ -30,13 +30,13 @@ declare type NativeTypes = {
 			testProperty14: (number | null);
 			/**
 			 * This is the description for testProperty13.
-			 * 
+			 *
 			 * @deprecated it is also deprecated
 			 */
 			testProperty13: (number | null);
 			/**
 			 * This is the description for testProperty12.
-			 * 
+			 *
 			 * @deprecated
 			 */
 			testProperty12: unknown;
@@ -47,7 +47,7 @@ declare type NativeTypes = {
 			testProperty10: unknown[];
 			/**
 			 * This is the description for testProperty1
-			 * 
+			 *
 			 * @deprecated
 			 */
 			testProperty1: string;
