@@ -29,8 +29,6 @@ use function sprintf;
  */
 final class DumperTest extends KernelTestCase
 {
-    private const EXPECTED_OUTPUT_DIR = 'tests/Fixture/Output';
-
     private Dumper $dumper;
 
     private Filesystem $filesystem;
@@ -272,18 +270,8 @@ final class DumperTest extends KernelTestCase
         $name = $this->filesystem->getSplFileInfo($path)->getFilename();
 
         self::assertStringEqualsStringIgnoringLineEndings(
-            expected: $this->loadExpectedOutput($name),
-            actual: $this->loadActualOutput($outputDir, $name),
+            expected: $this->filesystem->getContent('tests/Fixture/Output/' . $name),
+            actual: $this->filesystem->getContent($outputDir . '/' . $name),
         );
-    }
-
-    private function loadExpectedOutput(string $file): string
-    {
-        return $this->filesystem->getContent(self::EXPECTED_OUTPUT_DIR . '/' . $file);
-    }
-
-    private function loadActualOutput(string $outputDir, string $file): string
-    {
-        return $this->filesystem->getContent($outputDir . '/' . $file);
     }
 }
