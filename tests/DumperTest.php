@@ -19,7 +19,10 @@ use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
+use const PHP_EOL;
+
 use function array_key_exists;
+use function count;
 use function sprintf;
 
 /**
@@ -32,6 +35,8 @@ final class DumperTest extends KernelTestCase
     private Dumper $dumper;
 
     private Filesystem $filesystem;
+
+    private FullConfig $config;
 
     private string $inputDir;
 
@@ -50,8 +55,9 @@ final class DumperTest extends KernelTestCase
 
         $this->dumper     = $dumper;
         $this->filesystem = $filesystem;
-        $this->inputDir   = $config->get()->getInputDir();
-        $this->outputDir  = $config->get()->getOutputDir();
+        $this->config     = $config->get();
+        $this->inputDir   = $this->config->getInputDir();
+        $this->outputDir  = $this->config->getOutputDir();
     }
 
     protected function tearDown(): void
@@ -263,6 +269,20 @@ final class DumperTest extends KernelTestCase
     {
         $this->expectException(FileNotFoundException::class);
         $this->dumper->dumpFile('does-not-exist');
+    }
+
+    public function testGetTsInterfacesFromFile(): void
+    {
+        $tsInterfaces = $this->dumper->getTsInterfacesFromFile($this->inputDir . '/SubDir/GenericTypes.php');
+
+        self::assertTrue(count($tsInterfaces) === 1, 'Expected only one class in file.');
+
+        $tsInterfaces[0]->config = $this->config;
+
+        self::assertStringEqualsStringIgnoringLineEndings(
+            expected: $this->filesystem->getContent('tests/Fixture/Output/generic-types.ts'),
+            actual: $tsInterfaces[0]->toString() . PHP_EOL,
+        );
     }
 
     private function successCallback(string $outputDir, string $path): void

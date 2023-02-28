@@ -127,14 +127,14 @@ final class Dumper
      *
      * @throws FileNotFoundException
      */
-    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): ?array
+    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): array
     {
         $file = $this->filesystem->getSplFileInfo($file);
 
         $this->filesystem->assertFile($file->getRealPath());
 
         if (Str::toLower($file->getExtension()) !== 'php') {
-            return null;
+            return [];
         }
 
         $statements = null;
@@ -142,11 +142,11 @@ final class Dumper
         try {
             $statements = $this->parser->parse($file->getContents());
         } catch (Error) {
-            return null;
+            return [];
         }
 
         if (!is_array($statements)) {
-            return null;
+            return [];
         }
 
         $this->visitor->config = $config;
