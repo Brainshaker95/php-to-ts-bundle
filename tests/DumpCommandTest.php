@@ -20,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
@@ -86,7 +87,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
                 '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
-            ]),
+            ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 3,
         );
@@ -165,7 +166,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
                 '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
-            ]),
+            ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 3,
         );
@@ -217,7 +218,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
                 '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
-            ]),
+            ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 1,
         );
@@ -274,7 +275,7 @@ final class DumpCommandTest extends KernelTestCase
     /**
      * @param array<int|string|string[]> $arguments
      */
-    private static function runCommand(string $command, array $arguments = []): int
+    private static function runCommand(string $command, array $arguments = [], bool $isVerbose = false): int
     {
         $application = new Application(self::$kernel);
 
@@ -284,8 +285,8 @@ final class DumpCommandTest extends KernelTestCase
         return $application->run(
             new ArrayInput(array_merge([
                 'command' => $command,
-            ], $arguments)),
-            new NullOutput(),
+            ], $arguments, $isVerbose ? ['-v'] : [])),
+            $isVerbose ? new BufferedOutput() : new NullOutput(),
         );
     }
 }
