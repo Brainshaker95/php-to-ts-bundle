@@ -28,7 +28,13 @@ use function sprintf;
 /**
  * @internal
  *
+ * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
+ * @covers \Brainshaker95\PhpToTsBundle\Model\TsGeneric
+ * @covers \Brainshaker95\PhpToTsBundle\Model\TsInterface
+ * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
  * @covers \Brainshaker95\PhpToTsBundle\Service\Dumper
+ * @covers \Brainshaker95\PhpToTsBundle\Service\Filesystem
+ * @covers \Brainshaker95\PhpToTsBundle\Service\Visitor
  */
 final class DumperTest extends KernelTestCase
 {
