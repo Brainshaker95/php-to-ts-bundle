@@ -6,8 +6,10 @@ namespace App\Tests;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
+use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyLast;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
@@ -57,7 +59,7 @@ final class ConfigurationTest extends KernelTestCase
         $this->phpToTs = $phpToTs;
     }
 
-    public function testThatTheConfigurationIsCorrectlyLoaded(): void
+    public function testThatConfigIsCorrectlyLoaded(): void
     {
         $config = $this->config->get();
 
@@ -72,7 +74,7 @@ final class ConfigurationTest extends KernelTestCase
         self::assertSame($this->phpToTs[C::FILE_NAME_STRATEGY_KEY], $config->getFileNameStrategy());
     }
 
-    public function testThatTheConfigurationCanBeMergedWithOther(): void
+    public function testThatConfigCanBeMergedWithPartialConfig(): void
     {
         $fileType = FileType::TYPE_DECLARATION;
         $indent   = new Indent(Indent::STYLE_TAB);
@@ -97,5 +99,28 @@ final class ConfigurationTest extends KernelTestCase
         self::assertSame($this->phpToTs[C::QUOTES_KEY], $config->getQuotes()->style);
         self::assertTrue(count(array_diff($sortStrategies, $config->getSortStrategies())) === 0);
         self::assertSame($this->phpToTs[C::FILE_NAME_STRATEGY_KEY], $config->getFileNameStrategy());
+    }
+
+    public function testThatConfigIsReplacedWhemMergingFullConfig(): void
+    {
+        $config = $this->config->merge(new FullConfig(
+            inputDir: C::INPUT_DIR_DEFAULT,
+            outputDir: C::OUTPUT_DIR_DEFAULT,
+            fileType: C::FILE_TYPE_DEFAULT,
+            typeDefinitionType: C::TYPE_DEFINITION_TYPE_DEFAULT,
+            indent: new Indent(),
+            quotes: new Quotes(),
+            sortStrategies: C::SORT_STRATEGIES_DEFAULT,
+            fileNameStrategy: C::FILE_NAME_STRATEGY_DEFAULT,
+        ));
+
+        self::assertNotSame($this->config->get(), $config);
+    }
+
+    public function testThatConfigIsKepyWhenMergingNull(): void
+    {
+        $config = $this->config->merge(null);
+
+        self::assertSame($this->config->get(), $config);
     }
 }
