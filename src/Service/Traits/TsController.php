@@ -6,22 +6,14 @@ namespace Brainshaker95\PhpToTsBundle\Service\Traits;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Exception\AssertionFailedException;
-use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Contracts\Service\Attribute\Required;
 
 use function array_merge;
 
 trait TsController
 {
-    private Serializer $serializer;
-
-    #[Required]
-    public function setSerializer(Serializer $serializer): void
-    {
-        $this->serializer = $serializer;
-    }
+    use HasSerializer;
 
     /**
      * Returns a JsonResponse that uses the PhpToTs serializer.
@@ -32,7 +24,7 @@ trait TsController
      *
      * @throws AssertionFailedException When the given TypeScriptable is not tagged with the `AsTypeScriptable` attribute
      */
-    protected function ts(
+    final protected function ts(
         mixed $typeScriptable,
         int $status = JsonResponse::HTTP_OK,
         array $headers = [],

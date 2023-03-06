@@ -7,36 +7,28 @@ namespace Brainshaker95\PhpToTsBundle\Service;
 use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
-use PhpParser\Error;
+use PhpParser\ErrorHandler\Collecting;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Contracts\Service\Attribute\Required;
 
 use const DIRECTORY_SEPARATOR;
 use const PHP_EOL;
 
-use function is_array;
 use function is_string;
 
 final class Dumper
 {
-    #[Required]
-    public Configuration $config;
-
-    #[Required]
-    public Filesystem $filesystem;
-
-    #[Required]
-    public Visitor $visitor;
-
     private Parser $parser;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly Configuration $config,
+        private readonly Filesystem $filesystem,
+        private readonly Visitor $visitor,
+    ) {
         $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
     }
 
@@ -48,7 +40,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpDir(
@@ -74,7 +65,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpFiles(
@@ -84,7 +74,7 @@ final class Dumper
     ): void {
         foreach ($this->filesystem->getSplFileInfoArray($files) as $file) {
             if ($file->isDir()) {
-                $this->dumpFiles([...(new Finder())->in($file->getPathname())], $config, $successCallback);
+                $this->dumpFiles([...(new Finder())->depth(0)->in($file->getPathname())], $config, $successCallback);
             } else {
                 $this->dumpFile($file, $config, $successCallback);
             }
@@ -99,7 +89,6 @@ final class Dumper
      * @param ?Config $config config used for dumping
      * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
     public function dumpFile(
@@ -135,27 +124,21 @@ final class Dumper
      *
      * @return TsInterface[]
      *
-     * @throws Error
      * @throws FileNotFoundException
      */
-    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): ?array
+    public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): array
     {
         $file = $this->filesystem->getSplFileInfo($file);
 
         $this->filesystem->assertFile($file->getRealPath());
 
         if (Str::toLower($file->getExtension()) !== 'php') {
-            return null;
+            return [];
         }
 
-        $statements = $this->parser->parse($file->getContents());
-
-        if (!is_array($statements)) {
-            return null;
-        }
-
-        $this->visitor->config = $config;
+        $statements            = $this->parser->parse($file->getContents(), new Collecting()) ?? [];
         $traverser             = new NodeTraverser();
+        $this->visitor->config = $config;
 
         $traverser->addVisitor($this->visitor);
         $traverser->traverse($statements);

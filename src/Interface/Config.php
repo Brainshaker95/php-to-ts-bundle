@@ -23,7 +23,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
  *         style: ?string,
  *         count: ?int<0,max>,
  *     },
- *     quotes: ?string,
+ *     quotes?: ?string,
  *     sort_strategies?: ?non-empty-string[],
  *     file_name_strategy?: ?string,
  * }

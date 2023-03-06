@@ -70,7 +70,7 @@ final class TsDocComment implements Stringable
 
         $templateTagLines = array_reduce(
             $this->generics,
-            static fn ($lines, $generic) => array_merge(
+            static fn (array $lines, TsGeneric $generic) => array_merge(
                 $lines,
                 Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
             ),
@@ -111,7 +111,7 @@ final class TsDocComment implements Stringable
         $linesString = rtrim($indent?->toString() . implode(PHP_EOL . $indent?->toString(), $lines));
 
         return $hasPreviousLines && count($lines)
-            ? (PHP_EOL . $indent?->toString() . $linePrefix . PHP_EOL . $linesString)
+            ? (PHP_EOL . $indent?->toString() . rtrim($linePrefix) . PHP_EOL . $linesString)
             : $linesString;
     }
 }

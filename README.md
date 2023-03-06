@@ -265,7 +265,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TsInterfaceGeneratedEvent::class => 'onGeneratedTsInterface',
@@ -311,8 +311,10 @@ use Symfony\Contracts\Service\Attribute\Required;
 
 final class MyService
 {
-    #[Required]
-    public Dumper $dumper;
+    public function __construct(
+        private readonly Dumper $dumper,
+    ) {
+    }
     
     public function doTheThingsAndStuff(): void
     { 
