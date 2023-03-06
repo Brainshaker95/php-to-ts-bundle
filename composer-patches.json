@@ -1,0 +1,7 @@
+{
+  "patches": {
+    "friendsofphp/php-cs-fixer": {
+      "Ignore rules for specific classes": "https://patch-diff.githubusercontent.com/raw/PHP-CS-Fixer/PHP-CS-Fixer/pull/6358.diff"
+    }
+  }
+}

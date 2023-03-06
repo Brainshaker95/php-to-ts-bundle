@@ -22,7 +22,8 @@
       "symplify/phpstan-rules": "11.2.4.72",
       "phpunit/phpunit": "10.0.11",
       "symfony/framework-bundle": "6.2.5",
-      "symfony/yaml": "6.2.5"
+      "symfony/yaml": "6.2.5",
+      "cweagans/composer-patches": "1.7.3"
     },
     "require": {
       "php": ">=8.1",
@@ -52,5 +53,8 @@
       "psr-4": {
         "App\\Tests\\": "tests/"
       }
+    },
+    "extra": {
+      "patches-file": "composer-patches.json"
     }
   }
