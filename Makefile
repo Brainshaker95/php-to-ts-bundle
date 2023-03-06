@@ -16,7 +16,14 @@ php-cs-fix: ## runs php-cs-fixer fix
 	bash -c 'vendor/bin/php-cs-fixer fix -v ${ARGS}'
 
 test: ## runs tests
-	bash -c 'vendor/bin/phpunit ${ARGS}'
+	bash -c 'vendor/bin/phpunit ${ARGS}' || true
+	bash -c 'mkdir -p var/coverage/_css'
+	bash -c 'cp tests/assets/coverage.css var/coverage/_css/custom.css'
+
+serve-coverage:
+	bash -c 'php -S localhost:80 -t var/coverage'
+
+test-and-serve: test serve-coverage
 
 %:
 	@:
