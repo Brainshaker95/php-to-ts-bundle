@@ -7,7 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Service;
 use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
-use PhpParser\Error;
+use PhpParser\ErrorHandler\Collecting;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
@@ -18,7 +18,6 @@ use Symfony\Component\Finder\SplFileInfo;
 use const DIRECTORY_SEPARATOR;
 use const PHP_EOL;
 
-use function is_array;
 use function is_string;
 
 final class Dumper
@@ -137,20 +136,9 @@ final class Dumper
             return [];
         }
 
-        $statements = null;
-
-        try {
-            $statements = $this->parser->parse($file->getContents());
-        } catch (Error) {
-            return [];
-        }
-
-        if (!is_array($statements)) {
-            return [];
-        }
-
-        $this->visitor->config = $config;
+        $statements            = $this->parser->parse($file->getContents(), new Collecting()) ?? [];
         $traverser             = new NodeTraverser();
+        $this->visitor->config = $config;
 
         $traverser->addVisitor($this->visitor);
         $traverser->traverse($statements);
