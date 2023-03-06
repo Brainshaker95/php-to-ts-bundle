@@ -291,6 +291,18 @@ final class DumperTest extends KernelTestCase
         );
     }
 
+    public function testNoTsInterfaceInFile(): void
+    {
+        $this->dumper->dumpFile(
+            file: __DIR__ . '/TestKernel.php',
+            successCallback: static fn () => self::assertTrue(false, 'This file should not contain a TsInterface'),
+        );
+
+        $tsInterfaces = $this->dumper->getTsInterfacesFromFile(__DIR__ . '/assets/coverage.css');
+
+        self::assertCount(0, $tsInterfaces);
+    }
+
     private function successCallback(string $outputDir, string $path): void
     {
         $name = $this->filesystem->getSplFileInfo($path)->getFilename();
