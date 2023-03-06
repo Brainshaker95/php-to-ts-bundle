@@ -70,7 +70,7 @@ final class TsDocComment implements Stringable
 
         $templateTagLines = array_reduce(
             $this->generics,
-            static fn ($lines, $generic) => array_merge(
+            static fn (array $lines, TsGeneric $generic) => array_merge(
                 $lines,
                 Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
             ),
