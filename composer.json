@@ -54,8 +54,10 @@
       "App\\Tests\\": "tests/"
     }
   },
-  "allow-plugins": {
-    "cweagans/composer-patches": true
+  "config": {
+    "allow-plugins": {
+      "cweagans/composer-patches": true
+    },
   },
   "extra": {
     "patches-file": "composer-patches.json"
