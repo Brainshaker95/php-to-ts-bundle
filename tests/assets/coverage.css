@@ -92,6 +92,15 @@ table {
 .popover {
   --tooltip-bg-color: var(--clr-dark);
   border: 1px solid var(--clr-light);
+  position: fixed !important;
+  left: auto !important;
+  right: 0 !important;
+  top: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+  max-width: 300px;
+  height: 100vh;
+  overflow-y: scroll;
 }
 
 .popover ul {
