@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * @internal
  *
  * @covers \Brainshaker95\PhpToTsBundle\Serializer\Serializer
+ * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer
  */
 final class SeializerTest extends KernelTestCase
 {
-    private Serializer $serializer;
+    use HasSerializer;
 
     protected function setUp(): void
     {
@@ -23,7 +25,7 @@ final class SeializerTest extends KernelTestCase
 
         self::assertInstanceOf(Serializer::class, $serializer);
 
-        $this->serializer = $serializer;
+        $this->setSerializer($serializer);
     }
 
     public function testSerializer(): void
