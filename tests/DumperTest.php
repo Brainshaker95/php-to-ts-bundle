@@ -33,7 +33,6 @@ use function sprintf;
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsInterface
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
  * @covers \Brainshaker95\PhpToTsBundle\Service\Dumper
- * @covers \Brainshaker95\PhpToTsBundle\Service\Filesystem
  * @covers \Brainshaker95\PhpToTsBundle\Service\Visitor
  */
 final class DumperTest extends KernelTestCase
