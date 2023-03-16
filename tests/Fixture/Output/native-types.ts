@@ -46,6 +46,8 @@ export interface NativeTypes {
    */
   testProperty14: (number | null);
   testProperty15: unknown;
+  testProperty16: unknown;
+  testProperty17: unknown;
   testProperty5: number;
   testProperty6: number;
   testProperty7: string;

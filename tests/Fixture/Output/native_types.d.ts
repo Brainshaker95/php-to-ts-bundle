@@ -21,6 +21,8 @@ declare type NativeTypes = {
 			 * @deprecated
 			 */
 			readonly testProperty2: string;
+			testProperty17: unknown;
+			testProperty16: unknown;
 			testProperty15: unknown;
 			/**
 			 * This is the description for testProperty14
