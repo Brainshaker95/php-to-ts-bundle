@@ -3,6 +3,8 @@
  * Do not modify directly!
  */
 
+import type { SomeClass } from './SomeClass';
+
 /**
  * @deprecated because of reasons
  *
@@ -41,4 +43,6 @@ export interface GenericTypes<
     * This is the description for testProperty6.
     */
    testProperty6: W;
+   testProperty7: SomeClass<T1>;
+   testProperty8: number;
 }
