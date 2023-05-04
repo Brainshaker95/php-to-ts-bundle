@@ -71,8 +71,22 @@ final class NativeTypes
 
     /**
      * @phpstan-ignore-next-line
+     *
+     * @var Foo&Bar
      */
-    private $testProperty18;
+    public object $testProperty18;
+
+    public string|false $testProperty19;
+
+    /**
+     * @var true
+     */
+    public bool $testProperty20;
+
+    /**
+     * @phpstan-ignore-next-line
+     */
+    private $testProperty21;
 
     /**
      * This is the constructor description.
