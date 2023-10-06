@@ -18,14 +18,14 @@ trait TsController
     /**
      * Returns a JsonResponse that uses the PhpToTs serializer.
      *
-     * @param mixed $typeScriptable The TypeScriptable to serialize
+     * @param object $typeScriptable The TypeScriptable to serialize
      * @param array<string,string|string[]|null> $headers The HTTP headers of the response
      * @param array<string,mixed> $context Options normalizers/encoders have access to
      *
      * @throws AssertionFailedException When the given TypeScriptable is not tagged with the `AsTypeScriptable` attribute
      */
     final protected function ts(
-        mixed $typeScriptable,
+        object $typeScriptable,
         int $status = JsonResponse::HTTP_OK,
         array $headers = [],
         array $context = [],
