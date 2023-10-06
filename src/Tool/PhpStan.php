@@ -67,9 +67,6 @@ abstract class PhpStan
 
     final public static function toNode(PHPStanNode $node): Node
     {
-        /**
-         * @var ?class-string<Node>
-         */
         $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;
 
         if (!$nodeClass) {
