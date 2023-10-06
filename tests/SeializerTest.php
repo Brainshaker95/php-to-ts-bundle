@@ -30,9 +30,6 @@ final class SeializerTest extends KernelTestCase
 
     public function testSerializer(): void
     {
-        /**
-         * @phpstan-ignore-next-line - This is just a throwaway anonymous class used for this test
-         */
         $instance = new class(true, ['foo' => ['bar' => ['baz']]]) {
             public int $property1;
 
