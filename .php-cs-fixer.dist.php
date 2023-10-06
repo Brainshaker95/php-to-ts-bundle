@@ -35,7 +35,7 @@ return (new PhpCsFixer\Config())
         'native_constant_invocation'                       => true,
         'native_function_invocation'                       => ['include' => ['@all']],
         'nullable_type_declaration_for_default_null_value' => true,
-        'ordered_imports'                                  => ['imports_order'  => ['class', 'const', 'function'], 'sort_algorithm' => 'alpha'],
+        'ordered_imports'                                  => ['imports_order' => ['class', 'const', 'function'], 'sort_algorithm' => 'alpha'],
         'ordered_interfaces'                               => ['direction' => 'ascend', 'order' => 'alpha'],
         'phpdoc_align'                                     => ['align' => 'left'],
         'phpdoc_line_span'                                 => true,

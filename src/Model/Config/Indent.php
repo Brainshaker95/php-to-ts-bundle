@@ -21,8 +21,7 @@ final class Indent implements Stringable
     public function __construct(
         public readonly string $style = C::INDENT_STYLE_DEFAULT,
         public readonly int $count = C::INDENT_COUNT_DEFAULT,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

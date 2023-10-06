@@ -17,8 +17,7 @@ final class ArrayTypeNode implements Node
 {
     public function __construct(
         public readonly Node $type,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

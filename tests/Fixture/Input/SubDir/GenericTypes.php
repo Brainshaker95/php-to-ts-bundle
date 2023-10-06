@@ -95,6 +95,5 @@ final class GenericTypes
         public int $testProperty1,
         public int $testProperty2,
         public array $testProperty3,
-    ) {
-    }
+    ) {}
 }

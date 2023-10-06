@@ -28,8 +28,7 @@ final class ConstFetchNode implements Node, Quotable
     public function __construct(
         public readonly string $className,
         public readonly string $name,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

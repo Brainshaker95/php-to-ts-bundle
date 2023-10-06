@@ -14,6 +14,5 @@ final class TsPropertyGeneratedEvent extends Event
     public function __construct(
         public ?TsProperty $tsProperty,
         public readonly Param|Property $propertyNode,
-    ) {
-    }
+    ) {}
 }

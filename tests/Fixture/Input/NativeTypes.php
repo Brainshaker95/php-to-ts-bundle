@@ -102,11 +102,11 @@ final class NativeTypes
         public readonly string $testProperty2,
         public string $testProperty3,
         public $testProperty4,
-        #[Hidden] public $hiddenProperty,
+        #[Hidden]
+        public $hiddenProperty,
         /**
          * @phpstan-ignore-next-line
          */
         private string $privateProperty1,
-    ) {
-    }
+    ) {}
 }

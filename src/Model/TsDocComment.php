@@ -31,8 +31,7 @@ final class TsDocComment implements Stringable
         public readonly ?string $description = null,
         public readonly bool|string|null $deprecation = null,
         public readonly array $generics = [],
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

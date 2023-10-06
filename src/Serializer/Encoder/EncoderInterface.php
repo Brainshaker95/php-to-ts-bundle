@@ -8,6 +8,4 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Serializer\Encoder\EncoderInterface as SymfonyEncoderInterface;
 
 #[AutoconfigureTag(name: 'php_to_ts.serializer.encoder')]
-interface EncoderInterface extends SymfonyEncoderInterface
-{
-}
+interface EncoderInterface extends SymfonyEncoderInterface {}

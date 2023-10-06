@@ -46,8 +46,7 @@ final class TsInterface implements Stringable
         public bool|string|null $deprecation = null,
         public array $properties = [],
         public ?C $config = null,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

@@ -22,8 +22,7 @@ final class Filesystem extends SymfonyFilesystem
 {
     public function __construct(
         private readonly string $projectDir,
-    ) {
-    }
+    ) {}
 
     /**
      * Ensures an array of SplFileInfo objects.

@@ -9,6 +9,4 @@ use RuntimeException;
 /**
  * @internal
  */
-final class AssertionFailedException extends RuntimeException
-{
-}
+final class AssertionFailedException extends RuntimeException {}

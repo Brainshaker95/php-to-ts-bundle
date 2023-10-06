@@ -13,6 +13,5 @@ final class TsInterfaceGeneratedEvent extends Event
     public function __construct(
         public ?TsInterface $tsInterface,
         public readonly Class_ $classNode,
-    ) {
-    }
+    ) {}
 }

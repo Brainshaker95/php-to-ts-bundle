@@ -44,8 +44,7 @@ final class SeializerTest extends KernelTestCase
             public function __construct(
                 public bool $property3,
                 public array $property4,
-            ) {
-            }
+            ) {}
         };
 
         $instance->property1 = 1;
