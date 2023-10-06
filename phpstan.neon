@@ -15,33 +15,23 @@ includes:
 
 rules:
   - Symplify\PHPStanRules\Rules\BoolishClassMethodPrefixRule
-  - Symplify\PHPStanRules\Rules\CheckAttributteArgumentClassExistsRule
   - Symplify\PHPStanRules\Rules\CheckClassNamespaceFollowPsr4Rule
-  - Symplify\PHPStanRules\Rules\CheckNotTestsNamespaceOutsideTestsDirectoryRule
   - Symplify\PHPStanRules\Rules\CheckTypehintCallerTypeRule
   - Symplify\PHPStanRules\Rules\Complexity\ForbiddenSameNamedNewInstanceRule
   - Symplify\PHPStanRules\Rules\Complexity\NoDuplicatedTraitMethodNameRule
-  - Symplify\PHPStanRules\Rules\Domain\ForbiddenAlwaysSetterCallRule
-  - Symplify\PHPStanRules\Rules\Domain\NoDuplicatedRegexRule
   - Symplify\PHPStanRules\Rules\Domain\RequireAttributeNamespaceRule
   - Symplify\PHPStanRules\Rules\Domain\RequireExceptionNamespaceRule
   - Symplify\PHPStanRules\Rules\Enum\RequireUniqueEnumConstantRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoGetterAndPropertyRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoMixedCallableRule
   - Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
   - Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
   - Symplify\PHPStanRules\Rules\Explicit\NoRelativeFilePathRule
-  - Symplify\PHPStanRules\Rules\ForbiddenAnonymousClassRule
   - Symplify\PHPStanRules\Rules\ForbiddenExtendOfNonAbstractClassRule
   - Symplify\PHPStanRules\Rules\ForbiddenMultipleClassLikeInOneFileRule
-  - Symplify\PHPStanRules\Rules\ForbiddenNestedCallInAssertMethodCallRule
   - Symplify\PHPStanRules\Rules\ForbiddenParamTypeRemovalRule
-  - Symplify\PHPStanRules\Rules\ForbiddenTestsNamespaceOutsideTestsDirectoryRule
   - Symplify\PHPStanRules\Rules\NarrowType\NarrowPublicClassMethodParamTypeByCallerTypeRule
   - Symplify\PHPStanRules\Rules\NoAbstractMethodRule
   - Symplify\PHPStanRules\Rules\NoArrayAccessOnObjectRule
   - Symplify\PHPStanRules\Rules\NoConstructorInTestRule
-  - Symplify\PHPStanRules\Rules\NoDefaultExceptionRule
   - Symplify\PHPStanRules\Rules\NoDynamicNameRule
   - Symplify\PHPStanRules\Rules\NoEmptyClassRule
   - Symplify\PHPStanRules\Rules\NoInlineStringRegexRule
@@ -55,30 +45,14 @@ rules:
   - Symplify\PHPStanRules\Rules\PreventParentMethodVisibilityOverrideRule
   - Symplify\PHPStanRules\Rules\RegexSuffixInRegexConstantRule
   - Symplify\PHPStanRules\Rules\RequireAttributeNameRule
-  - Symplify\PHPStanRules\Rules\RequiredAbstractClassKeywordRule
-  - Symplify\PHPStanRules\Rules\RequireThisCallOnLocalMethodRule
   - Symplify\PHPStanRules\Rules\UppercaseConstantRule
-  - Symplify\PHPStanRules\Symfony\Rules\PreventDoubleSetParameterRule
 
 services:
-  - Symplify\PHPStanRules\Symfony\NodeAnalyzer\SymfonyPhpConfigClosureAnalyzer
-
   -
     class: Symplify\PHPStanRules\Rules\NoDuplicatedShortClassNameRule
     tags: [phpstan.rules.rule]
     arguments:
       toleratedNestingLevel: 3
-
-  -
-    class: Symplify\PHPStanRules\Rules\PreventDuplicateClassMethodRule
-    tags: [phpstan.rules.rule]
-    arguments:
-      minimumLineCount: 4
-
-  # required for "PreventDuplicateClassMethodRule"
-  -
-    class: Symplify\PHPStanRules\Collector\ClassMethod\ClassMethodContentCollector
-    tags: [phpstan.collector]
 
   -
     class: Symplify\PHPStanRules\ObjectCalisthenics\Rules\NoShortNameRule
