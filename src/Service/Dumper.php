@@ -6,6 +6,7 @@ namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use PhpParser\ErrorHandler\Collecting;
 use PhpParser\NodeTraverser;
@@ -22,10 +23,11 @@ use function is_string;
 
 final class Dumper
 {
+    use HasConfiguration;
+
     private Parser $parser;
 
     public function __construct(
-        private readonly Configuration $config,
         private readonly Filesystem $filesystem,
         private readonly Visitor $visitor,
     ) {

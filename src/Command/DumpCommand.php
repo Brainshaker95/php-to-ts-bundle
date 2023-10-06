@@ -7,6 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasDumper;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
@@ -21,6 +22,7 @@ use function sprintf;
 
 abstract class DumpCommand extends Command
 {
+    use HasConfiguration;
     use HasDumper;
 
     final public const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
@@ -111,7 +113,7 @@ abstract class DumpCommand extends Command
         $indentCount    = Assert::nonNegativeIntegerNullable($indentCount);
         $sortStrategies = Assert::nonEmptyStringArrayNullable($sortStrategies) ?? [];
 
-        return PartialConfig::fromArray([
+        return $this->config->merge(PartialConfig::fromArray([
             C::OUTPUT_DIR_KEY           => Assert::nonEmptyStringNullable($outputDir),
             C::FILE_TYPE_KEY            => Assert::nonEmptyStringNullable($fileType),
             C::TYPE_DEFINITION_TYPE_KEY => Assert::nonEmptyStringNullable($typeDefinitionType),
@@ -122,7 +124,7 @@ abstract class DumpCommand extends Command
             C::QUOTES_KEY             => Assert::nonEmptyStringNullable($quotes),
             C::SORT_STRATEGIES_KEY    => count($sortStrategies) > 0 ? $sortStrategies : null,
             C::FILE_NAME_STRATEGY_KEY => Assert::nonEmptyStringNullable($fileNameStrategy),
-        ]);
+        ]));
     }
 
     protected function fileSuccess(string $path, TsInterface $tsInterface): void
