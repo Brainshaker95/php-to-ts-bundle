@@ -79,7 +79,7 @@ final class GenericTypes
     public int $testProperty8;
 
     #[Hidden]
-    public string $testProperty10;
+    public string $testProperty9;
 
     /**
      * @phpstan-ignore-next-line
