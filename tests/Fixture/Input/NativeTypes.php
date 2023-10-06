@@ -12,6 +12,7 @@ use stdClass;
  * @internal
  *
  * @PhpCsFixerIgnore global_namespace_import
+ * @PhpCsFixerIgnore phpdoc_add_missing_param_annotation
  */
 #[AsTypeScriptable]
 final class NativeTypes
