@@ -47,20 +47,34 @@ span.comment {
 .success,
 .warning,
 .progress,
+.not-covered,
+.not-coverable,
+.covered-by-small-tests,
+.covered-by-medium-tests,
 .covered-by-large-tests {
   background-color: transparent !important;
 }
 
-.danger {
+.covered-by-large-tests {
+  color: color-mix(in srgb, var(--clr-success), var(--clr-danger) 25%);
+}
+
+.covered-by-medium-tests {
+  color: color-mix(in srgb, var(--clr-success), var(--clr-danger) 15%);
+}
+
+.danger,
+.not-coverable {
   color: var(--clr-danger);
 }
 
 .success,
-.covered-by-large-tests {
+.covered-by-small-tests {
   color: var(--clr-success);
 }
 
-.warning {
+.warning,
+.not-covered {
   color: var(--clr-warning);
 }
 
