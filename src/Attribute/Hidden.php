@@ -7,6 +7,4 @@ namespace Brainshaker95\PhpToTsBundle\Attribute;
 use Attribute;
 
 #[Attribute(flags: Attribute::TARGET_PROPERTY)]
-final class Hidden
-{
-}
+final class Hidden {}

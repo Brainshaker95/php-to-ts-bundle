@@ -30,10 +30,9 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable
 
     public function __construct(
         public readonly Node $valueNode,
-        public readonly ?Node $keyNode,
+        public readonly ?Node $keyNode = null,
         public readonly bool $isOptional = false,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

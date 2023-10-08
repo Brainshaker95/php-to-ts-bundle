@@ -13,6 +13,8 @@ use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
  * @template T of string class level generic
  *
  * @deprecated because of reasons
+ *
+ * @PhpCsFixerIgnore global_namespace_import
  */
 #[AsTypeScriptable]
 final class GenericTypes
@@ -64,8 +66,20 @@ final class GenericTypes
      */
     public object $testProperty6;
 
+    /**
+     * @phpstan-ignore-next-line
+     *
+     * @var \SomeClass<T>
+     */
+    public object $testProperty7;
+
+    /**
+     * @var int<0,max>
+     */
+    public int $testProperty8;
+
     #[Hidden]
-    public string $testProperty7;
+    public string $testProperty9;
 
     /**
      * @phpstan-ignore-next-line
@@ -81,6 +95,5 @@ final class GenericTypes
         public int $testProperty1,
         public int $testProperty2,
         public array $testProperty3,
-    ) {
-    }
+    ) {}
 }

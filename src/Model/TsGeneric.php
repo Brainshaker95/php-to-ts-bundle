@@ -32,8 +32,7 @@ final class TsGeneric implements Stringable
         public ?Node $default = null,
         public ?string $description = null,
         public array $properties = [],
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

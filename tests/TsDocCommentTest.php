@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
  *
  * @PhpCsFixerIgnore heredoc_indentation

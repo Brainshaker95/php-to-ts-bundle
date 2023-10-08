@@ -19,8 +19,10 @@ final class Serializer extends SymfonySerializer
      * @param Traversable<EncoderInterface> $encoders
      */
     public function __construct(
-        #[TaggedIterator(tag: 'php_to_ts.serializer.normalizer')] Traversable $normalizers,
-        #[TaggedIterator(tag: 'php_to_ts.serializer.encoder')] Traversable $encoders,
+        #[TaggedIterator(tag: 'php_to_ts.serializer.normalizer')]
+        Traversable $normalizers,
+        #[TaggedIterator(tag: 'php_to_ts.serializer.encoder')]
+        Traversable $encoders,
     ) {
         parent::__construct(iterator_to_array($normalizers), iterator_to_array($encoders));
     }

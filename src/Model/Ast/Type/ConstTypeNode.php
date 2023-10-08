@@ -17,8 +17,7 @@ final class ConstTypeNode implements Node
 {
     public function __construct(
         public readonly Node $constExpr,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

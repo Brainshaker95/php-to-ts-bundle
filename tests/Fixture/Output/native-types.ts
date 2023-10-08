@@ -3,6 +3,9 @@
  * Do not modify directly!
  */
 
+import type { Bar } from './bar';
+import type { Foo } from './foo';
+
 export interface NativeTypes {
   /**
    * @deprecated
@@ -46,6 +49,11 @@ export interface NativeTypes {
    */
   testProperty14: (number | null);
   testProperty15: unknown;
+  testProperty16: unknown;
+  testProperty17: unknown;
+  testProperty18: (Foo & Bar);
+  testProperty19: (string | false);
+  testProperty20: true;
   testProperty5: number;
   testProperty6: number;
   testProperty7: string;

@@ -7,6 +7,9 @@ namespace Brainshaker95\PhpToTsBundle\Service\Traits;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
+/**
+ * @internal
+ */
 trait HasEventDispatcher
 {
     protected EventDispatcherInterface $eventDispatcher;

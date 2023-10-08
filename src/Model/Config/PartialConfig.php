@@ -29,8 +29,7 @@ final class PartialConfig implements C
         private ?Quotes $quotes = null,
         private ?array $sortStrategies = null,
         private ?string $fileNameStrategy = null,
-    ) {
-    }
+    ) {}
 
     public function getInputDir(): ?string
     {

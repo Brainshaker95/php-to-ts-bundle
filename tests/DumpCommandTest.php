@@ -31,6 +31,8 @@ use function sprintf;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpCommand
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpDirCommand
  * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFileCommand

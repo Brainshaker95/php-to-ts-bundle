@@ -22,8 +22,7 @@ final class Quotes implements Stringable
      */
     public function __construct(
         public readonly string $style = C::QUOTES_DEFAULT,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

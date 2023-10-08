@@ -17,10 +17,15 @@ declare type NativeTypes = {
 			 * @deprecated
 			 */
 			testProperty3: string;
+			testProperty20: true;
 			/**
 			 * @deprecated
 			 */
 			readonly testProperty2: string;
+			testProperty19: (string | false);
+			testProperty18: (Foo & Bar);
+			testProperty17: unknown;
+			testProperty16: unknown;
 			testProperty15: unknown;
 			/**
 			 * This is the description for testProperty14

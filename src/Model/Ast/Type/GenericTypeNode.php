@@ -31,8 +31,7 @@ final class GenericTypeNode implements Node
     public function __construct(
         public readonly IdentifierTypeNode $type,
         public readonly array $genericTypes,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

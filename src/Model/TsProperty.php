@@ -42,8 +42,7 @@ final class TsProperty implements Stringable
         public readonly ?string $description = null,
         public bool|string|null $deprecation = null,
         public ?Config $config = null,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

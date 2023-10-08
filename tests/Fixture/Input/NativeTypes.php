@@ -6,9 +6,13 @@ namespace App\Tests\Fixture\Input;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
+use stdClass;
 
 /**
  * @internal
+ *
+ * @PhpCsFixerIgnore global_namespace_import
+ * @PhpCsFixerIgnore phpdoc_add_missing_param_annotation
  */
 #[AsTypeScriptable]
 final class NativeTypes
@@ -62,10 +66,28 @@ final class NativeTypes
      */
     public $testProperty15;
 
+    public \stdClass $testProperty16;
+
+    public stdClass $testProperty17;
+
+    /**
+     * @phpstan-ignore-next-line
+     *
+     * @var Foo&Bar
+     */
+    public object $testProperty18;
+
+    public string|false $testProperty19;
+
+    /**
+     * @var true
+     */
+    public bool $testProperty20;
+
     /**
      * @phpstan-ignore-next-line
      */
-    private $testProperty16;
+    private $testProperty21;
 
     /**
      * This is the constructor description.
@@ -81,11 +103,11 @@ final class NativeTypes
         public readonly string $testProperty2,
         public string $testProperty3,
         public $testProperty4,
-        #[Hidden] public $hiddenProperty,
+        #[Hidden]
+        public $hiddenProperty,
         /**
          * @phpstan-ignore-next-line
          */
         private string $privateProperty1,
-    ) {
-    }
+    ) {}
 }

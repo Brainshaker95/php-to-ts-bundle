@@ -22,6 +22,8 @@ declare type GenericTypes<
 			V extends boolean,
 			W extends unknown,
 > = {
+			testProperty8: number;
+			testProperty7: SomeClass<T1>;
 			/**
 			 * This is the description for testProperty6.
 			 */

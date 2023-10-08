@@ -290,9 +290,10 @@ abstract class Converter
     final public static function getClassIdentifierNode(Node $node): ?IdentifierTypeNode
     {
         return match (true) {
-            default                                                                        => null,
-            self::isClassIdentifierNode($node)                                             => $node,
-            self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type) => $node->type,
+            default                                                                                  => null,
+            self::isClassIdentifierNode($node)                                                       => $node,
+            self::isArrayOrNullableNode($node) && self::isClassIdentifierNode($node->type)           => $node->type,
+            $node instanceof GenericTypeNode && $node->type->type === IdentifierTypeNode::TYPE_CLASS => $node->type,
         };
     }
 

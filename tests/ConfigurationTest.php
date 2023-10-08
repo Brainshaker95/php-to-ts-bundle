@@ -24,6 +24,8 @@ use function count;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\Configuration
  * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\PhpToTsExtension
  * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FullConfig

@@ -6,6 +6,4 @@ namespace Brainshaker95\PhpToTsBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-final class PhpToTsBundle extends Bundle
-{
-}
+final class PhpToTsBundle extends Bundle {}

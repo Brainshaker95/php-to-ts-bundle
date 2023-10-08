@@ -33,8 +33,7 @@ final class ArrayShapeNode implements Indentable, Node
      */
     public function __construct(
         public readonly array $items,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

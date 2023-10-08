@@ -23,8 +23,7 @@ final class UnionTypeNode implements Node
      */
     public function __construct(
         public readonly array $types,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

@@ -89,7 +89,12 @@ abstract class Str
         string $linePrefix = '',
         ?callable $lineCallback = null,
     ): array {
-        $lines     = array_filter(u($string)->split("\n"), static fn (UnicodeString $line) => $line->length());
+        $string = u($string)
+            ->replace("\r\n", "\n")
+            ->replace("\r", "\n")
+        ;
+
+        $lines     = array_filter($string->split("\n"), static fn (UnicodeString $line) => $line->length());
         $lineCount = count($lines);
 
         if (!$lineCount) {

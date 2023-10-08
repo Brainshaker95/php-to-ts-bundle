@@ -17,6 +17,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\CamelCase
  * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\KebabCase
  * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\LowerCase

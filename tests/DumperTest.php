@@ -28,12 +28,31 @@ use function sprintf;
 /**
  * @internal
  *
+ * @small
+ *
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprNullNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprTrueNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent
+ * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsGeneric
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsInterface
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
  * @covers \Brainshaker95\PhpToTsBundle\Service\Dumper
- * @covers \Brainshaker95\PhpToTsBundle\Service\Filesystem
  * @covers \Brainshaker95\PhpToTsBundle\Service\Visitor
  */
 final class DumperTest extends KernelTestCase

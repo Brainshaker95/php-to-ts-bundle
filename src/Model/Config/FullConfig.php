@@ -29,8 +29,7 @@ final class FullConfig implements C
         private Quotes $quotes,
         private array $sortStrategies,
         private string $fileNameStrategy,
-    ) {
-    }
+    ) {}
 
     public function getInputDir(): string
     {

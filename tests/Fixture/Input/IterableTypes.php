@@ -58,4 +58,26 @@ final class IterableTypes
      * }
      */
     public array $testProperty7;
+
+    /**
+     * @var list{}
+     */
+    public array $testProperty8;
+
+    /**
+     * @var array{
+     *     string,
+     *     ...,
+     * }
+     */
+    public array $testProperty9;
+
+    /**
+     * @var array{
+     *     0: 1.0|string,
+     *     'foo': string,
+     *     ...,
+     * }
+     */
+    public array $testProperty10;
 }

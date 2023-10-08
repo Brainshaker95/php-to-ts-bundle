@@ -8,6 +8,4 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface as SymfonyNormalizerInterface;
 
 #[AutoconfigureTag(name: 'php_to_ts.serializer.normalizer')]
-interface NormalizerInterface extends SymfonyNormalizerInterface
-{
-}
+interface NormalizerInterface extends SymfonyNormalizerInterface {}

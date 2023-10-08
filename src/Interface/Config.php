@@ -32,7 +32,7 @@ interface Config
 {
     public const OUTPUT_DIR_KEY     = 'output_dir';
     public const OUTPUT_DIR_DEFAULT = 'assets/ts/types/php-to-ts';
-    public const OUTPUT_DIR_DESC    = 'Directory in which to dump generated TypeScript interfaces';
+    public const OUTPUT_DIR_DESC    = 'Directory in which to dump TypeScript interfaces';
 
     public const INPUT_DIR_KEY     = 'input_dir';
     public const INPUT_DIR_DEFAULT = 'src/Model';
@@ -49,7 +49,7 @@ interface Config
     public const TYPE_DEFINITION_TYPE_VALID_VALUES = [TypeDefinitionType::TYPE_INTERFACE, TypeDefinitionType::TYPE_TYPE_ALIAS];
 
     public const INDENT_KEY                = 'indent';
-    public const INDENT_DESC               = 'Indentation used for generated TypeScript interfaces';
+    public const INDENT_DESC               = 'Indentation used for TypeScript interfaces';
     public const INDENT_STYLE_KEY          = 'style';
     public const INDENT_STYLE_DEFAULT      = Indent::STYLE_SPACE;
     public const INDENT_STYLE_DESC         = 'Indent style used for TypeScript interfaces';
@@ -59,7 +59,7 @@ interface Config
     public const INDENT_COUNT_DESC         = 'Number of indent style characters per indent';
 
     public const QUOTES_KEY          = 'quotes';
-    public const QUOTES_DESC         = 'Quote style used for strings in generated TypeScript interfaces';
+    public const QUOTES_DESC         = 'Quote style used for strings in TypeScript interfaces';
     public const QUOTES_DEFAULT      = Quotes::STYLE_SINGLE;
     public const QUOTES_VALID_VALUES = [Quotes::STYLE_DOUBLE, Quotes::STYLE_SINGLE];
 
@@ -73,7 +73,7 @@ interface Config
 
     public const FILE_NAME_STRATEGY_KEY     = 'file_name_strategy';
     public const FILE_NAME_STRATEGY_DEFAULT = KebabCase::class;
-    public const FILE_NAME_STRATEGY_DESC    = 'Class name of file name strategies used for generated TypeScript files';
+    public const FILE_NAME_STRATEGY_DESC    = 'Class name of file name strategies used for TypeScript files';
 
     public function getInputDir(): ?string;
 
