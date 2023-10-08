@@ -1,7 +1,7 @@
 {
   "name": "brainshaker95/php-to-ts-bundle",
   "description": "Convert PHP model classes to TypeScript interfaces",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "keywords": [
     "bundle",
     "symfony",
