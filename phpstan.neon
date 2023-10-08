@@ -59,7 +59,7 @@ services:
     tags: [phpstan.rules.rule]
     arguments:
       minNameLength: 3
-      allowedShortNames: ['fd', 'i', 'io', 'j', 'x', 'y']
+      allowedShortNames: [fd, i, io, j, ts, x, y]
 
   -
     class: Symplify\PHPStanRules\Rules\ForbiddenNodeRule
