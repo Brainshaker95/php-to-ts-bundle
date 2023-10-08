@@ -17,6 +17,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
  *
  * @PhpCsFixerIgnore heredoc_indentation

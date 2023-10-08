@@ -12,6 +12,8 @@ use Symfony\Component\Finder\SplFileInfo;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Service\Filesystem
  *
  * @PhpCsFixerIgnore heredoc_indentation

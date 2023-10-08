@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Serializer\Serializer
  * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer
  */

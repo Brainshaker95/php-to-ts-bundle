@@ -28,6 +28,8 @@ use function sprintf;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode
  * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode
  * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode

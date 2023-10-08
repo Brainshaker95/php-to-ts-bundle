@@ -19,6 +19,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 /**
  * @internal
  *
+ * @small
+ *
  * @covers \Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent
  * @covers \Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent
  */
