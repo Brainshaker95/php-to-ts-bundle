@@ -22,7 +22,6 @@ use function is_numeric;
 use function is_object;
 use function is_scalar;
 use function is_string;
-use function iterator_to_array;
 use function sprintf;
 
 /**
@@ -294,15 +293,13 @@ abstract class Assert
         }
 
         if (is_iterable($value)) {
-            /**
-             * Call to function is_array() with array will always evaluate to true.
-             * This is not the case since $value could also be a Traversable.
-             *
-             * @phpstan-ignore-next-line
-             */
-            $value = !is_array($value) ? iterator_to_array($value) : $value;
+            $values = [];
 
-            return '[' . implode(', ', $value) . ']';
+            foreach ($value as $item) {
+                $values[] = self::mixedToString($item);
+            }
+
+            return '[' . implode(', ', $values) . ']';
         }
 
         return '';
