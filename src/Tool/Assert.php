@@ -29,6 +29,8 @@ use function sprintf;
  */
 abstract class Assert
 {
+    private function __construct() {}
+
     /**
      * @phpstan-assert non-empty-string $value
      *

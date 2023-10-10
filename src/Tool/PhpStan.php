@@ -65,6 +65,8 @@ abstract class PhpStan
 
     private static PhpDocParser $phpDocParser;
 
+    private function __construct() {}
+
     final public static function toNode(PHPStanNode $node): Node
     {
         $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;

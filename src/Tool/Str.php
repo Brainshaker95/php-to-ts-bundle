@@ -18,6 +18,8 @@ use function Symfony\Component\String\u;
  */
 abstract class Str
 {
+    private function __construct() {}
+
     final public static function toLower(string $string): string
     {
         return u($string)

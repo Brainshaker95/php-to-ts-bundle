@@ -131,6 +131,8 @@ abstract class Converter
         self::TYPE_NON_EMPTY_LIST,
     ];
 
+    private function __construct() {}
+
     final public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
     {
         $name = $node->name?->name;
