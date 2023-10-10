@@ -13,14 +13,10 @@ use function array_filter;
 use function array_map;
 use function count;
 use function filter_var;
-use function implode;
 use function in_array;
 use function is_a;
 use function is_array;
-use function is_iterable;
 use function is_numeric;
-use function is_object;
-use function is_scalar;
 use function is_string;
 use function sprintf;
 
@@ -40,8 +36,8 @@ abstract class Assert
     {
         if (!is_string($value) || !$value) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string.',
-                self::mixedToString($value),
+                'Expected value to be a non empty string. Given value was: %s',
+                Str::displayType($value),
             ));
         }
 
@@ -73,8 +69,8 @@ abstract class Assert
 
         if (filter_var($value, FILTER_VALIDATE_INT) === false || $intval < 0) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non negative integer.',
-                self::mixedToString($value),
+                'Expected value to be a non negative integer. Given value was: %s',
+                Str::displayType($value),
             ));
         }
 
@@ -105,8 +101,8 @@ abstract class Assert
         if (!is_array($value)
             || count(array_filter($value, static fn (mixed $val) => !is_string($val) || !$val))) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a non empty string array.',
-                self::mixedToString($value),
+                'Expected value to be a non empty string array. Given value was: %s',
+                Str::displayType($value),
             ));
         }
 
@@ -140,9 +136,9 @@ abstract class Assert
     {
         if (!is_string($value) || !in_array($value, $allowedStrings, true)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be contained in array "%s".',
-                self::mixedToString($value),
-                self::mixedToString($allowedStrings),
+                'Expected value to be contained in array %s. Given value was: %s',
+                Str::displayType($allowedStrings),
+                Str::displayType($value),
             ));
         }
 
@@ -204,8 +200,8 @@ abstract class Assert
             || !is_a($value, $class, true)
             || !(new ReflectionClass($value))->implementsInterface($class)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value "%s" to be a class string of a class that implements "%s".',
-                self::mixedToString($value),
+                'Expected value to be a class string of a class that implements %s. Given value was: %s',
+                Str::displayType($value),
                 $class,
             ));
         }
@@ -274,36 +270,9 @@ abstract class Assert
         if (!Attribute::existsOnClass($attribute, $class)) {
             throw new AssertionFailedException(sprintf(
                 'Expected instance of class "%s" to be tagged with attribute "%s".',
-                self::mixedToString($class),
+                Str::displayType($class),
                 $attribute,
             ));
         }
-    }
-
-    private static function mixedToString(mixed $value): string
-    {
-        if ($value === null) {
-            return '<null>';
-        }
-
-        if (is_scalar($value)) {
-            return (string) $value;
-        }
-
-        if (is_object($value)) {
-            return $value::class;
-        }
-
-        if (is_iterable($value)) {
-            $values = [];
-
-            foreach ($value as $item) {
-                $values[] = self::mixedToString($item);
-            }
-
-            return '[' . implode(', ', $values) . ']';
-        }
-
-        return '';
     }
 }
