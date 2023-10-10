@@ -40,10 +40,7 @@ final class IntersectionTypeNode implements Node
         Assert::instanceOf($node, PHPStanIntersectionTypeNode::class);
 
         return new self(
-            types: array_map(
-                [PhpStan::class, 'toNode'],
-                $node->types,
-            ),
+            types: array_map(PhpStan::toNode(...), $node->types),
         );
     }
 }

@@ -61,10 +61,7 @@ final class ArrayShapeNode implements Indentable, Node
     {
         Assert::instanceOf($node, PHPStanArrayShapeNode::class);
 
-        $items = array_map(
-            [ArrayShapeItemNode::class, 'fromPhpStan'],
-            $node->items,
-        );
+        $items = array_map(ArrayShapeItemNode::fromPhpStan(...), $node->items);
 
         if (!$node->sealed) {
             $hasKeys      = self::hasKeys($items);

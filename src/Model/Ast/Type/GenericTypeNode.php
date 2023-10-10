@@ -81,10 +81,7 @@ final class GenericTypeNode implements Node
 
         return new self(
             type: $type,
-            genericTypes: array_map(
-                [PhpStan::class, 'toNode'],
-                $node->genericTypes,
-            ),
+            genericTypes: array_map(PhpStan::toNode(...), $node->genericTypes),
         );
     }
 }
