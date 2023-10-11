@@ -8,6 +8,9 @@ use Brainshaker95\PhpToTsBundle\Exception\UnsupportedNodeException;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type;
+use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use PhpParser\Comment\Doc;
 use PHPStan\PhpDocParser\Ast\ConstExpr as PHPStanConstExpr;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -27,9 +30,12 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 
 use function array_filter;
+use function array_is_list;
 use function array_map;
 use function current;
 use function implode;
+use function is_array;
+use function is_iterable;
 use function sprintf;
 
 /**
@@ -157,5 +163,48 @@ abstract class PhpStan
             static fn (PhpDocTextNode $textNode) => $textNode->text,
             $textNodes,
         ));
+    }
+
+    final public static function phpValueToTsType(
+        mixed $value,
+        Indent $indent = new Indent(),
+        Quotes $quotes = new Quotes(),
+    ): string {
+        if (!is_iterable($value)) {
+            return self::phpValueToNode($value)->toString();
+        }
+
+        $itemNodes = [];
+        $hasKeys   = is_array($value) ? !array_is_list($value) : false;
+
+        foreach ($value as $itemKey => $itemValue) {
+            $itemNodes[] = new Type\ArrayShapeItemNode(
+                valueNode: self::phpValueToNode($itemValue),
+                keyNode: $hasKeys ? new ConstExpr\ConstExprStringNode($itemKey) : null,
+            );
+        }
+
+        $shapeNode = new Type\ArrayShapeNode($itemNodes);
+
+        Converter::applyIndentAndQuotes([$shapeNode], $indent, $quotes);
+
+        return $shapeNode->toString();
+    }
+
+    final public static function phpValueToNode(mixed $value): Node
+    {
+        $docComment = new Doc('/** @var ' . Str::displayType($value) . ' */');
+        $docNode    = self::getDocNode($docComment);
+        $varNode    = self::getVarNode($docNode);
+        $node       = new Type\IdentifierTypeNode(TsProperty::TYPE_UNKNOWN);
+
+        if ($varNode) {
+            try {
+                $node = self::toNode($varNode->type);
+            } catch (UnsupportedNodeException) {
+            }
+        }
+
+        return $node;
     }
 }

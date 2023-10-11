@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Exception\InvalidPropertyException;
 use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Interface\Quotable;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
@@ -239,7 +240,11 @@ abstract class Converter
             if ($node instanceof Indentable) {
                 $depthOffset = $node instanceof ArrayShapeNode ? -1 : 0;
 
-                $node->setIndent($indent->withTabPresses($depth + $depthOffset));
+                if ($node instanceof ConstFetchNode) {
+                    $node->setIndent($indent);
+                } else {
+                    $node->setIndent($indent->withTabPresses($depth + $depthOffset));
+                }
             }
 
             if ($node instanceof ArrayShapeItemNode) {
