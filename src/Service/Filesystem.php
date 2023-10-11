@@ -40,7 +40,7 @@ final class Filesystem extends SymfonyFilesystem
      */
     public function getSplFileInfoArray(array $files): array
     {
-        return array_map([$this, 'getSplFileInfo'], $files);
+        return array_map($this->getSplFileInfo(...), $files);
     }
 
     /**

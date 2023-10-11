@@ -40,10 +40,7 @@ final class UnionTypeNode implements Node
         Assert::instanceOf($node, PHPStanUnionTypeNode::class);
 
         return new self(
-            types: array_map(
-                [PhpStan::class, 'toNode'],
-                $node->types,
-            ),
+            types: array_map(PhpStan::toNode(...), $node->types),
         );
     }
 }

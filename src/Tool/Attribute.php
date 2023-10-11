@@ -16,6 +16,8 @@ use function property_exists;
  */
 abstract class Attribute
 {
+    private function __construct() {}
+
     /**
      * @param object|class-string $class
      */

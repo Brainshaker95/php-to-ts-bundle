@@ -7,8 +7,16 @@ namespace Brainshaker95\PhpToTsBundle\Tool;
 use Symfony\Component\String\UnicodeString;
 
 use function array_filter;
+use function array_is_list;
 use function array_map;
 use function count;
+use function implode;
+use function is_array;
+use function is_bool;
+use function is_iterable;
+use function is_object;
+use function is_scalar;
+use function is_string;
 use function range;
 use function rtrim;
 use function Symfony\Component\String\u;
@@ -18,6 +26,8 @@ use function Symfony\Component\String\u;
  */
 abstract class Str
 {
+    private function __construct() {}
+
     final public static function toLower(string $string): string
     {
         return u($string)
@@ -109,5 +119,45 @@ abstract class Str
             $lines,
             range(0, $lineCount - 1),
         );
+    }
+
+    final public static function displayType(mixed $value): string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        if (is_string($value)) {
+            return '"' . $value . '"';
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        if (is_iterable($value)) {
+            $hasKeys = is_array($value) ? !array_is_list($value) : false;
+            $values  = [];
+
+            foreach ($value as $key => $item) {
+                if ($hasKeys) {
+                    $values[] = $key . ': ' . self::displayType($item);
+                } else {
+                    $values[] = self::displayType($item);
+                }
+            }
+
+            return 'array{' . implode(', ', $values) . '}';
+        }
+
+        if (is_object($value)) {
+            return $value::class;
+        }
+
+        return 'mixed';
     }
 }
