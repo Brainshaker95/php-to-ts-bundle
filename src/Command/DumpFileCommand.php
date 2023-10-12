@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Command;
 
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -41,7 +42,7 @@ final class DumpFileCommand extends DumpCommand
 
         $this->io->progressStart();
 
-        $this->dumper->dumpFile($inputFile, $config, function (string $path, TsInterface $tsInterface): void {
+        $this->dumper->dumpFile($inputFile, $config, function (string $path, TsInterface|TsEnum $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

@@ -6,6 +6,7 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasDumper;
@@ -127,7 +128,7 @@ abstract class DumpCommand extends Command
         ]));
     }
 
-    protected function fileSuccess(string $path, TsInterface $tsInterface): void
+    protected function fileSuccess(string $path, TsInterface|TsEnum $tsInterface): void
     {
         $this->io->text(sprintf(
             '<fg=#0b0>%s</> -> <fg=#bb0>%s</>',
