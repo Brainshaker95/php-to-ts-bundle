@@ -248,7 +248,7 @@ bin/console phptots:dump:file <input-file> [options]
 
 ### 🤝 Events
 
-Each time a TsInterface or TsProperty instance is generated during the dumping process an [event](src/Event) is dispatched.  
+Each time a TsInterface, TsEnum or TsProperty instance is generated during the dumping process an [event](src/Event) is dispatched.  
 You can subscribe to these events if it is necessary to modify the output right before dumping.
 
 Example implementation:
@@ -260,8 +260,8 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Event\TsEnumGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
-use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
@@ -270,6 +270,7 @@ final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
     {
         return [
             TsInterfaceGeneratedEvent::class => 'onGeneratedTsInterface',
+            TsEnumGeneratedEvent::class      => 'onGeneratedTsEnum',
             TsPropertyGeneratedEvent::class  => 'onGeneratedTsProperty',
         ];
     }
@@ -278,6 +279,14 @@ final class TsInterfaceGeneratedSubscriber implements EventSubscriberInterface
     {
         $tsInterface = $event->tsInterface;
         $classNode   = $event->classNode;
+
+        // ...
+    }
+
+    public function onGeneratedTsEnum(TsEnumGeneratedEvent $event): void
+    {
+        $tsEnum   = $event->tsEnum;
+        $enumNode = $event->enumNode;
 
         // ...
     }
