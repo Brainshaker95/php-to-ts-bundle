@@ -124,7 +124,7 @@ abstract class Str
     final public static function displayType(mixed $value): string
     {
         if ($value === null) {
-            return 'null';
+            return Converter::TYPE_NULL;
         }
 
         if (is_string($value)) {
@@ -132,7 +132,7 @@ abstract class Str
         }
 
         if (is_bool($value)) {
-            return $value ? 'true' : 'false';
+            return $value ? Converter::TYPE_TRUE : Converter::TYPE_FALSE;
         }
 
         if (is_scalar($value)) {
@@ -151,13 +151,13 @@ abstract class Str
                 }
             }
 
-            return 'array{' . implode(', ', $values) . '}';
+            return Converter::TYPE_ARRAY . '{' . implode(', ', $values) . '}';
         }
 
         if (is_object($value)) {
             return $value::class;
         }
 
-        return 'mixed';
+        return Converter::TYPE_MIXED;
     }
 }

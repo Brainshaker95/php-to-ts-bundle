@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -39,7 +40,7 @@ final class DumpDirCommand extends DumpCommand
 
         $this->io->progressStart();
 
-        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface $tsInterface): void {
+        $this->dumper->dumpDir($inputDir, $config, function (string $path, TsInterface|TsEnum $tsInterface): void {
             if ($this->isVerbose) {
                 $this->fileSuccess($path, $tsInterface);
             }

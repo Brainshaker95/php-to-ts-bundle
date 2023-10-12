@@ -176,7 +176,7 @@ abstract class Assert
     {
         if (!$value instanceof $class) {
             throw new AssertionFailedException(sprintf(
-                'Expected object to be an instance of "%s", "%s" given.',
+                'Expected object to be an instance of "%s". Given instance was of class "%s".',
                 $class,
                 $value::class,
             ));

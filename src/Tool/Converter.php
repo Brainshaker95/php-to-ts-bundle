@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Tool;
 
+use Brainshaker95\PhpToTsBundle\Exception\InvalidEnumException;
 use Brainshaker95\PhpToTsBundle\Exception\InvalidPropertyException;
 use Brainshaker95\PhpToTsBundle\Interface\Indentable;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
@@ -20,6 +21,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
@@ -31,7 +33,11 @@ use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
+use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
+use PhpParser\Node\Stmt\EnumCase;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
 use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
@@ -164,10 +170,49 @@ abstract class Converter
     }
 
     /**
+     * @throws InvalidEnumException
+     */
+    final public static function toEnum(Enum_ $node): TsEnum
+    {
+        $name = $node->name?->name;
+
+        Assert::nonEmptyStringNonNullable($name);
+
+        $scalarType = in_array($node->scalarType?->name, [self::TYPE_INT, self::TYPE_STRING], true)
+            ? $node->scalarType->name
+            : null;
+
+        if (!$scalarType) {
+            throw new InvalidEnumException(sprintf(
+                'Invalid enum "%s". Only backed enums are supported.',
+                $name,
+            ));
+        }
+
+        $docComment     = $node->getDocComment();
+        $description    = null;
+        $deprecatedNode = null;
+
+        if ($docComment) {
+            $docNode        = PhpStan::getDocNode($docComment);
+            $textNodes      = PhpStan::getTextNodes($docNode);
+            $description    = PhpStan::textNodesToString($textNodes);
+            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+        }
+
+        return new TsEnum(
+            name: $name,
+            scalarType: $scalarType,
+            description: $description ?: null,
+            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
+        );
+    }
+
+    /**
      * @throws InvalidPropertyException
      */
     final public static function toProperty(
-        Param|Property $property,
+        Param|Property|EnumCase $property,
         bool $isReadonly,
         ?Doc $docComment,
     ): TsProperty {
@@ -216,6 +261,7 @@ abstract class Converter
             type: $data['rootNode'] ?? TsProperty::TYPE_UNKNOWN,
             isReadonly: $isReadonly,
             isConstructorProperty: $property instanceof Param,
+            isEnumProperty: $property instanceof EnumCase,
             classIdentifiers: $classIdentifiers,
             generics: $generics,
             description: $data['description'] ?? null,
@@ -338,7 +384,7 @@ abstract class Converter
      */
     private static function getDataFromDocComment(
         Doc $docComment,
-        Param|Property $property,
+        Param|Property|EnumCase $property,
         string $name,
         bool $forceVarNode = false,
     ): array {
@@ -367,11 +413,15 @@ abstract class Converter
     /**
      * @throws InvalidPropertyException
      */
-    private static function getNameFromProperty(Param|Property $property): string
+    private static function getNameFromProperty(Param|Property|EnumCase $property): string
     {
-        $name = $property instanceof Param
-            ? ($property->var instanceof Variable ? $property->var->name : null)
-            : $property->props[0]->name->name;
+        if ($property instanceof EnumCase) {
+            $name = $property->name->name;
+        } else {
+            $name = $property instanceof Param
+                ? ($property->var instanceof Variable ? $property->var->name : null)
+                : $property->props[0]->name->name;
+        }
 
         if (!is_string($name)) {
             throw new InvalidPropertyException(sprintf(
@@ -383,8 +433,26 @@ abstract class Converter
         return $name;
     }
 
-    private static function getTypeFromProperty(Param|Property $property): string
+    /**
+     * @throws InvalidEnumException
+     */
+    private static function getTypeFromProperty(Param|Property|EnumCase $property): string
     {
+        if ($property instanceof EnumCase) {
+            if ($property->expr instanceof LNumber) {
+                return (string) $property->expr->value;
+            }
+
+            if ($property->expr instanceof String_) {
+                return '"' . $property->expr->value . '"';
+            }
+
+            throw new InvalidEnumException(sprintf(
+                'Invalid enum case "%s". Only integers and strings are supported.',
+                $property->name->name,
+            ));
+        }
+
         if ($property->type && !$property->type instanceof ComplexType) {
             $type = self::getTypeName($property->type);
         } elseif ($property->type instanceof NullableType) {

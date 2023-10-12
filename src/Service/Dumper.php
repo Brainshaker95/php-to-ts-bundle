@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
@@ -40,7 +41,7 @@ final class Dumper
      *
      * @param Config|string|null $configOrDir directory to dump or config used for dumping
      * @param ?Config $config config used for dumping
-     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface|TsEnum $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws FileNotFoundException
      */
@@ -65,7 +66,7 @@ final class Dumper
      *
      * @param array<SplFileInfo|string> $files array of files to dump
      * @param ?Config $config config used for dumping
-     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface|TsEnum $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws FileNotFoundException
      */
@@ -89,7 +90,7 @@ final class Dumper
      *
      * @param SplFileInfo|string $file file to dump
      * @param ?Config $config config used for dumping
-     * @param ?callable(string $path, TsInterface $tsInterface): void $successCallback callback to run for dumped file
+     * @param ?callable(string $path, TsInterface|TsEnum $tsInterface): void $successCallback callback to run for dumped file
      *
      * @throws FileNotFoundException
      */
@@ -124,7 +125,7 @@ final class Dumper
      *
      * @param SplFileInfo|string $file file to extract TsInterface instances from
      *
-     * @return TsInterface[]
+     * @return (TsInterface|TsEnum)[]
      *
      * @throws FileNotFoundException
      */
@@ -145,6 +146,9 @@ final class Dumper
         $traverser->addVisitor($this->visitor);
         $traverser->traverse($statements);
 
-        return $this->visitor->getTsInterfaces();
+        return [
+            ...$this->visitor->getTsInterfaces(),
+            ...$this->visitor->getTsEnums(),
+        ];
     }
 }

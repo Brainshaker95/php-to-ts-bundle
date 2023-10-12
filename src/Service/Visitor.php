@@ -6,9 +6,11 @@ namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
+use Brainshaker95\PhpToTsBundle\Event\TsEnumGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
@@ -17,7 +19,10 @@ use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Enum_;
+use PhpParser\Node\Stmt\EnumCase;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\NodeVisitor\NameResolver;
 
@@ -43,10 +48,17 @@ final class Visitor extends NameResolver
 
     private ?TsInterface $currentTsInterface;
 
+    private ?TsEnum $currentTsEnum;
+
     /**
      * @var TsInterface[]
      */
     private array $tsInterfaces;
+
+    /**
+     * @var TsEnum[]
+     */
+    private array $tsEnums;
 
     /**
      * @param Node[] $nodes
@@ -60,7 +72,9 @@ final class Visitor extends NameResolver
         $this->isTypeScriptable   = false;
         $this->currentClassName   = null;
         $this->currentTsInterface = null;
+        $this->currentTsEnum      = null;
         $this->tsInterfaces       = [];
+        $this->tsEnums            = [];
 
         return null;
     }
@@ -72,13 +86,19 @@ final class Visitor extends NameResolver
     {
         parent::enterNode($node);
 
-        if ($node instanceof Class_ && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
-            $this->isTypeScriptable   = true;
-            $this->currentClassName   = self::getFqcn($node);
-            $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
+        if (($node instanceof Class_ || $node instanceof Enum_)
+            && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
+            $this->isTypeScriptable = true;
+            $this->currentClassName = self::getFqcn($node);
+
+            if ($node instanceof Class_) {
+                $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
+            } else {
+                $this->currentTsEnum = Converter::toEnum($node);
+            }
         }
 
-        if (!$this->currentTsInterface) {
+        if (!$this->currentTsInterface && !$this->currentTsEnum) {
             return null;
         }
 
@@ -87,7 +107,7 @@ final class Visitor extends NameResolver
         if ($node instanceof Property && $node->isPublic()) {
             $this->addTsProperty(
                 property: $node,
-                isReadonly: $this->currentTsInterface->isReadonly ? true : $node->isReadonly(),
+                isReadonly: $this->currentTsInterface?->isReadonly ? true : $node->isReadonly(),
                 docComment: $docComment,
             );
 
@@ -108,11 +128,18 @@ final class Visitor extends NameResolver
             array_map(
                 fn (Param $param, bool $isReadonly) => $this->addTsProperty(
                     property: $param,
-                    isReadonly: $this->currentTsInterface->isReadonly ? true : $isReadonly,
+                    isReadonly: $this->currentTsInterface?->isReadonly ? true : $isReadonly,
                     docComment: $docComment,
                 ),
                 $publicParams,
                 $readonlyStates,
+            );
+        }
+
+        if ($node instanceof EnumCase) {
+            $this->addTsProperty(
+                property: $node,
+                docComment: $docComment,
             );
         }
 
@@ -126,13 +153,8 @@ final class Visitor extends NameResolver
     {
         parent::leaveNode($node);
 
-        if (!$node instanceof Class_) {
-            return null;
-        }
-
-        $this->isTypeScriptable = false;
-
-        if ($this->currentTsInterface) {
+        if ($node instanceof Class_ && $this->currentTsInterface) {
+            $this->isTypeScriptable           = false;
             $this->currentTsInterface->config = $this->config;
 
             $event = $this->eventDispatcher->dispatch(new TsInterfaceGeneratedEvent(
@@ -142,6 +164,20 @@ final class Visitor extends NameResolver
 
             if ($event->tsInterface) {
                 $this->tsInterfaces[] = $event->tsInterface;
+            }
+        }
+
+        if ($node instanceof Enum_ && $this->currentTsEnum) {
+            $this->isTypeScriptable      = false;
+            $this->currentTsEnum->config = $this->config;
+
+            $event = $this->eventDispatcher->dispatch(new TsEnumGeneratedEvent(
+                tsEnum: $this->currentTsEnum,
+                enumNode: $node,
+            ));
+
+            if ($event->tsEnum) {
+                $this->tsEnums[] = $event->tsEnum;
             }
         }
 
@@ -158,10 +194,20 @@ final class Visitor extends NameResolver
         return $this->tsInterfaces;
     }
 
+    /**
+     * Gets all created TsEnum instances aggregated during traversal.
+     *
+     * @return TsEnum[]
+     */
+    public function getTsEnums(): array
+    {
+        return $this->tsEnums;
+    }
+
     private function addTsProperty(
-        Param|Property $property,
-        bool $isReadonly,
-        ?Doc $docComment,
+        Param|Property|EnumCase $property,
+        bool $isReadonly = false,
+        ?Doc $docComment = null,
     ): void {
         $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
 
@@ -178,11 +224,15 @@ final class Visitor extends NameResolver
         ));
 
         if ($event->tsProperty) {
-            $this->currentTsInterface?->addProperty($event->tsProperty);
+            if ($property instanceof EnumCase) {
+                $this->currentTsEnum?->addProperty($event->tsProperty);
+            } else {
+                $this->currentTsInterface?->addProperty($event->tsProperty);
+            }
         }
     }
 
-    private static function isTypeScriptable(Class_ $node): bool
+    private static function isTypeScriptable(ClassLike $node): bool
     {
         $fcqn = self::getFqcn($node);
 
@@ -194,7 +244,7 @@ final class Visitor extends NameResolver
     /**
      * @return ?class-string
      */
-    private static function getFqcn(Class_ $node): ?string
+    private static function getFqcn(ClassLike $node): ?string
     {
         /**
          * @var ?class-string

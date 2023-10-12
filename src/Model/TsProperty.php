@@ -37,6 +37,7 @@ final class TsProperty implements Stringable
         public string|Node $type,
         public readonly bool $isReadonly = false,
         public readonly bool $isConstructorProperty = false,
+        public readonly bool $isEnumProperty = false,
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
         public readonly ?string $description = null,
@@ -67,7 +68,8 @@ final class TsProperty implements Stringable
             ->append($indent->toString())
             ->append($this->isReadonly ? 'readonly ' : '')
             ->append($this->name . ': ')
-            ->append((string) $this->type . ';')
+            ->append((string) $this->type)
+            ->append($this->isEnumProperty ? ',' : ';')
             ->toString()
         ;
     }
