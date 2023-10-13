@@ -1,7 +1,7 @@
 {
   "name": "brainshaker95/php-to-ts-bundle",
   "description": "Convert PHP model classes to TypeScript interfaces",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "keywords": [
     "bundle",
     "symfony",
@@ -16,7 +16,7 @@
     }
   ],
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "3.34.1",
+    "friendsofphp/php-cs-fixer": "3.35.1",
     "phpstan/phpstan": "1.10.38",
     "phpstan/phpstan-strict-rules": "1.5.1",
     "symplify/phpstan-rules": "12.3.1",

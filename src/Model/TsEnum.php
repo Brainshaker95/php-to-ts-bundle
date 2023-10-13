@@ -61,7 +61,7 @@ final class TsEnum implements Stringable
         }
 
         $string = $string
-            ->append('const ')
+            ->append('export const ')
             ->append($upperSnakeName)
             ->append(' = <const>{')
             ->append(PHP_EOL)
