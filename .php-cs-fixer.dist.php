@@ -37,6 +37,7 @@ return (new PhpCsFixer\Config())
         'nullable_type_declaration_for_default_null_value' => true,
         'ordered_imports'                                  => ['imports_order' => ['class', 'const', 'function'], 'sort_algorithm' => 'alpha'],
         'ordered_interfaces'                               => ['direction' => 'ascend', 'order' => 'alpha'],
+        'ordered_types'                                    => ['null_adjustment' => 'always_last', 'sort_algorithm' => 'none'],
         'phpdoc_align'                                     => ['align' => 'left'],
         'phpdoc_line_span'                                 => true,
         'phpdoc_order_by_value'                            => ['annotations' => ['author', 'covers', 'coversNothing', 'dataProvider', 'depends', 'group', 'internal', 'method', 'mixin', 'property', 'property-read', 'property-write', 'requires', 'throws', 'uses']],
