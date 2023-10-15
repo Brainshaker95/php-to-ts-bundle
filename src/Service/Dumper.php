@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
@@ -106,7 +107,8 @@ final class Dumper
             return;
         }
 
-        $pathPrefix = $config->getOutputDir() . DIRECTORY_SEPARATOR;
+        $pathPrefix       = $config->getOutputDir() . DIRECTORY_SEPARATOR;
+        $doRequireValueOf = false;
 
         foreach ($tsInterfaces as $tsInterface) {
             $fileName = $tsInterface->getFileName();
@@ -114,10 +116,34 @@ final class Dumper
 
             $this->filesystem->dumpFile($path, $tsInterface->toString() . PHP_EOL);
 
+            if (!$doRequireValueOf) {
+                foreach ($tsInterface->properties as $property) {
+                    if ($property->doesRequireValueOf) {
+                        $doRequireValueOf = true;
+
+                        break;
+                    }
+                }
+            }
+
             if ($successCallback) {
                 $successCallback($path, $tsInterface);
             }
         }
+
+        if (!$doRequireValueOf) {
+            return;
+        }
+
+        $valueOfPath = $pathPrefix . (new ($config->getFileNameStrategy())())->getName('valueOf') . '.ts';
+        $isModule    = $config->getFileType() === FileType::TYPE_MODULE;
+
+        $this->filesystem->dumpFile(
+            $valueOfPath,
+            ($isModule ? 'export' : 'declare')
+                . ' type ValueOf<T> = T[keyof T];'
+                . PHP_EOL,
+        );
     }
 
     /**
