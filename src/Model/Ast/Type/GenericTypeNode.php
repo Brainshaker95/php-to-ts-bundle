@@ -54,7 +54,7 @@ final class GenericTypeNode implements Node
                     $genericTypeCount,
                 ));
             }
-        } elseif (array_key_exists($type, array_flip(Converter::NON_ITERABLE_TYPE_MAP))) {
+        } elseif (array_key_exists($type, array_flip(Converter::SIMPLE_TYPES))) {
             return $type;
         }
 

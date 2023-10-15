@@ -97,7 +97,7 @@ abstract class Converter
     public const TYPE_TRUTHY_STRING    = 'truthy-string';
     public const TYPE_VALUE_OF         = 'value-of';
 
-    public const NON_ITERABLE_TYPE_MAP = [
+    public const SIMPLE_TYPES = [
         self::TYPE_ARRAY_KEY        => TsProperty::TYPE_STRING,
         self::TYPE_BOOL             => TsProperty::TYPE_BOOLEAN,
         self::TYPE_BOOLEAN          => TsProperty::TYPE_BOOLEAN,
