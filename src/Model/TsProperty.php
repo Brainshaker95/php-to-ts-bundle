@@ -40,6 +40,7 @@ final class TsProperty implements Stringable
         public readonly bool $isEnumProperty = false,
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
+        public readonly bool $doesRequireValueOf = false,
         public readonly ?string $description = null,
         public bool|string|null $deprecation = null,
         public ?Config $config = null,

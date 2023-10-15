@@ -167,16 +167,25 @@ final class TsInterface implements Stringable
      */
     private function getImports(): array
     {
-        $imports      = $this->parentName ? [$this->parentName] : [];
-        $genericNames = TsGeneric::getNames($this->generics);
+        $imports          = $this->parentName ? [$this->parentName] : [];
+        $genericNames     = TsGeneric::getNames($this->generics);
+        $doRequireValueOf = false;
 
         foreach ($this->properties as $property) {
+            if (!$doRequireValueOf && $property->doesRequireValueOf) {
+                $doRequireValueOf = true;
+            }
+
             foreach ($property->classIdentifiers as $classIdentifier) {
                 if (!in_array($classIdentifier, $imports, true)
                     && !in_array($classIdentifier, $genericNames, true)) {
                     $imports[] = $classIdentifier;
                 }
             }
+        }
+
+        if ($doRequireValueOf) {
+            $imports[] = 'ValueOf';
         }
 
         natcasesort($imports);

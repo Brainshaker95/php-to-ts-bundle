@@ -76,7 +76,7 @@ final class TsEnum implements Stringable
 
         return $string
             ->append('} satisfies Record<string, ')
-            ->append(Converter::NON_ITERABLE_TYPE_MAP[$this->scalarType])
+            ->append(Converter::SIMPLE_TYPES[$this->scalarType])
             ->append('>;')
             ->append(PHP_EOL)
             ->append(PHP_EOL)

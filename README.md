@@ -345,6 +345,7 @@ final class MyService
 * Multiline `@deprecated` and `@template` descriptions cannot contain empty lines between paragraphs. Only a single new line can be used as a separator. All other lines will be considered as part of the property description.
 * No support for nested readonly types for array shapes. Only the array property itself will be marked as readonly, which would technically allow nested properties to be modified.
 * No support for array shapes where some items have keys and some do not.
+* No support for `value-of` on backed enums.
 * No support for automatically removing generated TypeScript files when corresponding TypeScriptable is deleted. (See: https://github.com/Brainshaker95/php-to-ts-bundle/issues/27)
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
@@ -352,9 +353,9 @@ final class MyService
 ## 🔨 TODOs / Roadmap
 
 * Document example TypeScriptable class
+* Document example TypeScriptable enum
 * Document usage of Hidden attribute
-* Document TsController usage
-* Fix conversion of generic types like key-of or value-of
+* Document usage of TsController
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>
 

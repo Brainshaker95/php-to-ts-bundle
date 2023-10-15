@@ -49,8 +49,8 @@ final class IdentifierTypeNode implements Node
         $name = $node->name;
         $type = self::TYPE_DEFAULT;
 
-        if (array_key_exists($name, Converter::NON_ITERABLE_TYPE_MAP)) {
-            $name = Converter::NON_ITERABLE_TYPE_MAP[$name];
+        if (array_key_exists($name, Converter::SIMPLE_TYPES)) {
+            $name = Converter::SIMPLE_TYPES[$name];
         } elseif (in_array($name, Converter::ITERABLE_TYPES, true)) {
             $name = TsProperty::TYPE_UNKNOWN . '[]';
         } elseif ($name === '\stdClass' || $name === 'stdClass') {

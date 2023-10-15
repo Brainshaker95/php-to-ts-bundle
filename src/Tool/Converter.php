@@ -97,7 +97,7 @@ abstract class Converter
     public const TYPE_TRUTHY_STRING    = 'truthy-string';
     public const TYPE_VALUE_OF         = 'value-of';
 
-    public const NON_ITERABLE_TYPE_MAP = [
+    public const SIMPLE_TYPES = [
         self::TYPE_ARRAY_KEY        => TsProperty::TYPE_STRING,
         self::TYPE_BOOL             => TsProperty::TYPE_BOOLEAN,
         self::TYPE_BOOLEAN          => TsProperty::TYPE_BOOLEAN,
@@ -110,7 +110,6 @@ abstract class Converter
         self::TYPE_INT              => TsProperty::TYPE_NUMBER,
         self::TYPE_INT_MASK         => TsProperty::TYPE_NUMBER,
         self::TYPE_INTEGER          => TsProperty::TYPE_NUMBER,
-        self::TYPE_KEY_OF           => TsProperty::TYPE_STRING,
         self::TYPE_MIXED            => TsProperty::TYPE_UNKNOWN,
         self::TYPE_NULL             => TsProperty::TYPE_NULL,
         self::TYPE_LITERAL_STRING   => TsProperty::TYPE_STRING,
@@ -127,7 +126,6 @@ abstract class Converter
         self::TYPE_THIS             => TsProperty::TYPE_THIS,
         self::TYPE_TRUE             => TsProperty::TYPE_TRUE,
         self::TYPE_TRUTHY_STRING    => TsProperty::TYPE_STRING,
-        self::TYPE_VALUE_OF         => TsProperty::TYPE_STRING,
     ];
 
     public const ITERABLE_TYPES = [
@@ -256,6 +254,10 @@ abstract class Converter
             static fn (string $classIdentifier) => !in_array($classIdentifier, $genericNames, true),
         );
 
+        $doesRequireValueOf = $data['rootNode']
+            ? self::getValueOfNodes([$data['rootNode']]) !== []
+            : false;
+
         return new TsProperty(
             name: $name,
             type: $data['rootNode'] ?? TsProperty::TYPE_UNKNOWN,
@@ -264,6 +266,7 @@ abstract class Converter
             isEnumProperty: $property instanceof EnumCase,
             classIdentifiers: $classIdentifiers,
             generics: $generics,
+            doesRequireValueOf: $doesRequireValueOf,
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
         );
@@ -513,6 +516,29 @@ abstract class Converter
         }
 
         return $identifiers;
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param GenericTypeNode[] $valueOfNodes
+     *
+     * @return GenericTypeNode[]
+     */
+    private static function getValueOfNodes(array $nodes, array $valueOfNodes = []): array
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof GenericTypeNode && $node->type->name === self::TYPE_VALUE_OF) {
+                $valueOfNodes[] = $node;
+            }
+
+            $nextLevelNodes = self::getNextLevelNodes($node);
+
+            if (count($nextLevelNodes)) {
+                $valueOfNodes = self::getValueOfNodes($nextLevelNodes, $valueOfNodes);
+            }
+        }
+
+        return $valueOfNodes;
     }
 
     /**

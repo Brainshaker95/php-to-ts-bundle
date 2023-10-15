@@ -17,6 +17,7 @@ use function array_flip;
 use function array_key_exists;
 use function array_map;
 use function count;
+use function current;
 use function implode;
 use function sprintf;
 
@@ -42,20 +43,45 @@ final class GenericTypeNode implements Node
     {
         $type = $this->type->name;
 
+        if (array_key_exists($type, array_flip(Converter::SIMPLE_TYPES))) {
+            return $type;
+        }
+
+        $genericTypeCount = count($this->genericTypes);
+
+        if ($type === Converter::TYPE_KEY_OF) {
+            if ($genericTypeCount !== 1) {
+                throw new UnsupportedNodeException(sprintf(
+                    'Expected generic key-of node to contain 1 sub type, %d given.',
+                    $genericTypeCount,
+                ));
+            }
+
+            return 'keyof ' . current($this->genericTypes);
+        }
+
+        if ($type === Converter::TYPE_VALUE_OF) {
+            if ($genericTypeCount !== 1) {
+                throw new UnsupportedNodeException(sprintf(
+                    'Expected generic value-of node to contain 1 sub type, %d given.',
+                    $genericTypeCount,
+                ));
+            }
+
+            return 'ValueOf<' . current($this->genericTypes) . '>';
+        }
+
         if ($type === TsProperty::TYPE_UNKNOWN . '[]') {
-            $genericTypeCount = count($this->genericTypes);
-            $type             = 'Array';
+            $type = 'Array';
 
             if ($genericTypeCount === 2) {
                 $type = 'Record';
             } elseif ($genericTypeCount !== 1) {
                 throw new UnsupportedNodeException(sprintf(
-                    'Expected generic array node to contain 1 or 2 sub types, %s given.',
+                    'Expected generic array node to contain 1 or 2 sub types, %d given.',
                     $genericTypeCount,
                 ));
             }
-        } elseif (array_key_exists($type, array_flip(Converter::NON_ITERABLE_TYPE_MAP))) {
-            return $type;
         }
 
         return $type . '<' . implode(', ', $this->genericTypes) . '>';
