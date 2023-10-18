@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -26,7 +27,7 @@ final class NullableTypeNode implements Node
 
     public function toString(): string
     {
-        return '(' . $this->type . ' | null)';
+        return '(' . $this->type . ' | ' . TsProperty::TYPE_NULL . ')';
     }
 
     public static function fromPhpStan(PHPStanNode $node): self

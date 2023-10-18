@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 
 use Brainshaker95\PhpToTsBundle\Interface\Node;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprTrueNode as PHPStanConstExprTrueNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
@@ -21,7 +22,7 @@ final class ConstExprTrueNode implements Node
 
     public function toString(): string
     {
-        return 'true';
+        return TsProperty::TYPE_TRUE;
     }
 
     public static function fromPhpStan(PHPStanNode $node): self
