@@ -59,7 +59,7 @@ use function sprintf;
 /**
  * @internal
  */
-abstract class Converter
+final class Converter
 {
     public const TYPE_ARRAY            = 'array';
     public const TYPE_ARRAY_KEY        = 'array-key';
@@ -138,7 +138,7 @@ abstract class Converter
 
     private function __construct() {}
 
-    final public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
+    public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
     {
         $name = $node->name?->name;
 
@@ -170,7 +170,7 @@ abstract class Converter
     /**
      * @throws InvalidEnumException
      */
-    final public static function toEnum(Enum_ $node): TsEnum
+    public static function toEnum(Enum_ $node): TsEnum
     {
         $name = $node->name?->name;
 
@@ -209,7 +209,7 @@ abstract class Converter
     /**
      * @throws InvalidPropertyException
      */
-    final public static function toProperty(
+    public static function toProperty(
         Param|Property|EnumCase $property,
         bool $isReadonly,
         ?Doc $docComment,
@@ -275,7 +275,7 @@ abstract class Converter
     /**
      * @param Node[] $nodes
      */
-    final public static function applyIndentAndQuotes(
+    public static function applyIndentAndQuotes(
         array $nodes,
         Indent $indent,
         Quotes $quotes,
@@ -326,7 +326,7 @@ abstract class Converter
     /**
      * @return Node[]
      */
-    final public static function getNextLevelNodes(Node $node): array
+    public static function getNextLevelNodes(Node $node): array
     {
         return match (true) {
             default                                => [],
@@ -343,7 +343,7 @@ abstract class Converter
         };
     }
 
-    final public static function getClassIdentifierNode(Node $node): ?IdentifierTypeNode
+    public static function getClassIdentifierNode(Node $node): ?IdentifierTypeNode
     {
         return match (true) {
             default                                                                                  => null,

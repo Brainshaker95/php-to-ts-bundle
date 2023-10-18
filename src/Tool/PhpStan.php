@@ -41,12 +41,12 @@ use function sprintf;
 /**
  * @internal
  */
-abstract class PhpStan
+final class PhpStan
 {
     /**
      * @var array<class-string<PHPStanNode>,class-string<Node>>
      */
-    public const NODE_CLASS_MAP = [
+    private const NODE_CLASS_MAP = [
         PHPStanConstExpr\ConstExprFalseNode::class   => ConstExpr\ConstExprFalseNode::class,
         PHPStanConstExpr\ConstExprFloatNode::class   => ConstExpr\ConstExprFloatNode::class,
         PHPStanConstExpr\ConstExprIntegerNode::class => ConstExpr\ConstExprIntegerNode::class,
@@ -73,7 +73,7 @@ abstract class PhpStan
 
     private function __construct() {}
 
-    final public static function toNode(PHPStanNode $node): Node
+    public static function toNode(PHPStanNode $node): Node
     {
         $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;
 
@@ -87,7 +87,7 @@ abstract class PhpStan
         return $nodeClass::fromPhpStan($node);
     }
 
-    final public static function getDocNode(Doc $docComment): PhpDocNode
+    public static function getDocNode(Doc $docComment): PhpDocNode
     {
         self::$lexer           ??= new Lexer();
         self::$constExprParser ??= new ConstExprParser();
@@ -98,7 +98,7 @@ abstract class PhpStan
         ));
     }
 
-    final public static function getParamNode(PhpDocNode $docNode, string $name): ParamTagValueNode|TypelessParamTagValueNode|null
+    public static function getParamNode(PhpDocNode $docNode, string $name): ParamTagValueNode|TypelessParamTagValueNode|null
     {
         $values = [
             ...$docNode->getParamTagValues('@param'),
@@ -115,7 +115,7 @@ abstract class PhpStan
         )) ?: null;
     }
 
-    final public static function getVarNode(PhpDocNode $docNode): ?VarTagValueNode
+    public static function getVarNode(PhpDocNode $docNode): ?VarTagValueNode
     {
         $values = [
             ...$docNode->getVarTagValues('@var'),
@@ -126,7 +126,7 @@ abstract class PhpStan
         return current($values) ?: null;
     }
 
-    final public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
+    public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
     {
         return current($docNode->getDeprecatedTagValues()) ?: null;
     }
@@ -134,7 +134,7 @@ abstract class PhpStan
     /**
      * @return TemplateTagValueNode[]
      */
-    final public static function getTemplateNodes(PhpDocNode $docNode): array
+    public static function getTemplateNodes(PhpDocNode $docNode): array
     {
         return [
             ...$docNode->getTemplateTagValues('@template'),
@@ -146,7 +146,7 @@ abstract class PhpStan
     /**
      * @return PhpDocTextNode[]
      */
-    final public static function getTextNodes(PhpDocNode $docNode): array
+    public static function getTextNodes(PhpDocNode $docNode): array
     {
         return array_filter(
             $docNode->children,
@@ -157,7 +157,7 @@ abstract class PhpStan
     /**
      * @param PhpDocTextNode[] $textNodes
      */
-    final public static function textNodesToString(array $textNodes): string
+    public static function textNodesToString(array $textNodes): string
     {
         return implode("\n", array_map(
             static fn (PhpDocTextNode $textNode) => $textNode->text,
@@ -165,7 +165,7 @@ abstract class PhpStan
         ));
     }
 
-    final public static function phpValueToTsType(
+    public static function phpValueToTsType(
         mixed $value,
         Indent $indent = new Indent(),
         Quotes $quotes = new Quotes(),
@@ -191,7 +191,7 @@ abstract class PhpStan
         return $shapeNode->toString();
     }
 
-    final public static function phpValueToNode(mixed $value): Node
+    public static function phpValueToNode(mixed $value): Node
     {
         $docComment = new Doc('/** @var ' . Str::displayType($value) . ' */');
         $docNode    = self::getDocNode($docComment);

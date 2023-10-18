@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
-use Brainshaker95\PhpToTsBundle\Command\DumpCommand;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
@@ -40,6 +39,9 @@ use function sprintf;
  */
 final class DumpCommandTest extends KernelTestCase
 {
+    private const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
+    private const INDENT_COUNT_KEY = C::INDENT_KEY . '-' . C::INDENT_COUNT_KEY;
+
     private Filesystem $filesystem;
 
     private string $inputDir;
@@ -80,15 +82,15 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:dir', [
-                Str::toKebab(C::INPUT_DIR_KEY)                     => $this->inputDir,
-                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)             => $this->outputDir . '/SubDir',
-                '--' . Str::toKebab(C::FILE_TYPE_KEY)              => FileType::TYPE_DECLARATION,
-                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY)   => TypeDefinitionType::TYPE_TYPE_ALIAS,
-                '--' . Str::toKebab(DumpCommand::INDENT_STYLE_KEY) => Indent::STYLE_TAB,
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
-                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
+                Str::toKebab(C::INPUT_DIR_KEY)                   => $this->inputDir,
+                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)           => $this->outputDir . '/SubDir',
+                '--' . Str::toKebab(C::FILE_TYPE_KEY)            => FileType::TYPE_DECLARATION,
+                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY) => TypeDefinitionType::TYPE_TYPE_ALIAS,
+                '--' . Str::toKebab(self::INDENT_STYLE_KEY)      => Indent::STYLE_TAB,
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)      => 3,
+                '--' . Str::toKebab(C::QUOTES_KEY)               => Quotes::STYLE_DOUBLE,
+                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)      => [AlphabeticalDesc::class],
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 3,
@@ -99,8 +101,8 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:dir', [
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => PascalCase::class,
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)    => 3,
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
             expectedFileCount: 3,
@@ -159,15 +161,15 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:files', [
-                'input-files'                                      => [$this->inputDir],
-                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)             => $this->outputDir . '/SubDir',
-                '--' . Str::toKebab(C::FILE_TYPE_KEY)              => FileType::TYPE_DECLARATION,
-                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY)   => TypeDefinitionType::TYPE_TYPE_ALIAS,
-                '--' . Str::toKebab(DumpCommand::INDENT_STYLE_KEY) => Indent::STYLE_TAB,
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
-                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
+                'input-files'                                    => [$this->inputDir],
+                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)           => $this->outputDir . '/SubDir',
+                '--' . Str::toKebab(C::FILE_TYPE_KEY)            => FileType::TYPE_DECLARATION,
+                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY) => TypeDefinitionType::TYPE_TYPE_ALIAS,
+                '--' . Str::toKebab(self::INDENT_STYLE_KEY)      => Indent::STYLE_TAB,
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)      => 3,
+                '--' . Str::toKebab(C::QUOTES_KEY)               => Quotes::STYLE_DOUBLE,
+                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)      => [AlphabeticalDesc::class],
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 3,
@@ -178,9 +180,9 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:files', [
-                'input-files'                                      => [$this->inputDir],
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => PascalCase::class,
+                'input-files'                                  => [$this->inputDir],
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)    => 3,
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
             expectedFileCount: 3,
@@ -211,15 +213,15 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:file', [
-                'input-file'                                       => $this->inputDir . '/SubDir/GenericTypes.php',
-                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)             => $this->outputDir . '/SubDir',
-                '--' . Str::toKebab(C::FILE_TYPE_KEY)              => FileType::TYPE_DECLARATION,
-                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY)   => TypeDefinitionType::TYPE_TYPE_ALIAS,
-                '--' . Str::toKebab(DumpCommand::INDENT_STYLE_KEY) => Indent::STYLE_TAB,
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::QUOTES_KEY)                 => Quotes::STYLE_DOUBLE,
-                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)        => [AlphabeticalDesc::class],
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => SnakeCase::class,
+                'input-file'                                     => $this->inputDir . '/SubDir/GenericTypes.php',
+                '--' . Str::toKebab(C::OUTPUT_DIR_KEY)           => $this->outputDir . '/SubDir',
+                '--' . Str::toKebab(C::FILE_TYPE_KEY)            => FileType::TYPE_DECLARATION,
+                '--' . Str::toKebab(C::TYPE_DEFINITION_TYPE_KEY) => TypeDefinitionType::TYPE_TYPE_ALIAS,
+                '--' . Str::toKebab(self::INDENT_STYLE_KEY)      => Indent::STYLE_TAB,
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)      => 3,
+                '--' . Str::toKebab(C::QUOTES_KEY)               => Quotes::STYLE_DOUBLE,
+                '--' . Str::toKebab(C::SORT_STRATEGIES_KEY)      => [AlphabeticalDesc::class],
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
             expectedFileCount: 1,
@@ -230,9 +232,9 @@ final class DumpCommandTest extends KernelTestCase
     {
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:file', [
-                'input-file'                                       => $this->inputDir . '/NativeTypes.php',
-                '--' . Str::toKebab(DumpCommand::INDENT_COUNT_KEY) => 3,
-                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)     => PascalCase::class,
+                'input-file'                                   => $this->inputDir . '/NativeTypes.php',
+                '--' . Str::toKebab(self::INDENT_COUNT_KEY)    => 3,
+                '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
             expectedFileCount: 1,

@@ -23,7 +23,7 @@ use function sprintf;
 /**
  * @internal
  */
-abstract class Assert
+final class Assert
 {
     private function __construct() {}
 
@@ -32,7 +32,7 @@ abstract class Assert
      *
      * @return non-empty-string
      */
-    final public static function nonEmptyStringNonNullable(mixed $value): string
+    public static function nonEmptyStringNonNullable(mixed $value): string
     {
         if (!is_string($value) || !$value) {
             throw new AssertionFailedException(sprintf(
@@ -49,7 +49,7 @@ abstract class Assert
      *
      * @return ?non-empty-string
      */
-    final public static function nonEmptyStringNullable(mixed $value): ?string
+    public static function nonEmptyStringNullable(mixed $value): ?string
     {
         if ($value === null) {
             return $value;
@@ -63,7 +63,7 @@ abstract class Assert
      *
      * @return int<0,max>
      */
-    final public static function nonNegativeIntegerNonNullable(mixed $value): int
+    public static function nonNegativeIntegerNonNullable(mixed $value): int
     {
         $intval = is_numeric($value) ? (int) $value : -1;
 
@@ -82,7 +82,7 @@ abstract class Assert
      *
      * @return ?int<0,max>
      */
-    final public static function nonNegativeIntegerNullable(mixed $value): ?int
+    public static function nonNegativeIntegerNullable(mixed $value): ?int
     {
         if ($value === null) {
             return $value;
@@ -96,7 +96,7 @@ abstract class Assert
      *
      * @return non-empty-string[]
      */
-    final public static function nonEmptyStringArrayNonNullable(mixed $value): array
+    public static function nonEmptyStringArrayNonNullable(mixed $value): array
     {
         if (!is_array($value)
             || count(array_filter($value, static fn (mixed $val) => !is_string($val) || !$val))) {
@@ -114,7 +114,7 @@ abstract class Assert
      *
      * @return ?non-empty-string[]
      */
-    final public static function nonEmptyStringArrayNullable(mixed $value): ?array
+    public static function nonEmptyStringArrayNullable(mixed $value): ?array
     {
         if ($value === null) {
             return $value;
@@ -132,7 +132,7 @@ abstract class Assert
      *
      * @return value-of<T>
      */
-    final public static function inStringArrayNonNullable(mixed $value, array $allowedStrings): string
+    public static function inStringArrayNonNullable(mixed $value, array $allowedStrings): string
     {
         if (!is_string($value) || !in_array($value, $allowedStrings, true)) {
             throw new AssertionFailedException(sprintf(
@@ -154,7 +154,7 @@ abstract class Assert
      *
      * @return ?value-of<T>
      */
-    final public static function inStringArrayNullable(mixed $value, array $allowedStrings): ?string
+    public static function inStringArrayNullable(mixed $value, array $allowedStrings): ?string
     {
         if ($value === null) {
             return $value;
@@ -172,7 +172,7 @@ abstract class Assert
      *
      * @return T
      */
-    final public static function instanceOf(object $value, string $class): object
+    public static function instanceOf(object $value, string $class): object
     {
         if (!$value instanceof $class) {
             throw new AssertionFailedException(sprintf(
@@ -194,7 +194,7 @@ abstract class Assert
      *
      * @return class-string<T>
      */
-    final public static function interfaceClassStringNonNullable(mixed $value, string $class): string
+    public static function interfaceClassStringNonNullable(mixed $value, string $class): string
     {
         if (!is_string($value)
             || !is_a($value, $class, true)
@@ -218,7 +218,7 @@ abstract class Assert
      *
      * @return ?class-string<T>
      */
-    final public static function interfaceClassStringNullable(mixed $value, string $class): ?string
+    public static function interfaceClassStringNullable(mixed $value, string $class): ?string
     {
         if ($value === null) {
             return $value;
@@ -236,7 +236,7 @@ abstract class Assert
      *
      * @return class-string<T>[]
      */
-    final public static function interfaceClassStringArrayNonNullable(mixed $value, string $class): array
+    public static function interfaceClassStringArrayNonNullable(mixed $value, string $class): array
     {
         return array_map(
             static fn (string $val) => self::interfaceClassStringNonNullable($val, $class),
@@ -253,7 +253,7 @@ abstract class Assert
      *
      * @return ?class-string<T>[]
      */
-    final public static function interfaceClassStringArrayNullable(mixed $value, string $class): ?array
+    public static function interfaceClassStringArrayNullable(mixed $value, string $class): ?array
     {
         if ($value === null) {
             return $value;
@@ -265,7 +265,7 @@ abstract class Assert
     /**
      * @param object|class-string $class
      */
-    final public static function existingClassAttribute(object|string $class, string $attribute): void
+    public static function existingClassAttribute(object|string $class, string $attribute): void
     {
         if (!Attribute::existsOnClass($attribute, $class)) {
             throw new AssertionFailedException(sprintf(

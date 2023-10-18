@@ -26,8 +26,8 @@ abstract class DumpCommand extends Command
     use HasConfiguration;
     use HasDumper;
 
-    final public const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
-    final public const INDENT_COUNT_KEY = C::INDENT_KEY . '-' . C::INDENT_COUNT_KEY;
+    final protected const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
+    final protected const INDENT_COUNT_KEY = C::INDENT_KEY . '-' . C::INDENT_COUNT_KEY;
 
     protected InputInterface $input;
 

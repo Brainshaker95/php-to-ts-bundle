@@ -14,14 +14,14 @@ use function property_exists;
 /**
  * @internal
  */
-abstract class Attribute
+final class Attribute
 {
     private function __construct() {}
 
     /**
      * @param object|class-string $class
      */
-    final public static function existsOnClass(string $attribute, object|string $class): bool
+    public static function existsOnClass(string $attribute, object|string $class): bool
     {
         return (is_string($class) && !class_exists($class))
             ? false
@@ -31,7 +31,7 @@ abstract class Attribute
     /**
      * @param object|class-string $class
      */
-    final public static function existsOnProperty(string $attribute, object|string $class, string $propertyName): bool
+    public static function existsOnProperty(string $attribute, object|string $class, string $propertyName): bool
     {
         if (is_string($class) && !class_exists($class)) {
             return false;
