@@ -55,6 +55,7 @@ return (new PhpCsFixer\Config())
         'strict_comparison'                                => true,
         'strict_param'                                     => true,
         'trailing_comma_in_multiline'                      => ['elements' => ['arrays', 'arguments', 'match', 'parameters']],
+        'unary_operator_spaces'                            => ['only_dec_inc' => true],
         'yoda_style'                                       => ['equal' => false, 'identical' => false, 'less_and_greater' => false],
     ])
 ;
