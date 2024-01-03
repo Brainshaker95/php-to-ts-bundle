@@ -250,7 +250,7 @@ final class Visitor extends NameResolver
          * @var ?class-string
          */
         return $node->namespacedName
-            ? implode('\\', $node->namespacedName->parts)
+            ? implode('\\', $node->namespacedName->getParts())
             : $node->name?->name;
     }
 }
