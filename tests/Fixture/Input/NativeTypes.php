@@ -11,6 +11,7 @@ use stdClass;
 /**
  * @internal
  *
+ * @PhpCsFixerIgnore fully_qualified_strict_types
  * @PhpCsFixerIgnore global_namespace_import
  * @PhpCsFixerIgnore phpdoc_add_missing_param_annotation
  */
