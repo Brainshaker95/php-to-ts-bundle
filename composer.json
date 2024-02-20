@@ -1,7 +1,7 @@
 {
   "name": "brainshaker95/php-to-ts-bundle",
   "description": "Convert PHP model classes to TypeScript interfaces",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "keywords": [
     "bundle",
     "symfony",
@@ -16,13 +16,13 @@
     }
   ],
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "3.45.0",
-    "phpstan/phpstan": "1.10.50",
+    "friendsofphp/php-cs-fixer": "3.49.0",
+    "phpstan/phpstan": "1.10.59",
     "phpstan/phpstan-strict-rules": "1.5.2",
-    "symplify/phpstan-rules": "12.4.3",
-    "phpunit/phpunit": "10.5.5",
-    "symfony/framework-bundle": "6.4.2",
-    "symfony/yaml": "6.4.0",
+    "symplify/phpstan-rules": "12.4.8",
+    "phpunit/phpunit": "10.5.10",
+    "symfony/framework-bundle": "6.4.3",
+    "symfony/yaml": "6.4.3",
     "cweagans/composer-patches": "1.7.3"
   },
   "require": {
@@ -30,19 +30,19 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-xml": "*",
-    "nikic/php-parser": "^4.17",
-    "symfony/config": "^5.0 || ^6.0",
-    "symfony/console": "^5.0 || ^6.0",
-    "symfony/dependency-injection": "^5.0 || ^6.0",
-    "symfony/event-dispatcher": "^5.0 || ^6.0",
-    "symfony/filesystem": "^5.0 || ^6.0",
-    "symfony/finder": "^5.0 || ^6.0",
-    "symfony/http-foundation": "^5.0 || ^6.0",
-    "symfony/http-kernel": "^5.0 || ^6.0",
-    "symfony/property-access": "^5.0 || ^6.0",
-    "symfony/serializer": "^5.0 || ^6.0",
-    "symfony/string": "^5.0 || ^6.0",
-    "phpstan/phpdoc-parser": "^1.24"
+    "nikic/php-parser": "^4.18",
+    "symfony/config": "^5.0 || ^6.0 || ^7.0",
+    "symfony/console": "^5.0 || ^6.0 || ^7.0",
+    "symfony/dependency-injection": "^5.0 || ^6.0 || ^7.0",
+    "symfony/event-dispatcher": "^5.0 || ^6.0 || ^7.0",
+    "symfony/filesystem": "^5.0 || ^6.0 || ^7.0",
+    "symfony/finder": "^5.0 || ^6.0 || ^7.0",
+    "symfony/http-foundation": "^5.0 || ^6.0 || ^7.0",
+    "symfony/http-kernel": "^5.0 || ^6.0 || ^7.0",
+    "symfony/property-access": "^5.0 || ^6.0 || ^7.0",
+    "symfony/serializer": "^5.0 || ^6.0 || ^7.0",
+    "symfony/string": "^5.0 || ^6.0 || ^7.0",
+    "phpstan/phpdoc-parser": "^1.25"
   },
   "autoload": {
     "psr-4": {

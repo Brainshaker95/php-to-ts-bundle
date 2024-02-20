@@ -9,6 +9,8 @@ use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 /**
  * @internal
  *
+ * @PhpCsFixerIgnore phpdoc_scalar
+ *
  * This is a class description
  */
 #[AsTypeScriptable]

@@ -69,8 +69,7 @@ final class MyClass extends MyParentClass
         public array $foo1,
         public readonly Foo&Bar $bar1,
         public ?bool $baz1,
-    ) {
-    }
+    ) {}
 
     /**
      * @var non-empty-string|array<int,string>
@@ -322,8 +321,7 @@ final class MyService
 {
     public function __construct(
         private readonly Dumper $dumper,
-    ) {
-    }
+    ) {}
     
     public function doTheThingsAndStuff(): void
     { 

@@ -104,7 +104,7 @@ abstract class Str
             ->replace("\r", "\n")
         ;
 
-        $lines     = array_filter($string->split("\n"), static fn (UnicodeString $line) => $line->length());
+        $lines     = array_filter($string->split("\n"), static fn (UnicodeString $line) => $line->length() > 0);
         $lineCount = count($lines);
 
         if (!$lineCount) {
