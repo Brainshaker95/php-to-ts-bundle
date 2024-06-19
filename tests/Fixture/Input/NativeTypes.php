@@ -13,6 +13,7 @@ use stdClass;
  *
  * @PhpCsFixerIgnore fully_qualified_strict_types
  * @PhpCsFixerIgnore global_namespace_import
+ * @PhpCsFixerIgnore nullable_type_declaration
  * @PhpCsFixerIgnore phpdoc_add_missing_param_annotation
  */
 #[AsTypeScriptable]
