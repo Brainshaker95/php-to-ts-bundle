@@ -33,7 +33,7 @@ use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
-use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
@@ -443,7 +443,7 @@ final class Converter
     private static function getTypeFromProperty(Param|Property|EnumCase $property): string
     {
         if ($property instanceof EnumCase) {
-            if ($property->expr instanceof LNumber) {
+            if ($property->expr instanceof Int_) {
                 return (string) $property->expr->value;
             }
 
