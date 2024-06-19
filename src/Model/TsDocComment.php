@@ -10,8 +10,6 @@ use Stringable;
 
 use const PHP_EOL;
 
-use function array_merge;
-use function array_reduce;
 use function count;
 use function implode;
 use function is_string;
@@ -67,14 +65,14 @@ final class TsDocComment implements Stringable
             indent: $indent,
         ));
 
-        $templateTagLines = array_reduce(
-            $this->generics,
-            static fn (array $lines, TsGeneric $generic) => array_merge(
-                $lines,
-                Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
-            ),
-            [],
-        );
+        $templateTagLines = [];
+
+        foreach ($this->generics as $generic) {
+            $templateTagLines = [
+                ...$templateTagLines,
+                ...Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
+            ];
+        }
 
         $content = $content->append(self::linesToString(
             lines: $templateTagLines,

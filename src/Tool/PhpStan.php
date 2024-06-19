@@ -36,6 +36,7 @@ use function current;
 use function implode;
 use function is_array;
 use function is_iterable;
+use function is_string;
 use function sprintf;
 
 /**
@@ -180,7 +181,7 @@ final class PhpStan
         foreach ($value as $itemKey => $itemValue) {
             $itemNodes[] = new Type\ArrayShapeItemNode(
                 valueNode: self::phpValueToNode($itemValue),
-                keyNode: $hasKeys ? new ConstExpr\ConstExprStringNode($itemKey) : null,
+                keyNode: $hasKeys && is_string($itemKey) ? new ConstExpr\ConstExprStringNode($itemKey) : null,
             );
         }
 

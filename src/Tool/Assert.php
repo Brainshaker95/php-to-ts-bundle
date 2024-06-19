@@ -106,6 +106,9 @@ final class Assert
             ));
         }
 
+        /**
+         * @var non-empty-string[]
+         */
         return $value;
     }
 
@@ -178,7 +181,7 @@ final class Assert
             throw new AssertionFailedException(sprintf(
                 'Expected object to be an instance of "%s". Given instance was of class "%s".',
                 $class,
-                $value::class,
+                is_string($value::class) ? $value::class : '<Unknown>',
             ));
         }
 

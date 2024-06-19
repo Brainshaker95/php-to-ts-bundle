@@ -3,6 +3,10 @@ parameters:
   paths:
     - src
     - tests
+  checkBenevolentUnionTypes: true
+  checkImplicitMixed: true
+  reportAlwaysTrueInLastCondition: true
+  reportAnyTypeWideningInVarTag: true
   strictRules:
     booleansInConditions: false
   ignoreErrors:
