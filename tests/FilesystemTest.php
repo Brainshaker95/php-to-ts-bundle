@@ -115,9 +115,6 @@ EOT, $license);
     {
         $this->expectException(FileNotFoundException::class);
 
-        /**
-         * @phpstan-ignore-next-line
-         */
         $this->filesystem->assertDir('tests/TestKernel.php');
     }
 }
