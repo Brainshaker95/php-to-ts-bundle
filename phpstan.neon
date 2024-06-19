@@ -9,9 +9,10 @@ parameters:
     # Since it is not possible to disable single subrule of "DisallowedConstructs" the errors thrown by "DisallowedShortTernaryRule" are just ignored
     - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
 
-includes:
-  - vendor/phpstan/phpstan-strict-rules/rules.neon
-  - vendor/symplify/phpstan-rules/config/services/services.neon
+  type_perfect:
+    narrow_param: true
+    no_mixed: true
+    null_over_false: true
 
 rules:
   - Symplify\PHPStanRules\Rules\CheckClassNamespaceFollowPsr4Rule

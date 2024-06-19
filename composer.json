@@ -24,6 +24,8 @@
     "symfony/framework-bundle": "7.1.1",
     "symfony/yaml": "7.1.1",
     "cweagans/composer-patches": "1.7.3",
+    "phpstan/extension-installer": "1.4.1",
+    "rector/type-perfect": "0.1.6",
     "symfony/error-handler": "7.1.1"
   },
   "require": {
@@ -57,7 +59,8 @@
   },
   "config": {
     "allow-plugins": {
-      "cweagans/composer-patches": true
+      "cweagans/composer-patches": true,
+      "phpstan/extension-installer": true
     }
   },
   "extra": {
