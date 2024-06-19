@@ -32,17 +32,17 @@ final class IterableTypes
     public array $testProperty3;
 
     /**
-     * @var array<string,boolean>
+     * @var array<string, boolean>
      */
     public array $testProperty4;
 
     /**
-     * @var iterable<string,array<int>>
+     * @var iterable<string, array<int>>
      */
     public iterable $testProperty5;
 
     /**
-     * @var array<string,array<int,string[]>>
+     * @var array<string, array<int, string[]>>
      */
     public array $testProperty6;
 

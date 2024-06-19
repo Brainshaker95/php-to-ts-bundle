@@ -16,6 +16,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
+use Stringable;
 
 use function is_numeric;
 use function sprintf;
@@ -23,7 +24,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeItemNode implements Indentable, Node, Quotable
+final class ArrayShapeItemNode implements Indentable, Node, Quotable, Stringable
 {
     use HasIndent;
     use HasQuotes;

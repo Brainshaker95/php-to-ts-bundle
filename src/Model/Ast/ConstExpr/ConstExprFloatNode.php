@@ -8,11 +8,12 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprFloatNode as PHPStanConstExprFloatNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ConstExprFloatNode implements Node
+final class ConstExprFloatNode implements Node, Stringable
 {
     public function __construct(
         private readonly string $value,

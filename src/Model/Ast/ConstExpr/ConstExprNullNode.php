@@ -9,11 +9,12 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprNullNode as PHPStanConstExprNullNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ConstExprNullNode implements Node
+final class ConstExprNullNode implements Node, Stringable
 {
     public function __toString(): string
     {

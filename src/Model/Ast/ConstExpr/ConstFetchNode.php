@@ -17,13 +17,14 @@ use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use Error;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode as PHPStanConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 use function constant;
 
 /**
  * @internal
  */
-final class ConstFetchNode implements Indentable, Node, Quotable
+final class ConstFetchNode implements Indentable, Node, Quotable, Stringable
 {
     use HasIndent;
     use HasQuotes;

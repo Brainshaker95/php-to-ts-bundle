@@ -9,11 +9,12 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode as PHPStanArrayTypeNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ArrayTypeNode implements Node
+final class ArrayTypeNode implements Node, Stringable
 {
     public function __construct(
         public readonly Node $type,

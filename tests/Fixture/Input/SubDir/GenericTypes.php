@@ -74,7 +74,7 @@ final class GenericTypes
     public object $testProperty7;
 
     /**
-     * @var int<0,max>
+     * @var int<0, max>
      */
     public int $testProperty8;
 

@@ -11,6 +11,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNode;
+use Stringable;
 
 use function array_key_exists;
 use function in_array;
@@ -19,7 +20,7 @@ use function str_contains;
 /**
  * @internal
  */
-final class IdentifierTypeNode implements Node
+final class IdentifierTypeNode implements Node, Stringable
 {
     public const TYPE_CLASS   = 'class';
     public const TYPE_DEFAULT = 'default';

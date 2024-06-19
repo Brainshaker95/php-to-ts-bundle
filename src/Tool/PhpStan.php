@@ -45,7 +45,7 @@ use function sprintf;
 final class PhpStan
 {
     /**
-     * @var array<class-string<PHPStanNode>,class-string<Node>>
+     * @var array<class-string<PHPStanNode>, class-string<Node>>
      */
     private const NODE_CLASS_MAP = [
         PHPStanConstExpr\ConstExprFalseNode::class   => ConstExpr\ConstExprFalseNode::class,

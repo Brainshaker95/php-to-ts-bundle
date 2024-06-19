@@ -61,7 +61,7 @@ final class Assert
     /**
      * @phpstan-assert int<0,max> $value
      *
-     * @return int<0,max>
+     * @return int<0, max>
      */
     public static function nonNegativeIntegerNonNullable(mixed $value): int
     {
@@ -80,7 +80,7 @@ final class Assert
     /**
      * @phpstan-assert ?int<0,max> $value
      *
-     * @return ?int<0,max>
+     * @return ?int<0, max>
      */
     public static function nonNegativeIntegerNullable(mixed $value): ?int
     {

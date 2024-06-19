@@ -16,7 +16,7 @@ final class Indent implements Stringable
 
     /**
      * @phpstan-param self::STYLE_* $style
-     * @param int<0,max> $count
+     * @param int<0, max> $count
      */
     public function __construct(
         public readonly string $style = C::INDENT_STYLE_DEFAULT,

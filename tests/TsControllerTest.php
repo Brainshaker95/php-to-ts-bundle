@@ -44,7 +44,7 @@ final class TsControllerTest extends KernelTestCase
             public string $property2;
 
             /**
-             * @param array<string,array<string,string[]>> $property4
+             * @param array<string, array<string, string[]>> $property4
              */
             public function __construct(
                 public bool $property3,

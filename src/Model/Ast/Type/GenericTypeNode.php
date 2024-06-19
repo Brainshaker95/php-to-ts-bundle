@@ -12,6 +12,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode as PHPStanGenericTypeNode;
+use Stringable;
 
 use function array_flip;
 use function array_key_exists;
@@ -24,7 +25,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class GenericTypeNode implements Node
+final class GenericTypeNode implements Node, Stringable
 {
     /**
      * @param Node[] $genericTypes

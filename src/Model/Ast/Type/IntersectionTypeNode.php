@@ -9,6 +9,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode as PHPStanIntersectionTypeNode;
+use Stringable;
 
 use function array_map;
 use function implode;
@@ -16,7 +17,7 @@ use function implode;
 /**
  * @internal
  */
-final class IntersectionTypeNode implements Node
+final class IntersectionTypeNode implements Node, Stringable
 {
     /**
      * @param Node[] $types

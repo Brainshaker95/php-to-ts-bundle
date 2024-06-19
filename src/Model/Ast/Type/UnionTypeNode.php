@@ -9,6 +9,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode as PHPStanUnionTypeNode;
+use Stringable;
 
 use function array_map;
 use function implode;
@@ -16,7 +17,7 @@ use function implode;
 /**
  * @internal
  */
-final class UnionTypeNode implements Node
+final class UnionTypeNode implements Node, Stringable
 {
     /**
      * @param Node[] $types

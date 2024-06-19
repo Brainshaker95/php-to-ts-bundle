@@ -19,7 +19,7 @@ final class EnumNormalizer implements NormalizerInterface
     /**
      * @param mixed[] $context
      *
-     * @return array<mixed>|string|int|float|bool|ArrayObject<int|string,mixed>|null
+     * @return array<mixed>|string|int|float|bool|ArrayObject<int|string, mixed>|null
      */
     public function normalize(
         mixed $data,
@@ -54,7 +54,7 @@ final class EnumNormalizer implements NormalizerInterface
     }
 
     /**
-     * @return array<class-string|'*'|'object'|string,bool|null>
+     * @return array<class-string|'*'|'object'|string, bool|null>
      */
     public function getSupportedTypes(?string $format): array
     {

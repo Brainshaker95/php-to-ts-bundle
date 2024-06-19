@@ -11,11 +11,12 @@ use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode as PHPStanConstExprStringNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ConstExprStringNode implements Node, Quotable
+final class ConstExprStringNode implements Node, Quotable, Stringable
 {
     use HasQuotes;
 

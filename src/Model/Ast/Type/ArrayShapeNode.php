@@ -13,6 +13,7 @@ use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode as PHPStanArrayShapeNode;
+use Stringable;
 
 use const PHP_EOL;
 
@@ -24,7 +25,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Indentable, Node
+final class ArrayShapeNode implements Indentable, Node, Stringable
 {
     use HasIndent;
 
