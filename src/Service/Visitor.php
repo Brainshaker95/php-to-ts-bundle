@@ -65,7 +65,7 @@ final class Visitor extends NameResolver
      *
      * @return ?Node[]
      */
-    public function beforeTraverse(array $nodes)
+    public function beforeTraverse(array $nodes): ?array
     {
         parent::beforeTraverse($nodes);
 

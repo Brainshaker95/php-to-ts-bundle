@@ -33,7 +33,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-xml": "*",
-    "nikic/php-parser": "^4.18",
+    "nikic/php-parser": "^5.0",
     "symfony/config": "^5.0 || ^6.0 || ^7.0",
     "symfony/console": "^5.0 || ^6.0 || ^7.0",
     "symfony/dependency-injection": "^5.0 || ^6.0 || ^7.0",

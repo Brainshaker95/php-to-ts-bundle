@@ -50,6 +50,7 @@ use function array_map;
 use function array_unique;
 use function count;
 use function end;
+use function explode;
 use function get_debug_type;
 use function implode;
 use function in_array;
@@ -556,8 +557,12 @@ final class Converter
 
     private static function getTypeName(Identifier|Name $node): ?string
     {
-        return $node instanceof Name
-            ? (end($node->parts) ?: null)
-            : $node->name;
+        if ($node instanceof Identifier) {
+            return $node->name;
+        }
+
+        $parts = explode('\\', $node->name);
+
+        return end($parts) ?: null;
     }
 }
