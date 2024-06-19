@@ -143,7 +143,7 @@ final class TsInterface implements Stringable
     /**
      * Gets the properties based on the configured sort strategy.
      *
-     * @param ?class-string<SortStrategy>[] $sortStrategies
+     * @phpstan-param ?class-string<SortStrategy>[] $sortStrategies
      *
      * @return TsProperty[]
      */

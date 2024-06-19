@@ -112,22 +112,22 @@ interface Config
     public function setQuotes(Quotes $quotes): self;
 
     /**
-     * @return ?class-string<SortStrategy>[]
+     * @phpstan-return ?class-string<SortStrategy>[]
      */
     public function getSortStrategies(): ?array;
 
     /**
-     * @param class-string<SortStrategy>[] $sortStrategies
+     * @phpstan-param class-string<SortStrategy>[] $sortStrategies
      */
     public function setSortStrategies(array $sortStrategies): self;
 
     /**
-     * @return ?class-string<FileNameStrategy>
+     * @phpstan-return ?class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): ?string;
 
     /**
-     * @param class-string<FileNameStrategy> $fileNameStrategy
+     * @phpstan-param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function setFileNameStrategy(string $fileNameStrategy): self;
 

@@ -116,7 +116,7 @@ final class FullConfig implements C
     }
 
     /**
-     * @return class-string<SortStrategy>[]
+     * @phpstan-return class-string<SortStrategy>[]
      */
     public function getSortStrategies(): array
     {
@@ -124,7 +124,7 @@ final class FullConfig implements C
     }
 
     /**
-     * @param class-string<SortStrategy>[] $sortStrategies
+     * @phpstan-param class-string<SortStrategy>[] $sortStrategies
      */
     public function setSortStrategies(array $sortStrategies): self
     {
@@ -134,7 +134,7 @@ final class FullConfig implements C
     }
 
     /**
-     * @return class-string<FileNameStrategy>
+     * @phpstan-return class-string<FileNameStrategy>
      */
     public function getFileNameStrategy(): string
     {
@@ -142,7 +142,7 @@ final class FullConfig implements C
     }
 
     /**
-     * @param class-string<FileNameStrategy> $fileNameStrategy
+     * @phpstan-param class-string<FileNameStrategy> $fileNameStrategy
      */
     public function setFileNameStrategy(string $fileNameStrategy): self
     {
