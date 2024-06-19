@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\Command\DumpCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpDirCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpFileCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpFilesCommand;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
@@ -15,6 +19,8 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -23,20 +29,19 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 use function array_merge;
 use function sprintf;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpDirCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFileCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFilesCommand
  */
+#[Small]
+#[CoversClass(DumpCommand::class)]
+#[CoversClass(DumpDirCommand::class)]
+#[CoversClass(DumpFileCommand::class)]
+#[CoversClass(DumpFilesCommand::class)]
 final class DumpCommandTest extends KernelTestCase
 {
     private const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
@@ -281,6 +286,8 @@ final class DumpCommandTest extends KernelTestCase
      */
     private static function runCommand(string $command, array $arguments = [], bool $isVerbose = false): int
     {
+        self::assertInstanceOf(KernelInterface::class, self::$kernel);
+
         $application = new Application(self::$kernel);
 
         $application->setAutoExit(false);

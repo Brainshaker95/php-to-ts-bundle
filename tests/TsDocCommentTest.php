@@ -7,17 +7,17 @@ namespace App\Tests;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
- *
  * @PhpCsFixerIgnore heredoc_indentation
  */
+#[Small]
+#[CoversClass(TsDocComment::class)]
 final class TsDocCommentTest extends TestCase
 {
     public function testToString(): void

@@ -13,17 +13,17 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent
- * @covers \Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent
  */
+#[Small]
+#[CoversClass(TsInterfaceGeneratedEvent::class)]
+#[CoversClass(TsPropertyGeneratedEvent::class)]
 final class EventTest extends TestCase
 {
     public function testTsInterfaceGeneratedEvent(): void

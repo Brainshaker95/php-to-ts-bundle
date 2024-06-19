@@ -12,17 +12,17 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
- *
  * @PhpCsFixerIgnore heredoc_indentation
  */
+#[Small]
+#[CoversClass(TsProperty::class)]
 final class TsPropertyTest extends TestCase
 {
     public function testToString(): void

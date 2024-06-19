@@ -6,20 +6,22 @@ namespace App\Tests;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\TsController;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Serializer\Serializer
- * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer
- * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\TsController
  */
+#[Small]
+#[CoversClass(Serializer::class)]
+#[CoversTrait(HasSerializer::class)]
+#[CoversTrait(TsController::class)]
 final class TsControllerTest extends KernelTestCase
 {
     use TsController;

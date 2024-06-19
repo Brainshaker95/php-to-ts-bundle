@@ -4,6 +4,22 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprNullNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprTrueNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
@@ -13,9 +29,19 @@ use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalDesc;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
+use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
+use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
+use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Dumper;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
+use Brainshaker95\PhpToTsBundle\Service\Visitor;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
@@ -27,34 +53,32 @@ use function sprintf;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprNullNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprTrueNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent
- * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsGeneric
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsInterface
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
- * @covers \Brainshaker95\PhpToTsBundle\Service\Dumper
- * @covers \Brainshaker95\PhpToTsBundle\Service\Visitor
  */
+#[Small]
+#[CoversClass(ArrayShapeItemNode::class)]
+#[CoversClass(ArrayShapeNode::class)]
+#[CoversClass(ArrayTypeNode::class)]
+#[CoversClass(ConstExprFalseNode::class)]
+#[CoversClass(ConstExprFloatNode::class)]
+#[CoversClass(ConstExprIntegerNode::class)]
+#[CoversClass(ConstExprNullNode::class)]
+#[CoversClass(ConstExprStringNode::class)]
+#[CoversClass(ConstExprTrueNode::class)]
+#[CoversClass(ConstFetchNode::class)]
+#[CoversClass(ConstTypeNode::class)]
+#[CoversClass(Dumper::class)]
+#[CoversClass(GenericTypeNode::class)]
+#[CoversClass(IdentifierTypeNode::class)]
+#[CoversClass(IntersectionTypeNode::class)]
+#[CoversClass(NullableTypeNode::class)]
+#[CoversClass(TsDocComment::class)]
+#[CoversClass(TsGeneric::class)]
+#[CoversClass(TsInterface::class)]
+#[CoversClass(TsProperty::class)]
+#[CoversClass(UnionTypeNode::class)]
+#[CoversClass(Visitor::class)]
+#[CoversTrait(HasIndent::class)]
+#[CoversTrait(HasQuotes::class)]
 final class DumperTest extends KernelTestCase
 {
     private Dumper $dumper;
