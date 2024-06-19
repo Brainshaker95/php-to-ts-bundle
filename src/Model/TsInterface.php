@@ -114,7 +114,7 @@ final class TsInterface implements Stringable
             ->append(PHP_EOL)
         ;
 
-        foreach ($this->getSortedProperties() as $property) {
+        foreach ($this->getSortedProperties(null) as $property) {
             $string = $string
                 ->append($property->toString())
                 ->append(PHP_EOL)
