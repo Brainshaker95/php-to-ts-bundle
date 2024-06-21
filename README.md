@@ -48,6 +48,8 @@ namespace App\Model\TypeScriptables;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
+ * This is a class summary.
+ * 
  * This is a class description
  *
  * @deprecated use MyOtherClass instead
@@ -77,7 +79,7 @@ final class MyClass extends MyParentClass
     public $foo2;
 
     /**
-     * This is a property description
+     * This is a property summary
      * with a new line
      *
      * @deprecated
@@ -106,6 +108,8 @@ import type { Foo } from './foo';
 import type { MyParentClass } from './my-parent-class';
 
 /**
+ * This is a class summary.
+ * 
  * This is a class description
  *
  * @deprecated use MyOtherClass instead
@@ -115,7 +119,7 @@ export interface MyClass<
 > extends MyParentClass {
   readonly bar1: (Foo & Bar);
   /**
-   * This is a property description
+   * This is a property summary
    * with a new line
    *
    * @deprecated
