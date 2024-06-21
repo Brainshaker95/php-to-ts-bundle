@@ -50,9 +50,8 @@ final class TsDocComment implements Stringable
             default                       => [],
             $this->deprecation            => [$linePrefix . '@deprecated'],
             is_string($this->deprecation) => Str::splitByNewLines(
-                $this->deprecation,
-                $linePrefix,
-                static fn (string $line, int $index) => $index === 0
+                string: $this->deprecation,
+                lineCallback: static fn (string $line, int $index) => $index === 0
                     ? $linePrefix . '@deprecated ' . $line
                     : $linePrefix . $line,
             ),
