@@ -80,11 +80,11 @@ abstract class Str
 
     final public static function afterLast(
         string $string,
-        string $eeedle,
+        string $needle,
         bool $indcludeNeedle = false,
     ): string {
         return u($string)
-            ->afterLast($eeedle, $indcludeNeedle)
+            ->afterLast($needle, $indcludeNeedle)
             ->toString()
         ;
     }
@@ -98,13 +98,19 @@ abstract class Str
         string $string,
         string $linePrefix = '',
         ?callable $lineCallback = null,
+        bool $removeEmptyLines = true,
     ): array {
         $string = u($string)
             ->replace("\r\n", "\n")
             ->replace("\r", "\n")
         ;
 
-        $lines     = array_filter($string->split("\n"), static fn (UnicodeString $line) => $line->length() > 0);
+        $lines = $string->split("\n");
+
+        if ($removeEmptyLines) {
+            $lines = array_filter($lines, static fn (UnicodeString $line) => $line->length() > 0);
+        }
+
         $lineCount = count($lines);
 
         if (!$lineCount) {
