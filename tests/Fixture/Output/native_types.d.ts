@@ -28,19 +28,26 @@ declare type NativeTypes = {
 			testProperty16: unknown;
 			testProperty15: unknown;
 			/**
+			 * This is the summary for testProperty14.
+			 *
 			 * This is the description for testProperty14
 			 * with a newline
 			 * and another one.
+			 *
+			 * And also another paragraph.
+			 *
+			 * And even another one
+			 * with a newline
 			 */
 			testProperty14: (number | null);
 			/**
-			 * This is the description for testProperty13.
+			 * This is the summary for testProperty13.
 			 *
 			 * @deprecated it is also deprecated
 			 */
 			testProperty13: (number | null);
 			/**
-			 * This is the description for testProperty12.
+			 * This is the summary for testProperty12.
 			 *
 			 * @deprecated
 			 */

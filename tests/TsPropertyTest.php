@@ -31,6 +31,7 @@ final class TsPropertyTest extends TestCase
             name: 'propertyName',
             type: TsProperty::TYPE_UNKNOWN,
             isReadonly: true,
+            summary: 'This is a summary',
             description: 'This is a description',
             deprecation: 'This is a deprecation',
         );
@@ -39,12 +40,39 @@ final class TsPropertyTest extends TestCase
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
   /**
+   * This is a summary
+   *
    * This is a description
    *
    * @deprecated This is a deprecation
    */
   readonly propertyName: unknown;
 EOT, '' . $tsProperty);
+
+        self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
+  /**
+   * This is a summary
+   *
+   * This is a description
+   */
+  propertyName: 3.14;
+EOT, '' . new TsProperty(
+            name: 'propertyName',
+            type: new ConstExprFloatNode('3.14'),
+            summary: 'This is a summary',
+            description: 'This is a description',
+        ));
+
+        self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
+  /**
+   * This is a summary
+   */
+  propertyName: 3.14;
+EOT, '' . new TsProperty(
+            name: 'propertyName',
+            type: new ConstExprFloatNode('3.14'),
+            summary: 'This is a summary',
+        ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
   /**

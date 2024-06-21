@@ -44,6 +44,7 @@ final class TsInterface implements Stringable
         public ?string $parentName = null,
         public readonly bool $isReadonly = false,
         public readonly array $generics = [],
+        public ?string $summary = null,
         public ?string $description = null,
         public bool|string|null $deprecation = null,
         public array $properties = [],
@@ -73,6 +74,7 @@ final class TsInterface implements Stringable
         $generics           = $this->getGenerics();
 
         $docComment = (new TsDocComment(
+            summary: $this->summary,
             description: $this->description,
             deprecation: $this->deprecation,
             generics: $generics,

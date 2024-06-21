@@ -41,6 +41,7 @@ final class TsProperty implements Stringable
         public readonly array $classIdentifiers = [],
         public readonly array $generics = [],
         public readonly bool $doesRequireValueOf = false,
+        public readonly ?string $summary = null,
         public readonly ?string $description = null,
         public bool|string|null $deprecation = null,
         public ?Config $config = null,
@@ -61,6 +62,7 @@ final class TsProperty implements Stringable
         }
 
         $docComment = (new TsDocComment(
+            summary: $this->summary,
             description: $this->description,
             deprecation: $this->deprecation,
         ))->toString($indent);

@@ -24,6 +24,7 @@ final class TsEnum implements Stringable
     public function __construct(
         public string $name,
         public readonly string $scalarType,
+        public ?string $summary = null,
         public ?string $description = null,
         public bool|string|null $deprecation = null,
         public array $properties = [],
@@ -47,6 +48,7 @@ final class TsEnum implements Stringable
         $upperSnakeName = Str::toUpper(Str::toSnake($this->name));
 
         $docComment = (new TsDocComment(
+            summary: $this->summary,
             description: $this->description,
             deprecation: $this->deprecation,
         ))->toString();

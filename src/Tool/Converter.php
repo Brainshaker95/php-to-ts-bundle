@@ -25,6 +25,8 @@ use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use PhpParser\Comment\Doc;
 use PhpParser\Node\ComplexType;
 use PhpParser\Node\Expr\Variable;
@@ -137,6 +139,8 @@ final class Converter
         self::TYPE_NON_EMPTY_LIST,
     ];
 
+    private static DocBlockFactoryInterface $docBlockFactory;
+
     private function __construct() {}
 
     public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
@@ -147,13 +151,15 @@ final class Converter
 
         $docComment     = $node->getDocComment();
         $generics       = [];
+        $summary        = null;
         $description    = null;
         $deprecatedNode = null;
 
         if ($docComment) {
+            $docBlock       = self::getDocBlockFactory()->create($docComment->getText());
+            $summary        = $docBlock->getSummary();
+            $description    = $docBlock->getDescription()->render();
             $docNode        = PhpStan::getDocNode($docComment);
-            $textNodes      = PhpStan::getTextNodes($docNode);
-            $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
             $generics       = self::getGenerics(PhpStan::getTemplateNodes($docNode));
         }
@@ -163,6 +169,7 @@ final class Converter
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
             isReadonly: $isReadonly,
             generics: $generics,
+            summary: $summary ?: null,
             description: $description ?: null,
             deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
@@ -189,19 +196,22 @@ final class Converter
         }
 
         $docComment     = $node->getDocComment();
+        $summary        = null;
         $description    = null;
         $deprecatedNode = null;
 
         if ($docComment) {
+            $docBlock       = self::getDocBlockFactory()->create($docComment->getText());
+            $summary        = $docBlock->getSummary();
+            $description    = $docBlock->getDescription()->render();
             $docNode        = PhpStan::getDocNode($docComment);
-            $textNodes      = PhpStan::getTextNodes($docNode);
-            $description    = PhpStan::textNodesToString($textNodes);
             $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
         }
 
         return new TsEnum(
             name: $name,
             scalarType: $scalarType,
+            summary: $summary,
             description: $description ?: null,
             deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
         );
@@ -268,6 +278,7 @@ final class Converter
             classIdentifiers: $classIdentifiers,
             generics: $generics,
             doesRequireValueOf: $doesRequireValueOf,
+            summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
             deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
         );
@@ -381,6 +392,7 @@ final class Converter
     /**
      * @return array{
      *     rootNode: ?Node,
+     *     summary: ?string,
      *     description: ?string,
      *     deprecatedNode: ?DeprecatedTagValueNode,
      *     templateNodes: TemplateTagValueNode[],
@@ -392,7 +404,8 @@ final class Converter
         string $name,
         bool $forceVarNode = false,
     ): array {
-        $docNode = PhpStan::getDocNode($docComment);
+        $docBlock = self::getDocBlockFactory()->create($docComment->getText());
+        $docNode  = PhpStan::getDocNode($docComment);
 
         $rawNode = $property instanceof Param && !$forceVarNode
             ? PhpStan::getParamNode($docNode, $name)
@@ -404,10 +417,11 @@ final class Converter
 
         $description = $property instanceof Param
             ? $rawNode?->description
-            : PhpStan::textNodesToString(PhpStan::getTextNodes($docNode));
+            : $docBlock->getDescription()->render();
 
         return [
             'rootNode'       => $rootNode,
+            'summary'        => $docBlock->getSummary() ?: null,
             'description'    => $description ?: null,
             'deprecatedNode' => PhpStan::getDeprecatedNode($docNode),
             'templateNodes'  => PhpStan::getTemplateNodes($docNode),
@@ -564,5 +578,12 @@ final class Converter
         $parts = explode('\\', $node->name);
 
         return end($parts) ?: null;
+    }
+
+    private static function getDocBlockFactory(): DocBlockFactoryInterface
+    {
+        self::$docBlockFactory ??= DocBlockFactory::createInstance();
+
+        return self::$docBlockFactory;
     }
 }

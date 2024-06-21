@@ -31,21 +31,28 @@ export interface NativeTypes {
    */
   testProperty11: unknown;
   /**
-   * This is the description for testProperty12.
+   * This is the summary for testProperty12.
    *
    * @deprecated
    */
   testProperty12: unknown;
   /**
-   * This is the description for testProperty13.
+   * This is the summary for testProperty13.
    *
    * @deprecated it is also deprecated
    */
   testProperty13: (number | null);
   /**
+   * This is the summary for testProperty14.
+   *
    * This is the description for testProperty14
    * with a newline
    * and another one.
+   *
+   * And also another paragraph.
+   *
+   * And even another one
+   * with a newline
    */
   testProperty14: (number | null);
   testProperty15: unknown;

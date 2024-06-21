@@ -43,23 +43,30 @@ final class NativeTypes
     public mixed $testProperty11;
 
     /**
-     * This is the description for testProperty12.
+     * This is the summary for testProperty12.
      *
      * @deprecated
      */
     public object $testProperty12;
 
     /**
-     * This is the description for testProperty13.
+     * This is the summary for testProperty13.
      *
      * @deprecated it is also deprecated
      */
     public ?int $testProperty13;
 
     /**
+     * This is the summary for testProperty14.
+     *
      * This is the description for testProperty14
      * with a newline
      * and another one.
+     *
+     * And also another paragraph.
+     *
+     * And even another one
+     * with a newline
      */
     public int|null $testProperty14;
 
@@ -92,8 +99,6 @@ final class NativeTypes
     private $testProperty21;
 
     /**
-     * This is the constructor description.
-     *
      * @param string $testProperty1 This is the description for testProperty1
      *
      * @deprecated

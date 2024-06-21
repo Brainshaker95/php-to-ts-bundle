@@ -4,6 +4,8 @@
  */
 
 /**
+ * This is a class summary.
+ *
  * This is a class description
  */
 declare type IterableTypes = {

@@ -20,13 +20,18 @@ use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 final class GenericTypes
 {
     /**
-     * @var T|'foo'
+     * This is the summary for testProperty4
+     * And also this.
      *
-     * This is the description for testProperty4
+     * @var T|'foo'
      */
     public string $testProperty4;
 
     /**
+     * This is the summary for testProperty5.
+     *
+     * This is the description for testProperty5
+     *
      * @template T of array{
      *     foo: 'bar'|'baz',
      * }
@@ -36,6 +41,8 @@ final class GenericTypes
      * @template U property level generic
      * with a newline
      *
+     * This should be ignored
+     *
      * @phpstan-ignore-next-line
      *
      * @template V of bool
@@ -44,7 +51,7 @@ final class GenericTypes
      *
      * @template W this is unused
      *
-     * This is the description for testProperty5
+     * This should also be ignored
      *
      * @var array{
      *     foo: ?T,
@@ -55,7 +62,9 @@ final class GenericTypes
     public array $testProperty5;
 
     /**
-     * This is the description for testProperty6.
+     * This is the summary for testProperty6.
+     *
+     * This is the description for testProperty6
      *
      * @template W of object
      * @template X of object another unused one

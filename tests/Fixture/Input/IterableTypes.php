@@ -7,11 +7,13 @@ namespace App\Tests\Fixture\Input;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
+ * This is a class summary.
+ *
+ * This is a class description
+ *
  * @internal
  *
  * @PhpCsFixerIgnore phpdoc_scalar
- *
- * This is a class description
  */
 #[AsTypeScriptable]
 final class IterableTypes
