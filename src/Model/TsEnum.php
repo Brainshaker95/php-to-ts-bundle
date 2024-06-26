@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasFileName;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasTsInterfaceHeader;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
@@ -14,6 +16,7 @@ use const PHP_EOL;
 
 final class TsEnum implements Stringable
 {
+    use HasFileName;
     use HasTsInterfaceHeader;
 
     /**
@@ -46,6 +49,7 @@ final class TsEnum implements Stringable
     public function toString(): string
     {
         $upperSnakeName = Str::toUpper(Str::toSnake($this->name));
+        $isModule       = ($this->config?->getFileType() ?? C::FILE_TYPE_DEFAULT) === FileType::TYPE_MODULE;
 
         $docComment = (new TsDocComment(
             summary: $this->summary,
@@ -63,9 +67,9 @@ final class TsEnum implements Stringable
         }
 
         $string = $string
-            ->append('export const ')
+            ->append($isModule ? 'export const ' : 'declare var ')
             ->append($upperSnakeName)
-            ->append(' = <const>{')
+            ->append($isModule ? ' = <const>{' : ': {')
             ->append(PHP_EOL)
         ;
 
@@ -77,12 +81,13 @@ final class TsEnum implements Stringable
         }
 
         return $string
-            ->append('} satisfies Record<string, ')
-            ->append(Converter::SIMPLE_TYPES[$this->scalarType])
-            ->append('>;')
+            ->append($isModule ? '} satisfies Record<string, ' : '')
+            ->append($isModule ? Converter::SIMPLE_TYPES[$this->scalarType] : '')
+            ->append($isModule ? '>;' : '};')
             ->append(PHP_EOL)
             ->append(PHP_EOL)
-            ->append('export type ')
+            ->append($docComment ? $docComment . PHP_EOL : '')
+            ->append($isModule ? 'export type ' : 'declare type ')
             ->append($this->name)
             ->append(' = typeof ')
             ->append($upperSnakeName)
@@ -91,15 +96,5 @@ final class TsEnum implements Stringable
             ->append('];')
             ->toString()
         ;
-    }
-
-    /**
-     * Gets the file based on the configured file name strategy.
-     */
-    public function getFileName(): string
-    {
-        $fileNameStrategy = $this->config?->getFileNameStrategy() ?? C::FILE_NAME_STRATEGY_DEFAULT;
-
-        return (new $fileNameStrategy())->getName($this->name) . '.ts';
     }
 }

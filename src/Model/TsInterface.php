@@ -12,6 +12,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasFileName;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasTsInterfaceHeader;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Stringable;
@@ -32,6 +33,7 @@ use function usort;
 
 final class TsInterface implements Stringable
 {
+    use HasFileName;
     use HasTsInterfaceHeader;
 
     /**
@@ -127,19 +129,6 @@ final class TsInterface implements Stringable
             ->append('}')
             ->toString()
         ;
-    }
-
-    /**
-     * Gets the file based on the configured file name strategy and file type.
-     */
-    public function getFileName(): string
-    {
-        $fileNameStrategy = $this->config?->getFileNameStrategy() ?? C::FILE_NAME_STRATEGY_DEFAULT;
-        $fileType         = $this->config?->getFileType() ?? C::FILE_TYPE_DEFAULT;
-
-        return (new $fileNameStrategy())->getName($this->name)
-            . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
-            . '.ts';
     }
 
     /**
