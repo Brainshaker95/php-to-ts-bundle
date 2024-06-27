@@ -21,10 +21,12 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use PhpParser\Comment\Doc;
@@ -42,7 +44,6 @@ use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\EnumCase;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
-use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -149,19 +150,19 @@ final class Converter
 
         Assert::nonEmptyStringNonNullable($name);
 
-        $docComment     = $node->getDocComment();
-        $generics       = [];
-        $summary        = null;
-        $description    = null;
-        $deprecatedNode = null;
+        $docComment  = $node->getDocComment();
+        $generics    = [];
+        $summary     = null;
+        $description = null;
+        $tags        = [];
 
         if ($docComment) {
-            $docBlock       = self::getDocBlockFactory()->create($docComment->getText());
-            $summary        = $docBlock->getSummary();
-            $description    = $docBlock->getDescription()->render();
-            $docNode        = PhpStan::getDocNode($docComment);
-            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
-            $generics       = self::getGenerics(PhpStan::getTemplateNodes($docNode));
+            $docBlock    = self::getDocBlockFactory()->create($docComment->getText());
+            $summary     = $docBlock->getSummary();
+            $description = $docBlock->getDescription()->render();
+            $tags        = self::getSupportedTags($docBlock);
+            $docNode     = PhpStan::getDocNode($docComment);
+            $generics    = self::getGenerics(PhpStan::getTemplateNodes($docNode));
         }
 
         return new TsInterface(
@@ -171,7 +172,7 @@ final class Converter
             generics: $generics,
             summary: $summary ?: null,
             description: $description ?: null,
-            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
+            tags: $tags,
         );
     }
 
@@ -195,17 +196,16 @@ final class Converter
             ));
         }
 
-        $docComment     = $node->getDocComment();
-        $summary        = null;
-        $description    = null;
-        $deprecatedNode = null;
+        $docComment  = $node->getDocComment();
+        $summary     = null;
+        $description = null;
+        $tags        = [];
 
         if ($docComment) {
-            $docBlock       = self::getDocBlockFactory()->create($docComment->getText());
-            $summary        = $docBlock->getSummary();
-            $description    = $docBlock->getDescription()->render();
-            $docNode        = PhpStan::getDocNode($docComment);
-            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+            $docBlock    = self::getDocBlockFactory()->create($docComment->getText());
+            $summary     = $docBlock->getSummary();
+            $description = $docBlock->getDescription()->render();
+            $tags        = self::getSupportedTags($docBlock);
         }
 
         return new TsEnum(
@@ -213,7 +213,7 @@ final class Converter
             scalarType: $scalarType,
             summary: $summary,
             description: $description ?: null,
-            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
+            tags: $tags,
         );
     }
 
@@ -280,7 +280,7 @@ final class Converter
             doesRequireValueOf: $doesRequireValueOf,
             summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
-            deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
+            tags: $data['tags'] ?? [],
         );
     }
 
@@ -394,7 +394,7 @@ final class Converter
      *     rootNode: ?Node,
      *     summary: ?string,
      *     description: ?string,
-     *     deprecatedNode: ?DeprecatedTagValueNode,
+     *     tags: array<value-of<TsDocComment::SUPPORTED_TAGS>, string>,
      *     templateNodes: TemplateTagValueNode[],
      * }
      */
@@ -420,11 +420,11 @@ final class Converter
             : $docBlock->getDescription()->render();
 
         return [
-            'rootNode'       => $rootNode,
-            'summary'        => $docBlock->getSummary() ?: null,
-            'description'    => $description ?: null,
-            'deprecatedNode' => PhpStan::getDeprecatedNode($docNode),
-            'templateNodes'  => PhpStan::getTemplateNodes($docNode),
+            'rootNode'      => $rootNode,
+            'summary'       => $docBlock->getSummary() ?: null,
+            'description'   => $description ?: null,
+            'tags'          => self::getSupportedTags($docBlock),
+            'templateNodes' => PhpStan::getTemplateNodes($docNode),
         ];
     }
 
@@ -585,5 +585,23 @@ final class Converter
         self::$docBlockFactory ??= DocBlockFactory::createInstance();
 
         return self::$docBlockFactory;
+    }
+
+    /**
+     * @phpstan-return array<value-of<TsDocComment::SUPPORTED_TAGS>, string>
+     */
+    private static function getSupportedTags(DocBlock $docBlock): array
+    {
+        $tags = [];
+
+        foreach ($docBlock->getTags() as $tag) {
+            $name = $tag->getName();
+
+            if (in_array($name, TsDocComment::SUPPORTED_TAGS, true)) {
+                $tags[$name] = $tag->render();
+            }
+        }
+
+        return $tags;
     }
 }

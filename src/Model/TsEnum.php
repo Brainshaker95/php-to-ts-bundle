@@ -21,7 +21,7 @@ final class TsEnum implements Stringable
 
     /**
      * @param Converter::TYPE_INT|Converter::TYPE_STRING $scalarType
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<TsDocComment::SUPPORTED_TAGS>, string> $tags
      * @param TsProperty[] $properties
      */
     public function __construct(
@@ -29,7 +29,7 @@ final class TsEnum implements Stringable
         public readonly string $scalarType,
         public ?string $summary = null,
         public ?string $description = null,
-        public bool|string|null $deprecation = null,
+        public array $tags = [],
         public array $properties = [],
         public ?C $config = null,
     ) {}
@@ -54,7 +54,7 @@ final class TsEnum implements Stringable
         $docComment = (new TsDocComment(
             summary: $this->summary,
             description: $this->description,
-            deprecation: $this->deprecation,
+            tags: $this->tags,
         ))->toString();
 
         $string = self::getHeader();

@@ -30,7 +30,7 @@ final class TsProperty implements Stringable
      * @param self::TYPE_UNKNOWN|Node $type
      * @param TsGeneric[] $generics
      * @param string[] $classIdentifiers
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<TsDocComment::SUPPORTED_TAGS>, string> $tags
      */
     public function __construct(
         public string $name,
@@ -43,7 +43,7 @@ final class TsProperty implements Stringable
         public readonly bool $doesRequireValueOf = false,
         public readonly ?string $summary = null,
         public readonly ?string $description = null,
-        public bool|string|null $deprecation = null,
+        public array $tags = [],
         public ?Config $config = null,
     ) {}
 
@@ -64,7 +64,7 @@ final class TsProperty implements Stringable
         $docComment = (new TsDocComment(
             summary: $this->summary,
             description: $this->description,
-            deprecation: $this->deprecation,
+            tags: $this->tags,
         ))->toString($indent);
 
         return u($docComment ? ($docComment . PHP_EOL) : '')

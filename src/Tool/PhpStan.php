@@ -14,7 +14,6 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use PhpParser\Comment\Doc;
 use PHPStan\PhpDocParser\Ast\ConstExpr as PHPStanConstExpr;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocChildNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
@@ -125,11 +124,6 @@ final class PhpStan
         ];
 
         return current($values) ?: null;
-    }
-
-    public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
-    {
-        return current($docNode->getDeprecatedTagValues()) ?: null;
     }
 
     /**

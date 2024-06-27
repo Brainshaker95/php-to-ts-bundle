@@ -344,7 +344,6 @@ final class MyService
 
 * All class identifiers used need to point to classes tagged with the `AsTypeScriptable` attribute, otherwise invalid TypeScript interfaces will be generated.
 * Types are only recognized as class identifiers if they start with an uppercase letter.
-* Multiline `@deprecated` and `@template` descriptions cannot contain empty lines between paragraphs. Only a single new line can be used as a separator. All other lines will be considered as part of the property description.
 * No support for nested readonly types for array shapes. Only the array property itself will be marked as readonly, which would technically allow nested properties to be modified.
 * No support for array shapes where some items have keys and some do not.
 * No support for `value-of` on backed enums.

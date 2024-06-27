@@ -38,7 +38,7 @@ final class TsInterface implements Stringable
 
     /**
      * @param TsGeneric[] $generics
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<TsDocComment::SUPPORTED_TAGS>, string> $tags
      * @param TsProperty[] $properties
      */
     public function __construct(
@@ -48,7 +48,7 @@ final class TsInterface implements Stringable
         public readonly array $generics = [],
         public ?string $summary = null,
         public ?string $description = null,
-        public bool|string|null $deprecation = null,
+        public array $tags = [],
         public array $properties = [],
         public ?C $config = null,
     ) {}
@@ -78,7 +78,7 @@ final class TsInterface implements Stringable
         $docComment = (new TsDocComment(
             summary: $this->summary,
             description: $this->description,
-            deprecation: $this->deprecation,
+            tags: $this->tags,
             generics: $generics,
         ))->toString();
 

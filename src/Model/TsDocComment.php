@@ -7,14 +7,11 @@ namespace Brainshaker95\PhpToTsBundle\Model;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
 use Stringable;
+use Symfony\Component\String\UnicodeString;
 
 use const PHP_EOL;
 
-use function array_filter;
-use function count;
-use function implode;
-use function is_string;
-use function rtrim;
+use function array_values;
 use function Symfony\Component\String\u;
 
 /**
@@ -22,14 +19,48 @@ use function Symfony\Component\String\u;
  */
 final class TsDocComment implements Stringable
 {
+    public const TAG_API        = 'api';
+    public const TAG_AUTHOR     = 'author';
+    public const TAG_CATEGORY   = 'category';
+    public const TAG_COPYRIGHT  = 'copyright';
+    public const TAG_DEPRECATED = 'deprecated';
+    public const TAG_INTERNAL   = 'internal';
+    public const TAG_LICENSE    = 'license';
+    public const TAG_LINK       = 'link';
+    public const TAG_PACKAGE    = 'package';
+    public const TAG_SEE        = 'see';
+    public const TAG_SINCE      = 'since';
+    public const TAG_SUBPACKAGE = 'subpackage';
+    public const TAG_TODO       = 'todo';
+    public const TAG_VERSION    = 'version';
+
+    public const SUPPORTED_TAGS = [
+        self::TAG_API,
+        self::TAG_AUTHOR,
+        self::TAG_CATEGORY,
+        self::TAG_COPYRIGHT,
+        self::TAG_DEPRECATED,
+        self::TAG_INTERNAL,
+        self::TAG_LICENSE,
+        self::TAG_LINK,
+        self::TAG_PACKAGE,
+        self::TAG_SEE,
+        self::TAG_SINCE,
+        self::TAG_SUBPACKAGE,
+        self::TAG_TODO,
+        self::TAG_VERSION,
+    ];
+
+    private const LINE_PREFIX = ' * ';
+
     /**
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<self::SUPPORTED_TAGS>, string> $tags
      * @param TsGeneric[] $generics
      */
     public function __construct(
         public readonly ?string $summary = null,
         public readonly ?string $description = null,
-        public readonly bool|string|null $deprecation = null,
+        public readonly array $tags = [],
         public readonly array $generics = [],
     ) {}
 
@@ -40,81 +71,50 @@ final class TsDocComment implements Stringable
 
     public function toString(?Indent $indent = null): string
     {
-        $linePrefix = ' * ';
+        $content = u('');
 
-        $content = u(self::linesToString(
-            lines: Str::splitByNewLines($this->summary ?? '', $linePrefix),
-            linePrefix: $linePrefix,
-            indent: $indent,
-        ));
-
-        $previousDescriptionLine = '';
-
-        $descriptionLines = array_filter(Str::splitByNewLines(
-            string: $this->description ?? '',
-            removeEmptyLines: false,
-            lineCallback: static function (string $line) use (&$previousDescriptionLine, $linePrefix) {
-                if ($line === '' && $previousDescriptionLine !== '') {
-                    $previousDescriptionLine = $line;
-
-                    return $linePrefix . "\n";
-                }
-
-                $previousDescriptionLine = $line;
-
-                return $line ? $linePrefix . $line : '';
-            },
-        ));
-
-        $content = $content->append(self::linesToString(
-            lines: $descriptionLines,
-            linePrefix: $linePrefix,
-            hasPreviousLines: (bool) $content->trim()->length(),
-            indent: $indent,
-        ));
-
-        $deprecationLines = match (true) {
-            default                       => [],
-            $this->deprecation            => [$linePrefix . '@deprecated'],
-            is_string($this->deprecation) => Str::splitByNewLines(
-                string: $this->deprecation,
-                lineCallback: static fn (string $line, int $index) => $index === 0
-                    ? $linePrefix . '@deprecated ' . $line
-                    : $linePrefix . $line,
-            ),
-        };
-
-        $content = $content->append(self::linesToString(
-            lines: $deprecationLines,
-            linePrefix: $linePrefix,
-            hasPreviousLines: (bool) $content->trim()->length(),
-            indent: $indent,
-        ));
-
-        $templateTagLines = [];
-
-        foreach ($this->generics as $generic) {
-            $templateTagLines = [
-                ...$templateTagLines,
-                ...Str::splitByNewLines($generic->getTemplateTag(), $linePrefix),
-            ];
+        if ($this->summary) {
+            $content = self::appendPadded(
+                content: $content,
+                stringToAppend: $this->summary,
+                indent: $indent,
+            );
         }
 
-        $content = $content->append(self::linesToString(
-            lines: $templateTagLines,
-            linePrefix: $linePrefix,
-            hasPreviousLines: (bool) $content->trim()->length(),
-            indent: $indent,
-        ));
+        if ($this->description) {
+            $content = self::appendPadded(
+                content: $content,
+                stringToAppend: $this->description,
+                indent: $indent,
+            );
+        }
 
-        if (!$content->trim()->length()) {
+        foreach (array_values($this->tags) as $index => $renderedTag) {
+            $content = self::appendPadded(
+                content: $content,
+                stringToAppend: $renderedTag,
+                indent: $indent,
+                index: $index,
+            );
+        }
+
+        foreach (array_values($this->generics) as $index => $generic) {
+            $content = self::appendPadded(
+                content: $content,
+                stringToAppend: $generic->getTemplateTag(),
+                indent: $indent,
+                index: $index,
+            );
+        }
+
+        if ($content->trim()->length() === 0) {
             return '';
         }
 
         return u($indent?->toString() ?? '')
             ->append('/**')
             ->append(PHP_EOL)
-            ->append($content->toString())
+            ->append(Str::trimEnd($content->toString(), self::LINE_PREFIX))
             ->append(PHP_EOL)
             ->append($indent?->toString() ?? '')
             ->append(' */')
@@ -122,19 +122,38 @@ final class TsDocComment implements Stringable
         ;
     }
 
-    /**
-     * @param string[] $lines
-     */
-    private static function linesToString(
-        array $lines,
-        string $linePrefix,
+    private static function appendPadded(
+        UnicodeString $content,
+        string $stringToAppend,
         ?Indent $indent,
-        bool $hasPreviousLines = false,
-    ): string {
-        $linesString = rtrim($indent?->toString() . implode(PHP_EOL . $indent?->toString(), $lines));
+        int $index = 0,
+    ): UnicodeString {
+        static $previousWasMultiline;
 
-        return $hasPreviousLines && count($lines)
-            ? (PHP_EOL . $indent?->toString() . rtrim($linePrefix) . PHP_EOL . $linesString)
-            : $linesString;
+        if ($previousWasMultiline === null) {
+            $previousWasMultiline = false;
+        }
+
+        $isMutliline = Str::containsNewlines($stringToAppend);
+
+        $emptyLine = u($indent?->toString() ?? '')
+            ->append(self::LINE_PREFIX)
+            ->append(PHP_EOL)
+            ->toString()
+        ;
+
+        if ($index > 0 && !($previousWasMultiline || $isMutliline)) {
+            $content = u(Str::trimEnd($content->toString(), self::LINE_PREFIX))
+                ->append(PHP_EOL)
+            ;
+        }
+
+        $previousWasMultiline = $isMutliline;
+
+        return $content->append(Str::indentAndPrefixLines(
+            string: $stringToAppend,
+            indent: $indent,
+            prefix: self::LINE_PREFIX,
+        ) . PHP_EOL . $emptyLine);
     }
 }
