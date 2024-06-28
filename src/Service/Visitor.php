@@ -119,7 +119,7 @@ final class Visitor extends NameResolver
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
             $publicParams = array_filter(
                 $node->params,
-                static fn (Param $param) => ($param->flags & Modifiers::READONLY) !== 0,
+                static fn (Param $param) => ($param->flags & Modifiers::PUBLIC) !== 0,
             );
 
             $readonlyStates = array_map(
