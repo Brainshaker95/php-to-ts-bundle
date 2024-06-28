@@ -28,10 +28,10 @@ final class TsGeneric implements Stringable
      */
     public function __construct(
         public string $name,
-        public ?Node $bound = null,
-        public ?Node $default = null,
-        public ?string $description = null,
         public array $properties = [],
+        public readonly ?Node $bound = null,
+        public readonly ?Node $default = null,
+        public readonly ?string $description = null,
     ) {}
 
     public function __toString(): string

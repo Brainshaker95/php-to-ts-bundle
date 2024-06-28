@@ -26,7 +26,7 @@ final class TsEnum implements Stringable
      */
     public function __construct(
         public string $name,
-        public readonly string $scalarType,
+        public string $scalarType,
         public ?string $summary = null,
         public ?string $description = null,
         public array $tags = [],

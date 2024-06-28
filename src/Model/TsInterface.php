@@ -44,8 +44,8 @@ final class TsInterface implements Stringable
     public function __construct(
         public string $name,
         public ?string $parentName = null,
-        public readonly bool $isReadonly = false,
-        public readonly array $generics = [],
+        public bool $isReadonly = false,
+        public array $generics = [],
         public ?string $summary = null,
         public ?string $description = null,
         public array $tags = [],
