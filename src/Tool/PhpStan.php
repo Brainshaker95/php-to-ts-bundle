@@ -15,9 +15,7 @@ use PhpParser\Comment\Doc;
 use PHPStan\PhpDocParser\Ast\ConstExpr as PHPStanConstExpr;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocChildNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTextNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TypelessParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -30,9 +28,7 @@ use PHPStan\PhpDocParser\Parser\TypeParser;
 
 use function array_filter;
 use function array_is_list;
-use function array_map;
 use function current;
-use function implode;
 use function is_array;
 use function is_iterable;
 use function is_string;
@@ -136,28 +132,6 @@ final class PhpStan
             ...$docNode->getTemplateTagValues('@phpstan-template'),
             ...$docNode->getTemplateTagValues('@psalm-template'),
         ];
-    }
-
-    /**
-     * @return PhpDocTextNode[]
-     */
-    public static function getTextNodes(PhpDocNode $docNode): array
-    {
-        return array_filter(
-            $docNode->children,
-            static fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode && $childNode->text,
-        );
-    }
-
-    /**
-     * @param PhpDocTextNode[] $textNodes
-     */
-    public static function textNodesToString(array $textNodes): string
-    {
-        return implode("\n", array_map(
-            static fn (PhpDocTextNode $textNode) => $textNode->text,
-            $textNodes,
-        ));
     }
 
     public static function phpValueToTsType(
