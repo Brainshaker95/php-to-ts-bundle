@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
@@ -44,7 +44,7 @@ final class TsProperty implements Stringable
         public ?string $summary = null,
         public ?string $description = null,
         public array $tags = [],
-        public ?Config $config = null,
+        public ?C $config = null,
     ) {}
 
     public function __toString(): string
