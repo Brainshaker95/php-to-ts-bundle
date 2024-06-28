@@ -16,6 +16,7 @@ use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PhpParser\Comment\Doc;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
@@ -94,6 +95,7 @@ final class Visitor extends NameResolver
             if ($node instanceof Class_) {
                 $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
             } else {
+                // TODO: Add class context for resolving imports?
                 $this->currentTsEnum = Converter::toEnum($node);
             }
         }
@@ -117,11 +119,11 @@ final class Visitor extends NameResolver
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
             $publicParams = array_filter(
                 $node->params,
-                static fn (Param $param) => ($param->flags & Class_::MODIFIER_PUBLIC) !== 0,
+                static fn (Param $param) => ($param->flags & Modifiers::READONLY) !== 0,
             );
 
             $readonlyStates = array_map(
-                static fn (Param $param) => ($param->flags & Class_::MODIFIER_READONLY) !== 0,
+                static fn (Param $param) => ($param->flags & Modifiers::READONLY) !== 0,
                 $publicParams,
             );
 
