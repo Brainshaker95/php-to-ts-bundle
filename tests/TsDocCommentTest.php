@@ -23,8 +23,8 @@ final class TsDocCommentTest extends TestCase
     public function testToString(): void
     {
         $tsDocComment = new TsDocComment(
-            description: 'This is a description',
-            deprecation: 'This is a deprecation',
+            summary: 'This is a summary',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
             generics: [
                 new TsGeneric(
                     name: 'Foo',
@@ -44,7 +44,7 @@ final class TsDocCommentTest extends TestCase
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
 /**
- * This is a description
+ * This is a summary
  *
  * @deprecated This is a deprecation
  *
@@ -76,7 +76,7 @@ EOT, '' . new TsDocComment(
  * @template Foo This is a generic description
  */
 EOT, '' . new TsDocComment(
-            deprecation: 'This is a deprecation',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
             generics: [
                 new TsGeneric(
                     name: 'Foo',
@@ -87,13 +87,13 @@ EOT, '' . new TsDocComment(
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
 /**
- * This is a description
+ * This is a summary
  *
  * @deprecated This is a deprecation
  */
 EOT, '' . new TsDocComment(
-            description: 'This is a description',
-            deprecation: 'This is a deprecation',
+            summary: 'This is a summary',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
@@ -101,7 +101,7 @@ EOT, '' . new TsDocComment(
  * @deprecated
  */
 EOT, '' . new TsDocComment(
-            deprecation: true,
+            tags: ['deprecated' => '@deprecated'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
@@ -117,19 +117,16 @@ EOT, '' . new TsDocComment(
             ],
         ));
 
-        self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
-/**
- *
- */
-EOT, '' . new TsDocComment(
+        self::assertStringEqualsStringIgnoringLineEndings('', '' . new TsDocComment(
+            summary: ' ',
             description: ' ',
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<EOT
 \t\t\t/**
-\t\t\t *
+\t\t\t * This is a summary
 \t\t\t */
-EOT, (new TsDocComment(' '))->toString(new Indent(Indent::STYLE_TAB, 3)));
+EOT, (new TsDocComment('This is a summary'))->toString(new Indent(Indent::STYLE_TAB, 3)));
 
         self::assertStringEqualsStringIgnoringLineEndings('', '' . new TsDocComment());
     }

@@ -6,10 +6,12 @@
 import type { SomeClass } from './SomeClass';
 
 /**
+ * @internal
  * @deprecated because of reasons
  *
  * @template T1 class level generic
  * @template T2 constructor level generic
+ *
  * @template U2 property level generic
  * with a newline
  */

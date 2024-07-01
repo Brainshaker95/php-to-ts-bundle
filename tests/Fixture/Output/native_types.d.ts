@@ -3,6 +3,9 @@
  * Do not modify directly!
  */
 
+/**
+ * @internal
+ */
 declare type NativeTypes = {
 			testProperty9: unknown[];
 			testProperty8: boolean;

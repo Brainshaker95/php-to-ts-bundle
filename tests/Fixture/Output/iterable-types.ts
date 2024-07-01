@@ -7,6 +7,8 @@
  * This is a class summary.
  *
  * This is a class description
+ *
+ * @internal
  */
 export interface IterableTypes {
   testProperty1: string[];

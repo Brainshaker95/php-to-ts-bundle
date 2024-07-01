@@ -33,7 +33,7 @@ final class TsPropertyTest extends TestCase
             isReadonly: true,
             summary: 'This is a summary',
             description: 'This is a description',
-            deprecation: 'This is a deprecation',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
         );
 
         self::assertSame($tsProperty->toString(), $tsProperty->__toString());
@@ -93,7 +93,7 @@ EOT, '' . new TsProperty(
 EOT, '' . new TsProperty(
             name: 'propertyName',
             type: new ConstExprNullNode(),
-            deprecation: 'This is a deprecation',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
@@ -104,7 +104,7 @@ EOT, '' . new TsProperty(
 EOT, '' . new TsProperty(
             name: 'propertyName',
             type: new ConstExprIntegerNode('69'),
-            deprecation: true,
+            tags: ['deprecated' => '@deprecated'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<EOT

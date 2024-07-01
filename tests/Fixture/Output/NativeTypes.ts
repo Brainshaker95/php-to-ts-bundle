@@ -6,6 +6,9 @@
 import type { Bar } from './Bar';
 import type { Foo } from './Foo';
 
+/**
+ * @internal
+ */
 export interface NativeTypes {
    /**
     * @deprecated
