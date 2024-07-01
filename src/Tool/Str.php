@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Tool;
 
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
+use Symfony\Component\String\UnicodeString;
 
 use const PHP_EOL;
 
 use function array_is_list;
+use function array_map;
 use function implode;
 use function is_array;
 use function is_bool;
@@ -16,7 +18,6 @@ use function is_iterable;
 use function is_object;
 use function is_scalar;
 use function is_string;
-use function rtrim;
 use function Symfony\Component\String\u;
 
 /**
@@ -76,9 +77,17 @@ abstract class Str
         ;
     }
 
+    /**
+     * @phpstan-assert-if-true !non-empty-string $string
+     */
+    final public static function isEmpty(?string $string): bool
+    {
+        return $string === null || u($string)->trim()->length() === 0;
+    }
+
     final public static function trimEnd(
         string $string,
-        string $additionalChars,
+        string $additionalChars = '',
         string $chars = " \t\n\r\0\x0B\x0C\u{A0}\u{FEFF}",
     ): string {
         return u($string)
@@ -106,7 +115,12 @@ abstract class Str
             ->split("\n")
         ;
 
-        return rtrim($indent?->toString() . $prefix . implode(PHP_EOL . $indent?->toString() . $prefix, $lines));
+        return implode(PHP_EOL, array_map(
+            static fn (UnicodeString $line): string => $line->toString() === ''
+                ? $indent?->toString() . self::trimEnd($prefix) . $line
+                : $indent?->toString() . $prefix . $line,
+            $lines,
+        ));
     }
 
     final public static function containsNewlines(string $string): bool

@@ -73,7 +73,7 @@ final class TsDocComment implements Stringable
     {
         $content = u('');
 
-        if ($this->summary) {
+        if (!Str::isEmpty($this->summary)) {
             $content = self::appendPadded(
                 content: $content,
                 stringToAppend: $this->summary,
@@ -81,7 +81,7 @@ final class TsDocComment implements Stringable
             );
         }
 
-        if ($this->description) {
+        if (!Str::isEmpty($this->description)) {
             $content = self::appendPadded(
                 content: $content,
                 stringToAppend: $this->description,
@@ -90,24 +90,30 @@ final class TsDocComment implements Stringable
         }
 
         foreach (array_values($this->tags) as $index => $renderedTag) {
-            $content = self::appendPadded(
-                content: $content,
-                stringToAppend: $renderedTag,
-                indent: $indent,
-                index: $index,
-            );
+            if (!Str::isEmpty($renderedTag)) {
+                $content = self::appendPadded(
+                    content: $content,
+                    stringToAppend: $renderedTag,
+                    indent: $indent,
+                    index: $index,
+                );
+            }
         }
 
         foreach (array_values($this->generics) as $index => $generic) {
-            $content = self::appendPadded(
-                content: $content,
-                stringToAppend: $generic->getTemplateTag(),
-                indent: $indent,
-                index: $index,
-            );
+            $templateTag = $generic->getTemplateTag();
+
+            if (!Str::isEmpty($templateTag)) {
+                $content = self::appendPadded(
+                    content: $content,
+                    stringToAppend: $templateTag,
+                    indent: $indent,
+                    index: $index,
+                );
+            }
         }
 
-        if ($content->trim()->length() === 0) {
+        if (Str::isEmpty($content->toString())) {
             return '';
         }
 
@@ -128,6 +134,10 @@ final class TsDocComment implements Stringable
         ?Indent $indent,
         int $index = 0,
     ): UnicodeString {
+        if (!$stringToAppend) {
+            return $content;
+        }
+
         static $previousWasMultiline;
 
         if ($previousWasMultiline === null) {
@@ -137,7 +147,7 @@ final class TsDocComment implements Stringable
         $isMutliline = Str::containsNewlines($stringToAppend);
 
         $emptyLine = u($indent?->toString() ?? '')
-            ->append(self::LINE_PREFIX)
+            ->append(Str::trimEnd(self::LINE_PREFIX))
             ->append(PHP_EOL)
             ->toString()
         ;
