@@ -17,9 +17,10 @@
   ],
   "require": {
     "php": ">=8.1",
+    "ext-ctype": "*",
+    "ext-filter": "*",
     "ext-json": "*",
-    "ext-mbstring": "*",
-    "ext-xml": "*",
+    "ext-tokenizer": "*",
     "nikic/php-parser": "^5.0",
     "phpdocumentor/reflection-docblock": "^5.4",
     "phpstan/phpdoc-parser": "^1.25",
@@ -36,6 +37,12 @@
     "symfony/string": "^5.0 || ^6.0 || ^7.0"
   },
   "require-dev": {
+    "ext-dom": "*",
+    "ext-libxml": "*",
+    "ext-mbstring": "*",
+    "ext-phar": "*",
+    "ext-xml": "*",
+    "ext-xmlwriter": "*",
     "friendsofphp/php-cs-fixer": "3.59.3",
     "phpstan/phpstan": "1.11.5",
     "phpstan/phpstan-strict-rules": "1.6.0",
