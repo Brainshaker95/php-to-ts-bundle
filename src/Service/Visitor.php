@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
-use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 use Brainshaker95\PhpToTsBundle\Event\TsEnumGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
@@ -42,11 +41,6 @@ final class Visitor extends NameResolver
 
     private bool $isTypeScriptable;
 
-    /**
-     * @var ?class-string
-     */
-    private ?string $currentClassName;
-
     private ?TsInterface $currentTsInterface;
 
     private ?TsEnum $currentTsEnum;
@@ -71,7 +65,6 @@ final class Visitor extends NameResolver
         parent::beforeTraverse($nodes);
 
         $this->isTypeScriptable   = false;
-        $this->currentClassName   = null;
         $this->currentTsInterface = null;
         $this->currentTsEnum      = null;
         $this->tsInterfaces       = [];
@@ -90,12 +83,10 @@ final class Visitor extends NameResolver
         if (($node instanceof Class_ || $node instanceof Enum_)
             && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
             $this->isTypeScriptable = true;
-            $this->currentClassName = self::getFqcn($node);
 
             if ($node instanceof Class_) {
                 $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
             } else {
-                // TODO: Add class context for resolving imports?
                 $this->currentTsEnum = Converter::toEnum($node);
             }
         }
@@ -211,13 +202,7 @@ final class Visitor extends NameResolver
         bool $isReadonly = false,
         ?Doc $docComment = null,
     ): void {
-        $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
-
-        if ($this->currentClassName
-            && Attribute::existsOnProperty(Hidden::class, $this->currentClassName, $tsProperty->name)) {
-            return;
-        }
-
+        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment);
         $tsProperty->config = $this->config;
 
         $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(

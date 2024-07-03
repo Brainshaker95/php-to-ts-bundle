@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Fixture\Input;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
-use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 use stdClass;
 
 /**
@@ -110,8 +109,6 @@ final class NativeTypes
         public readonly string $testProperty2,
         public string $testProperty3,
         public $testProperty4,
-        #[Hidden]
-        public $hiddenProperty,
         /**
          * @phpstan-ignore-next-line
          */

@@ -355,7 +355,6 @@ final class MyService
 
 * Document example TypeScriptable class
 * Document example TypeScriptable enum
-* Document usage of Hidden attribute
 * Document usage of TsController
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>

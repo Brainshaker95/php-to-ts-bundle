@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Fixture\Input\SubDir;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
-use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 
 /**
  * @internal
@@ -86,9 +85,6 @@ final class GenericTypes
      * @var int<0, max>
      */
     public int $testProperty8;
-
-    #[Hidden]
-    public string $testProperty9;
 
     /**
      * @phpstan-ignore-next-line
