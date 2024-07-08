@@ -41,7 +41,7 @@ final class ConstFetchNode implements Indentable, Node, Quotable, Stringable
     use HasQuotes;
 
     public function __construct(
-        public readonly string $className,
+        public string $className,
         public readonly string $name,
     ) {}
 

@@ -23,7 +23,10 @@ use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\EnumCase;
+use PhpParser\Node\Stmt\GroupUse;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitor\NameResolver;
 
 use function array_filter;
@@ -46,6 +49,11 @@ final class Visitor extends NameResolver
     private ?TsEnum $currentTsEnum;
 
     /**
+     * @var array<string, string>
+     */
+    private array $currentClassNameMap;
+
+    /**
      * @var TsInterface[]
      */
     private array $tsInterfaces;
@@ -64,11 +72,12 @@ final class Visitor extends NameResolver
     {
         parent::beforeTraverse($nodes);
 
-        $this->isTypeScriptable   = false;
-        $this->currentTsInterface = null;
-        $this->currentTsEnum      = null;
-        $this->tsInterfaces       = [];
-        $this->tsEnums            = [];
+        $this->isTypeScriptable    = false;
+        $this->currentTsInterface  = null;
+        $this->currentTsEnum       = null;
+        $this->currentClassNameMap = [];
+        $this->tsInterfaces        = [];
+        $this->tsEnums             = [];
 
         return null;
     }
@@ -80,6 +89,25 @@ final class Visitor extends NameResolver
     {
         parent::enterNode($node);
 
+        if ($node instanceof Use_ || $node instanceof GroupUse) {
+            if ($node instanceof Use_ && $node->type !== Use_::TYPE_NORMAL) {
+                return null;
+            }
+
+            $uses = $node instanceof Use_
+                ? $node->uses
+                : array_filter(
+                    $node->uses,
+                    static fn (UseItem $use): bool => $use->type === Use_::TYPE_NORMAL,
+                );
+
+            foreach ($uses as $use) {
+                $this->currentClassNameMap[$use->getAlias()->name] = $use->name->name;
+            }
+
+            return null;
+        }
+
         if (($node instanceof Class_ || $node instanceof Enum_)
             && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
             $this->isTypeScriptable = true;
@@ -89,6 +117,8 @@ final class Visitor extends NameResolver
             } else {
                 $this->currentTsEnum = Converter::toEnum($node);
             }
+
+            return null;
         }
 
         if (!$this->currentTsInterface && !$this->currentTsEnum) {
@@ -127,6 +157,8 @@ final class Visitor extends NameResolver
                 $publicParams,
                 $readonlyStates,
             );
+
+            return null;
         }
 
         if ($node instanceof EnumCase) {
@@ -134,6 +166,8 @@ final class Visitor extends NameResolver
                 property: $node,
                 docComment: $docComment,
             );
+
+            return null;
         }
 
         return null;
@@ -202,7 +236,7 @@ final class Visitor extends NameResolver
         bool $isReadonly = false,
         ?Doc $docComment = null,
     ): void {
-        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment);
+        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment, $this->currentClassNameMap);
         $tsProperty->config = $this->config;
 
         $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(

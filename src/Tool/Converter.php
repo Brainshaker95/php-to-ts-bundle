@@ -26,6 +26,7 @@ use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Closure;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
@@ -218,12 +219,15 @@ final class Converter
     }
 
     /**
+     * @param array<string, string> $classNameMap
+     *
      * @throws InvalidPropertyException
      */
     public static function toProperty(
         Param|Property|EnumCase $property,
         bool $isReadonly,
         ?Doc $docComment,
+        array $classNameMap,
     ): TsProperty {
         $name = self::getNameFromProperty($property);
         $data = [];
@@ -243,6 +247,11 @@ final class Converter
                 name: $name,
                 forceVarNode: true,
             )['rootNode'];
+        }
+
+        if (isset($data['rootNode'])) {
+            self::normalizeClassIdentifiers([$data['rootNode']], $classNameMap);
+            self::fqcnifyConstFetchNodeClassNames([$data['rootNode']], $classNameMap);
         }
 
         $classIdentifiers = $data['rootNode']
@@ -510,50 +519,89 @@ final class Converter
 
     /**
      * @param Node[] $nodes
-     * @param string[] $identifiers
      *
      * @return string[]
      */
-    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
+    private static function getClassIdentifiers(array $nodes): array
     {
-        foreach ($nodes as $node) {
+        $identifiers = [];
+
+        self::traverseNodes($nodes, static function (Node $node) use (&$identifiers): void {
             $identifier = self::getClassIdentifierNode($node)?->name;
 
             if ($identifier) {
                 $identifiers[] = $identifier;
             }
-
-            $nextLevelNodes = self::getNextLevelNodes($node);
-
-            if (count($nextLevelNodes)) {
-                $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
-            }
-        }
+        });
 
         return $identifiers;
     }
 
     /**
      * @param Node[] $nodes
-     * @param GenericTypeNode[] $valueOfNodes
      *
      * @return GenericTypeNode[]
      */
-    private static function getValueOfNodes(array $nodes, array $valueOfNodes = []): array
+    private static function getValueOfNodes(array $nodes): array
     {
-        foreach ($nodes as $node) {
+        $valueOfNodes = [];
+
+        self::traverseNodes($nodes, static function (Node $node) use (&$valueOfNodes): void {
             if ($node instanceof GenericTypeNode && $node->type->name === self::TYPE_VALUE_OF) {
                 $valueOfNodes[] = $node;
             }
-
-            $nextLevelNodes = self::getNextLevelNodes($node);
-
-            if (count($nextLevelNodes)) {
-                $valueOfNodes = self::getValueOfNodes($nextLevelNodes, $valueOfNodes);
-            }
-        }
+        });
 
         return $valueOfNodes;
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param array<string, string> $classNameMap
+     */
+    private static function normalizeClassIdentifiers(array $nodes, array $classNameMap): void
+    {
+        self::traverseNodes($nodes, static function (Node $node) use ($classNameMap): void {
+            $classIdentifierNode = self::getClassIdentifierNode($node);
+
+            if ($classIdentifierNode && ($classNameMap[$classIdentifierNode->name] ?? false)) {
+                $classIdentifierNode->name = Str::getShortClassName($classNameMap[$classIdentifierNode->name]);
+            }
+        });
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param array<string, string> $classNameMap
+     */
+    private static function fqcnifyConstFetchNodeClassNames(array $nodes, array $classNameMap): void
+    {
+        self::traverseNodes($nodes, static function (Node $node) use ($classNameMap): void {
+            if (!$node instanceof ConstTypeNode || !$node->constExpr instanceof ConstFetchNode) {
+                return;
+            }
+
+            $constFetchNode     = $node->constExpr;
+            $firstNamespacePart = Str::getFirstNamespacePart($constFetchNode->className);
+
+            if ($classNameMap[$firstNamespacePart] ?? false) {
+                $constFetchNode->className = $classNameMap[$firstNamespacePart] . '\\' . Str::getTrailingNamespaceParts($constFetchNode->className);
+            } elseif ($classNameMap[$constFetchNode->className] ?? false) {
+                $constFetchNode->className = $classNameMap[$constFetchNode->className];
+            }
+        });
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param Closure(Node $node): void $callback
+     */
+    private static function traverseNodes(array $nodes, Closure $callback): void
+    {
+        foreach ($nodes as $node) {
+            $callback($node);
+            self::traverseNodes(self::getNextLevelNodes($node), $callback);
+        }
     }
 
     /**

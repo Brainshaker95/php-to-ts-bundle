@@ -18,6 +18,7 @@ use function is_iterable;
 use function is_object;
 use function is_scalar;
 use function is_string;
+use function str_contains;
 use function Symfony\Component\String\u;
 
 /**
@@ -96,17 +97,6 @@ abstract class Str
         ;
     }
 
-    final public static function afterLast(
-        string $string,
-        string $needle,
-        bool $indcludeNeedle = false,
-    ): string {
-        return u($string)
-            ->afterLast($needle, $indcludeNeedle)
-            ->toString()
-        ;
-    }
-
     final public static function indentAndPrefixLines(string $string, ?Indent $indent, string $prefix = ''): string
     {
         $lines = u($string)
@@ -170,5 +160,26 @@ abstract class Str
         }
 
         return Converter::TYPE_MIXED;
+    }
+
+    final public static function getShortClassName(string $className): string
+    {
+        return str_contains($className, '\\')
+            ? u($className)->afterLast('\\')->toString()
+            : $className;
+    }
+
+    final public static function getFirstNamespacePart(string $className): ?string
+    {
+        return str_contains($className, '\\')
+            ? u($className)->before('\\')->toString()
+            : null;
+    }
+
+    final public static function getTrailingNamespaceParts(string $className): ?string
+    {
+        return str_contains($className, '\\')
+            ? u($className)->after('\\')->toString()
+            : null;
     }
 }

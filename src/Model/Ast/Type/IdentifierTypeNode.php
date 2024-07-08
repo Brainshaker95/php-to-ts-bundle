@@ -15,7 +15,6 @@ use Stringable;
 
 use function array_key_exists;
 use function in_array;
-use function str_contains;
 
 /**
  * @internal
@@ -57,7 +56,7 @@ final class IdentifierTypeNode implements Node, Stringable
         } elseif ($name === '\stdClass' || $name === 'stdClass') {
             $name = TsProperty::TYPE_UNKNOWN;
         } elseif (self::isInterpretedAsClass($name)) {
-            $name = self::getShortClassName($name);
+            $name = Str::getShortClassName($name);
             $type = self::TYPE_CLASS;
         }
 
@@ -70,12 +69,5 @@ final class IdentifierTypeNode implements Node, Stringable
     private static function isInterpretedAsClass(string $name): bool
     {
         return $name[0] === Str::toUpper($name[0]);
-    }
-
-    private static function getShortClassName(string $name): string
-    {
-        return str_contains($name, '\\')
-            ? Str::afterLast($name, '\\')
-            : $name;
     }
 }
