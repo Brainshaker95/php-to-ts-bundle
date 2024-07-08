@@ -352,6 +352,7 @@ final class Converter
         return match (true) {
             default                                => [],
             $node instanceof ArrayShapeNode        => $node->items,
+            $node instanceof ArrayTypeNode         => [$node->type],
             $node instanceof ArrayShapeItemNode    => [$node->valueNode],
             $node instanceof GenericTypeNode       => $node->genericTypes,
             self::isUnionOrIntersectionNode($node) => $node->types,
