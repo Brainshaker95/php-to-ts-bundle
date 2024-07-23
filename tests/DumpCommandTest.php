@@ -31,7 +31,6 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-use function array_merge;
 use function sprintf;
 
 /**
@@ -267,11 +266,9 @@ final class DumpCommandTest extends KernelTestCase
         );
 
         foreach ($files as $file) {
-            $name = $file->getFilename();
-
             self::assertStringEqualsStringIgnoringLineEndings(
-                expected: $this->filesystem->getContent('tests/Fixture/Output/' . $name),
-                actual: $this->filesystem->getContent($outputDir . '/' . $name),
+                expected: $this->filesystem->getContent('tests/Fixture/Output/' . $file->getFilename()),
+                actual: $file->getContents(),
             );
         }
     }
@@ -294,9 +291,11 @@ final class DumpCommandTest extends KernelTestCase
         $application->setCatchExceptions(false);
 
         return $application->run(
-            new ArrayInput(array_merge([
+            new ArrayInput([
                 'command' => $command,
-            ], $arguments, $isVerbose ? ['-v'] : [])),
+                ...$arguments,
+                ...($isVerbose ? ['-v'] : []),
+            ]),
             $isVerbose ? new BufferedOutput() : new NullOutput(),
         );
     }
