@@ -51,11 +51,9 @@ final class Assert
      */
     public static function nonEmptyStringNullable(mixed $value): ?string
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::nonEmptyStringNonNullable($value);
+        return $value === null
+            ? null
+            : self::nonEmptyStringNonNullable($value);
     }
 
     /**
@@ -84,11 +82,9 @@ final class Assert
      */
     public static function nonNegativeIntegerNullable(mixed $value): ?int
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::nonNegativeIntegerNonNullable($value);
+        return $value === null
+            ? null
+            : self::nonNegativeIntegerNonNullable($value);
     }
 
     /**
@@ -119,11 +115,9 @@ final class Assert
      */
     public static function nonEmptyStringArrayNullable(mixed $value): ?array
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::nonEmptyStringArrayNonNullable($value);
+        return $value === null
+            ? null
+            : self::nonEmptyStringArrayNonNullable($value);
     }
 
     /**
@@ -159,11 +153,9 @@ final class Assert
      */
     public static function inStringArrayNullable(mixed $value, array $allowedStrings): ?string
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::inStringArrayNonNullable($value, $allowedStrings);
+        return $value === null
+            ? null
+            : self::inStringArrayNonNullable($value, $allowedStrings);
     }
 
     /**
@@ -223,11 +215,9 @@ final class Assert
      */
     public static function interfaceClassStringNullable(mixed $value, string $class): ?string
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::interfaceClassStringNonNullable($value, $class);
+        return $value === null
+            ? null
+            : self::interfaceClassStringNonNullable($value, $class);
     }
 
     /**
@@ -258,11 +248,9 @@ final class Assert
      */
     public static function interfaceClassStringArrayNullable(mixed $value, string $class): ?array
     {
-        if ($value === null) {
-            return $value;
-        }
-
-        return self::interfaceClassStringArrayNonNullable($value, $class);
+        return $value === null
+            ? null
+            : self::interfaceClassStringArrayNonNullable($value, $class);
     }
 
     /**
