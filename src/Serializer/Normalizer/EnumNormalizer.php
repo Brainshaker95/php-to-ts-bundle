@@ -27,18 +27,22 @@ final class EnumNormalizer implements NormalizerInterface
         array $context = [],
     ): array|string|int|float|bool|ArrayObject|null {
         if (!is_object($data)) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(sprintf(
                 'Expected paramteter 1 ($data) to be of type "object" but got "%s".',
                 get_debug_type($data),
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         if (!$data instanceof BackedEnum) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(sprintf(
                 'Expected object to be an instance of "%s". Given instance was of class "%s".',
                 BackedEnum::class,
                 $data::class,
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         return $data->value;
