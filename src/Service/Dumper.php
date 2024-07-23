@@ -158,14 +158,7 @@ final class Dumper
      */
     public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): array
     {
-        $file     = $this->filesystem->getSplFileInfo($file);
-        $realPath = $file->getRealPath();
-
-        if (!$realPath) {
-            return [];
-        }
-
-        $this->filesystem->assertFile($realPath);
+        $file = $this->filesystem->getSplFileInfo($file);
 
         if (Str::toLower($file->getExtension()) !== 'php') {
             return [];
