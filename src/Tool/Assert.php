@@ -195,9 +195,9 @@ final class Assert
             || !is_a($value, $class, true)
             || !(new ReflectionClass($value))->implementsInterface($class)) {
             throw new AssertionFailedException(sprintf(
-                'Expected value to be a class string of a class that implements %s. Given value was: %s',
-                Str::displayType($value),
+                'Expected value to be a class string of a class that implements "%s". Given value was: %s',
                 $class,
+                Str::displayType($value),
             ));
         }
 
