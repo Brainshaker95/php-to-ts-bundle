@@ -136,8 +136,12 @@ final class Dumper
             return;
         }
 
-        $valueOfPath = $pathPrefix . (new ($config->getFileNameStrategy())())->getName('valueOf') . '.ts';
-        $isModule    = $config->getFileType() === FileType::TYPE_MODULE;
+        $isModule = $config->getFileType() === FileType::TYPE_MODULE;
+
+        $valueOfPath = $pathPrefix
+            . (new ($config->getFileNameStrategy())())->getName('valueOf')
+            . (!$isModule ? '.d' : '')
+            . '.ts';
 
         $this->filesystem->dumpFile(
             $valueOfPath,
