@@ -32,6 +32,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
@@ -39,6 +40,8 @@ use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Dumper;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Brainshaker95\PhpToTsBundle\Service\Visitor;
+use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Small;
@@ -73,10 +76,17 @@ use function count;
 #[CoversClass(TsGeneric::class)]
 #[CoversClass(TsInterface::class)]
 #[CoversClass(TsProperty::class)]
+#[CoversClass(TsEnum::class)]
 #[CoversClass(UnionTypeNode::class)]
 #[CoversClass(Visitor::class)]
 #[CoversTrait(HasIndent::class)]
 #[CoversTrait(HasQuotes::class)]
+#[CoversClass(Converter::class)]
+#[CoversClass(PhpStan::class)]
+#[CoversClass(Quotes::class)]
+#[CoversClass(Indent::class)]
+#[CoversClass(FullConfig::class)]
+#[CoversClass(PartialConfig::class)]
 final class DumperTest extends KernelTestCase
 {
     private Dumper $dumper;
