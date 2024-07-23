@@ -140,10 +140,7 @@ final class TsDocComment implements Stringable
 
         static $previousWasMultiline;
 
-        if ($previousWasMultiline === null) {
-            $previousWasMultiline = false;
-        }
-
+        $previousWasMultiline ??= false;
         $isMutliline = Str::containsNewlines($stringToAppend);
 
         $emptyLine = u($indent?->toString() ?? '')
