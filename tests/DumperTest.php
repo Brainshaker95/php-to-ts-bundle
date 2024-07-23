@@ -47,9 +47,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 use const PHP_EOL;
 
-use function array_key_exists;
 use function count;
-use function sprintf;
 
 /**
  * @internal
@@ -119,7 +117,7 @@ final class DumperTest extends KernelTestCase
     public function testDumpDirWithDefaultOptions(): void
     {
         $this->dumper->dumpDir(
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -136,7 +134,7 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -147,26 +145,15 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpDirWithInputDirChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpDir(
             configOrDir: $this->inputDir . '/SubDir',
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, sprintf(
-                    'The directory "%s" should only contain one class.',
-                    $this->inputDir . '/SubDir',
-                ));
-
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -178,42 +165,25 @@ final class DumperTest extends KernelTestCase
 
     public function testDumpFilesWithDefaultOptions(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFiles(
             files: [
                 $this->inputDir . '/IterableTypes.php',
                 $this->inputDir . '/SubDir/GenericTypes.php',
             ],
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter <= 2, 'Expected 2 dumped files.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFilesWithADirectoryAsInput(): void
     {
-        $fileCounter = 0;
-        $paths       = [];
+        $paths = [];
 
         $this->dumper->dumpFiles(
             files: [
                 $this->inputDir,
                 $this->inputDir . '/SubDir/GenericTypes.php',
             ],
-            successCallback: function (string $path) use (&$fileCounter, &$paths): void {
-                if (array_key_exists($path, $paths)) {
-                    $fileCounter += 1;
-                } else {
-                    $paths[$path] = true;
-                }
-
-                self::assertTrue($fileCounter <= 3, 'Expected 3 dumped files.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -231,7 +201,7 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -244,7 +214,7 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -256,23 +226,14 @@ final class DumperTest extends KernelTestCase
 
     public function testDumpFileWithDefaultOptions(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/IterableTypes.php',
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFileWithAllOptionsChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/SubDir/GenericTypes.php',
             config: new FullConfig(
@@ -285,19 +246,12 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir . '/SubDir', $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFileWithSomeOptionsChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/NativeTypes.php',
             config: new PartialConfig(
@@ -305,12 +259,7 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -346,13 +295,14 @@ final class DumperTest extends KernelTestCase
         self::assertCount(0, $tsInterfaces);
     }
 
-    private function successCallback(string $outputDir, string $path): void
+    private function successCallback(string $path): void
     {
-        $name = $this->filesystem->getSplFileInfo($path)->getFilename();
+        $file = $this->filesystem->getSplFileInfo($path);
+        $name = $file->getFilename();
 
         self::assertStringEqualsStringIgnoringLineEndings(
             expected: $this->filesystem->getContent('tests/Fixture/Output/' . $name),
-            actual: $this->filesystem->getContent($outputDir . '/' . $name),
+            actual: $file->getContents(),
         );
     }
 }
