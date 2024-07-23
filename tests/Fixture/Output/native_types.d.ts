@@ -7,24 +7,7 @@
  * @internal
  */
 declare type NativeTypes = {
-			testProperty9: unknown[];
-			testProperty8: boolean;
-			testProperty7: string;
-			testProperty6: number;
-			testProperty5: number;
-			/**
-			 * @deprecated
-			 */
-			testProperty4: unknown;
-			/**
-			 * @deprecated
-			 */
-			testProperty3: string;
 			testProperty20: true;
-			/**
-			 * @deprecated
-			 */
-			readonly testProperty2: string;
 			testProperty19: (string | false);
 			testProperty18: (Foo & Bar);
 			testProperty17: unknown;
@@ -60,6 +43,23 @@ declare type NativeTypes = {
 			 */
 			testProperty11: unknown;
 			testProperty10: unknown[];
+			testProperty9: unknown[];
+			testProperty8: boolean;
+			testProperty7: string;
+			testProperty6: number;
+			testProperty5: number;
+			/**
+			 * @deprecated
+			 */
+			testProperty4: unknown;
+			/**
+			 * @deprecated
+			 */
+			testProperty3: string;
+			/**
+			 * @deprecated
+			 */
+			readonly testProperty2: string;
 			/**
 			 * This is the description for testProperty1
 			 *

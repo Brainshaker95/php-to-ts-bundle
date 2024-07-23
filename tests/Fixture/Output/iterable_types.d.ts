@@ -11,6 +11,11 @@
  * @internal
  */
 declare type IterableTypes = {
+			testProperty10: {
+						[key: string]: unknown;
+						"0": (1.0 | string);
+						foo: string;
+			};
 			testProperty9: [
 						string,
 						...unknown[],
@@ -32,10 +37,5 @@ declare type IterableTypes = {
 			testProperty4: Record<string, boolean>;
 			testProperty3: Array<number>;
 			testProperty2: string[][];
-			testProperty10: {
-						[key: string]: unknown;
-						"0": (1.0 | string);
-						foo: string;
-			};
 			testProperty1: string[];
 }

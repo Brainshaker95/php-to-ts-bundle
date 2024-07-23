@@ -28,6 +28,11 @@ export interface NativeTypes {
     * @deprecated
     */
    testProperty4: unknown;
+   testProperty5: number;
+   testProperty6: number;
+   testProperty7: string;
+   testProperty8: boolean;
+   testProperty9: unknown[];
    testProperty10: unknown[];
    /**
     * @deprecated
@@ -64,9 +69,4 @@ export interface NativeTypes {
    testProperty18: (Foo & Bar);
    testProperty19: (string | false);
    testProperty20: true;
-   testProperty5: number;
-   testProperty6: number;
-   testProperty7: string;
-   testProperty8: boolean;
-   testProperty9: unknown[];
 }
