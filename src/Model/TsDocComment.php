@@ -71,7 +71,7 @@ final class TsDocComment implements Stringable
 
     public function toString(?Indent $indent = null): string
     {
-        $content = u('');
+        $content = u();
 
         if (!Str::isEmpty($this->summary)) {
             $content = self::appendPadded(
