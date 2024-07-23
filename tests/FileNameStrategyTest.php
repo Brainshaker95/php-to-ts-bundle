@@ -18,8 +18,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
- *
- * @small
  */
 #[Small]
 #[CoversClass(CamelCase::class)]
