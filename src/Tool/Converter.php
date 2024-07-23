@@ -143,6 +143,9 @@ final class Converter
 
     private static DocBlockFactoryInterface $docBlockFactory;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
@@ -530,6 +533,7 @@ final class Converter
         self::traverseNodes($nodes, static function (Node $node) use (&$identifiers): void {
             $identifier = self::getClassIdentifierNode($node)?->name;
 
+            // TODO: Test for duplicates when using ArrayTypeNode or NullableNode
             if ($identifier) {
                 $identifiers[] = $identifier;
             }

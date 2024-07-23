@@ -67,6 +67,9 @@ final class PhpStan
 
     private static PhpDocParser $phpDocParser;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     public static function toNode(PHPStanNode $node): Node
@@ -74,10 +77,12 @@ final class PhpStan
         $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;
 
         if (!$nodeClass) {
+            // @codeCoverageIgnoreStart
             throw new UnsupportedNodeException(sprintf(
                 'Unsupported node type "%s".',
                 $node::class,
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         return $nodeClass::fromPhpStan($node);
@@ -170,7 +175,9 @@ final class PhpStan
         if ($varNode) {
             try {
                 $node = self::toNode($varNode->type);
+                // @codeCoverageIgnoreStart
             } catch (UnsupportedNodeException) {
+                // @codeCoverageIgnoreEnd
             }
         }
 

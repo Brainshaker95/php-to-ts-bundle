@@ -25,6 +25,9 @@ use function sprintf;
  */
 final class Assert
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     /**

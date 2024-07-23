@@ -26,6 +26,9 @@ use function Symfony\Component\String\u;
  */
 abstract class Str
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     final public static function toLower(string $string): string

@@ -15,6 +15,9 @@ use function is_string;
  */
 final class Attribute
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     /**
