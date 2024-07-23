@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Tests\Fixture\Input\IntEnum;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
+use Brainshaker95\PhpToTsBundle\Serializer\Normalizer\EnumNormalizer;
 use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\TsController;
@@ -22,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 #[CoversClass(Serializer::class)]
 #[CoversTrait(HasSerializer::class)]
 #[CoversTrait(TsController::class)]
+#[CoversClass(EnumNormalizer::class)]
 final class TsControllerTest extends KernelTestCase
 {
     use TsController;
@@ -41,7 +44,7 @@ final class TsControllerTest extends KernelTestCase
         $instance = new #[AsTypeScriptable] class(true, ['foo' => ['bar' => ['baz']]]) {
             public int $property1;
 
-            public string $property2;
+            public IntEnum $property2;
 
             /**
              * @param array<string, array<string, string[]>> $property4
@@ -53,14 +56,14 @@ final class TsControllerTest extends KernelTestCase
         };
 
         $instance->property1 = 1;
-        $instance->property2 = '1';
+        $instance->property2 = IntEnum::CASE_1;
 
         $response = $this->ts($instance);
 
         self::assertTrue($response->getStatusCode() === Response::HTTP_OK);
         self::assertInstanceOf(JsonResponse::class, $response);
 
-        $expected = '{"property1":1,"property2":"1","property3":true,"property4":{"foo":{"bar":["baz"]}}}';
+        $expected = '{"property1":1,"property2":0,"property3":true,"property4":{"foo":{"bar":["baz"]}}}';
 
         self::assertSame(
             expected: $expected,
