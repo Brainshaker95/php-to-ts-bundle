@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\Event\TsEnumGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\Property;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
@@ -22,6 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * @internal
  */
 #[Small]
+#[CoversClass(TsEnumGeneratedEvent::class)]
 #[CoversClass(TsInterfaceGeneratedEvent::class)]
 #[CoversClass(TsPropertyGeneratedEvent::class)]
 final class EventTest extends TestCase
@@ -46,6 +51,28 @@ final class EventTest extends TestCase
 
         self::assertNull($event->tsInterface);
         self::assertInstanceOf(Class_::class, $event->classNode);
+    }
+
+    public function testTsEnumGeneratedEvent(): void
+    {
+        $eventDispatcher = new EventDispatcher();
+
+        $eventDispatcher->addListener(
+            eventName: TsEnumGeneratedEvent::class,
+            listener: static function (TsEnumGeneratedEvent $event): void {
+                self::assertInstanceOf(TsEnum::class, $event->tsEnum);
+
+                $event->tsEnum = null;
+            },
+        );
+
+        $event = $eventDispatcher->dispatch(new TsEnumGeneratedEvent(
+            tsEnum: new TsEnum('Test', Converter::TYPE_INT),
+            enumNode: new Enum_('Test'),
+        ));
+
+        self::assertNull($event->tsEnum);
+        self::assertInstanceOf(Enum_::class, $event->enumNode);
     }
 
     public function testTsPropertyGeneratedEvent(): void
