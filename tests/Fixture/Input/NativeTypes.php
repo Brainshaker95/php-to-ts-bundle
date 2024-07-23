@@ -92,10 +92,19 @@ final class NativeTypes
      */
     public bool $testProperty20;
 
+    public null $testProperty21;
+
+    public true $testProperty22;
+
+    /**
+     * @var false
+     */
+    public $testProperty23;
+
     /**
      * @phpstan-ignore-next-line
      */
-    private $testProperty21;
+    private $privateProperty2;
 
     /**
      * @param string $testProperty1 This is the description for testProperty1

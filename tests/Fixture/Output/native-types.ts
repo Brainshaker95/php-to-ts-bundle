@@ -69,4 +69,7 @@ export interface NativeTypes {
   testProperty18: (Foo & Bar);
   testProperty19: (string | false);
   testProperty20: true;
+  testProperty21: null;
+  testProperty22: true;
+  testProperty23: false;
 }

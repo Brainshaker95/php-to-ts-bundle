@@ -7,6 +7,9 @@
  * @internal
  */
 declare type NativeTypes = {
+			testProperty23: false;
+			testProperty22: true;
+			testProperty21: null;
 			testProperty20: true;
 			testProperty19: (string | false);
 			testProperty18: (Foo & Bar);
