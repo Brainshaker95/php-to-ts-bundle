@@ -78,7 +78,7 @@ final class DumpCommandTest extends KernelTestCase
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:dir'),
             outputDir: $this->outputDir,
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
@@ -97,7 +97,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
@@ -109,7 +109,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
@@ -157,7 +157,7 @@ final class DumpCommandTest extends KernelTestCase
                 ],
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
@@ -176,7 +176,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
@@ -189,7 +189,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 6,
+            expectedFileCount: 7,
         );
     }
 
