@@ -145,7 +145,11 @@ final class PhpStan
         Quotes $quotes = new Quotes(),
     ): string {
         if (!is_iterable($value)) {
-            return self::phpValueToNode($value)->toString();
+            $node = self::phpValueToNode($value);
+
+            Converter::applyIndentAndQuotes([$node], $indent, $quotes);
+
+            return $node->toString();
         }
 
         $itemNodes = [];
