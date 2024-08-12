@@ -14,6 +14,7 @@ use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Brainshaker95\PhpToTsBundle\Tool\Str;
 use PhpParser\Comment\Doc;
 use PhpParser\Modifiers;
 use PhpParser\Node;
@@ -110,7 +111,10 @@ final class Visitor extends NameResolver
 
         if (($node instanceof Class_ || $node instanceof Enum_)
             && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
-            $this->isTypeScriptable = true;
+            $fqcn                                                     = self::getFqcn($node);
+            $this->isTypeScriptable                                   = true;
+            $this->currentClassNameMap['self']                        = $fqcn;
+            $this->currentClassNameMap[Str::getShortClassName($fqcn)] = $fqcn;
 
             if ($node instanceof Class_) {
                 $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
