@@ -111,10 +111,13 @@ final class Visitor extends NameResolver
 
         if (($node instanceof Class_ || $node instanceof Enum_)
             && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
-            $fqcn                                                     = self::getFqcn($node);
-            $this->isTypeScriptable                                   = true;
-            $this->currentClassNameMap['self']                        = $fqcn;
-            $this->currentClassNameMap[Str::getShortClassName($fqcn)] = $fqcn;
+            $this->isTypeScriptable = true;
+            $fqcn                   = self::getFqcn($node);
+
+            if ($fqcn) {
+                $this->currentClassNameMap['self']                        = $fqcn;
+                $this->currentClassNameMap[Str::getShortClassName($fqcn)] = $fqcn;
+            }
 
             if ($node instanceof Class_) {
                 $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());

@@ -33,12 +33,12 @@ final class SpecialTypes
     public string $testProperty1;
 
     /**
-     * @var key-of<App\Tests\Fixture\Input\SpecialTypes::CONSTANT_2>
+     * @var key-of<self::CONSTANT_2>
      */
     public string $testProperty2;
 
     /**
-     * @var self::CONSTANT_3|\App\Tests\Fixture\Input\SpecialTypes::CONSTANT_4
+     * @var self::CONSTANT_3|self::CONSTANT_4
      */
     public string $testProperty3;
 
