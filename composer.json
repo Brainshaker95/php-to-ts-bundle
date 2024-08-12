@@ -43,18 +43,18 @@
     "ext-phar": "*",
     "ext-xml": "*",
     "ext-xmlwriter": "*",
-    "friendsofphp/php-cs-fixer": "3.59.3",
-    "phpstan/phpstan": "1.11.5",
-    "phpstan/phpstan-strict-rules": "1.6.0",
-    "symplify/phpstan-rules": "13.0.0",
-    "phpunit/phpunit": "11.2.2",
-    "symfony/framework-bundle": "7.1.1",
-    "symfony/yaml": "7.1.1",
     "cweagans/composer-patches": "1.7.3",
+    "friendsofphp/php-cs-fixer": "3.62.0",
+    "kubawerlos/php-cs-fixer-custom-fixers": "3.21.0",
     "phpstan/extension-installer": "1.4.1",
-    "rector/type-perfect": "0.1.6",
-    "symfony/error-handler": "7.1.1",
-    "kubawerlos/php-cs-fixer-custom-fixers": "3.21.0"
+    "phpstan/phpstan": "1.11.10",
+    "phpstan/phpstan-strict-rules": "1.6.0",
+    "phpunit/phpunit": "11.3.0",
+    "rector/type-perfect": "0.1.8",
+    "symfony/error-handler": "7.1.3",
+    "symfony/framework-bundle": "7.1.3",
+    "symfony/yaml": "7.1.1",
+    "symplify/phpstan-rules": "13.0.0"
   },
   "autoload": {
     "psr-4": {

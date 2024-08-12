@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Command;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Brainshaker95\PhpToTsBundle\Model\Config\FullConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
@@ -99,7 +100,7 @@ abstract class DumpCommand extends Command
         ;
     }
 
-    protected function getConfig(): C
+    protected function getConfig(): FullConfig
     {
         $outputDir          = $this->input->getOption(Str::toKebab(C::OUTPUT_DIR_KEY));
         $fileType           = $this->input->getOption(Str::toKebab(C::FILE_TYPE_KEY));
