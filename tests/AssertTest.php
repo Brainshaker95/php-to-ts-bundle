@@ -13,9 +13,9 @@ use Exception;
 use IteratorAggregate;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Stringable;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Traversable;
 
 use const PHP_INT_MAX;
@@ -26,7 +26,7 @@ use const PHP_INT_MAX;
 #[Small]
 #[CoversClass(Attribute::class)]
 #[CoversClass(Assert::class)]
-final class AssertTest extends KernelTestCase
+final class AssertTest extends TestCase
 {
     public function testNonEmptyStringNonNullable(): void
     {
