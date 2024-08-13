@@ -52,4 +52,6 @@ export interface GenericTypes<
   testProperty6: W;
   testProperty7: SomeClass<T1>;
   testProperty8: number;
+  testProperty9: (T1 extends 'foo' ? 'bar' : 'baz');
+  testProperty10: (T1 extends 'foo' ? 'baz' : 'bar');
 }

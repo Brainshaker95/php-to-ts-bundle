@@ -13,6 +13,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConditionalTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
@@ -329,6 +330,7 @@ final class Converter
             $nextLevelNodes = match (true) {
                 $node instanceof ConstTypeNode         => [$node->constExpr],
                 $node instanceof ArrayShapeNode        => $node->items,
+                $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
                 $node instanceof GenericTypeNode       => $node->genericTypes,
                 self::isUnionOrIntersectionNode($node) => $node->types,
                 self::isArrayOrNullableNode($node)     => match (true) {
@@ -336,6 +338,7 @@ final class Converter
                     $node->type instanceof ArrayShapeNode,
                     $node->type instanceof GenericTypeNode,
                     self::isUnionOrIntersectionNode($node->type) => [$node->type],
+                    $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
                     default                                      => [],
                 },
                 default => [],
@@ -357,11 +360,13 @@ final class Converter
             $node instanceof ArrayShapeNode        => $node->items,
             $node instanceof ArrayTypeNode         => [$node->type],
             $node instanceof ArrayShapeItemNode    => [$node->valueNode],
+            $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
             $node instanceof GenericTypeNode       => $node->genericTypes,
             self::isUnionOrIntersectionNode($node) => $node->types,
             self::isArrayOrNullableNode($node)     => match (true) {
                 default                                      => [],
                 $node->type instanceof ArrayShapeNode        => $node->type->items,
+                $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
                 $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
                 self::isUnionOrIntersectionNode($node->type) => $node->type->types,
             },

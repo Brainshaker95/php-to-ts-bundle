@@ -53,6 +53,7 @@ final class PhpStan
         PHPStanType\ArrayShapeItemNode::class        => Type\ArrayShapeItemNode::class,
         PHPStanType\ArrayShapeNode::class            => Type\ArrayShapeNode::class,
         PHPStanType\ArrayTypeNode::class             => Type\ArrayTypeNode::class,
+        PHPStanType\ConditionalTypeNode::class       => Type\ConditionalTypeNode::class,
         PHPStanType\ConstTypeNode::class             => Type\ConstTypeNode::class,
         PHPStanType\GenericTypeNode::class           => Type\GenericTypeNode::class,
         PHPStanType\IdentifierTypeNode::class        => Type\IdentifierTypeNode::class,

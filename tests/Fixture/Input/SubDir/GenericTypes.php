@@ -87,6 +87,16 @@ final class GenericTypes
     public int $testProperty8;
 
     /**
+     * @var (T is 'foo' ? 'bar' : 'baz')
+     */
+    public string $testProperty9;
+
+    /**
+     * @var (T is not 'foo' ? 'bar' : 'baz')
+     */
+    public string $testProperty10;
+
+    /**
      * @phpstan-ignore-next-line
      *
      * @template T of int constructor level generic
