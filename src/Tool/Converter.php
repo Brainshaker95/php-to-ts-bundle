@@ -19,6 +19,7 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\OffsetAccessTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
@@ -332,6 +333,7 @@ final class Converter
                 $node instanceof ArrayShapeNode        => $node->items,
                 $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
                 $node instanceof GenericTypeNode       => $node->genericTypes,
+                $node instanceof OffsetAccessTypeNode  => [$node->type, $node->offset],
                 self::isUnionOrIntersectionNode($node) => $node->types,
                 self::isArrayOrNullableNode($node)     => match (true) {
                     $node->type instanceof ConstTypeNode,
@@ -339,6 +341,7 @@ final class Converter
                     $node->type instanceof GenericTypeNode,
                     self::isUnionOrIntersectionNode($node->type) => [$node->type],
                     $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
+                    $node->type instanceof OffsetAccessTypeNode  => [$node->type->type, $node->type->offset],
                     default                                      => [],
                 },
                 default => [],
@@ -362,12 +365,14 @@ final class Converter
             $node instanceof ArrayShapeItemNode    => [$node->valueNode],
             $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
             $node instanceof GenericTypeNode       => $node->genericTypes,
+            $node instanceof OffsetAccessTypeNode  => [$node->type, $node->offset],
             self::isUnionOrIntersectionNode($node) => $node->types,
             self::isArrayOrNullableNode($node)     => match (true) {
                 default                                      => [],
                 $node->type instanceof ArrayShapeNode        => $node->type->items,
                 $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
                 $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
+                $node->type instanceof OffsetAccessTypeNode  => [$node->type->type, $node->type->offset],
                 self::isUnionOrIntersectionNode($node->type) => $node->type->types,
             },
         };
@@ -539,6 +544,7 @@ final class Converter
             $identifier = self::getClassIdentifierNode($node)?->name;
 
             // TODO: Test for duplicates when using ArrayTypeNode or NullableNode
+            // if ($identifier && !in_array($identifier, $identifiers, true)) {
             if ($identifier) {
                 $identifiers[] = $identifier;
             }

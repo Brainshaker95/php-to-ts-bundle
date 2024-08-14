@@ -45,4 +45,16 @@ final class SpecialTypes
     public StringEnum $testProperty4;
 
     public IntEnum $testProperty5;
+
+    /**
+     * @var array{
+     *     foo: 'bar',
+     * }['foo']
+     */
+    public string $testProperty6;
+
+    /**
+     * @var self::CONSTANT_2['foo1']
+     */
+    public string $testProperty7;
 }

@@ -24,4 +24,12 @@ export interface SpecialTypes {
   testProperty3: ('foo' | 'bar');
   testProperty4: StringEnum;
   testProperty5: IntEnum;
+  testProperty6: {
+    foo: 'bar';
+  }['foo'];
+  testProperty7: {
+    foo1: 'foo2';
+    bar1: 'bar2';
+    baz1: 'baz2';
+  }['foo1'];
 }

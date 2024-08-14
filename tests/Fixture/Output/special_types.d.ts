@@ -7,6 +7,14 @@
  * @internal
  */
 declare type SpecialTypes = {
+			testProperty7: {
+						foo1: "foo2";
+						bar1: "bar2";
+						baz1: "baz2";
+			}["foo1"];
+			testProperty6: {
+						foo: "bar";
+			}["foo"];
 			testProperty5: IntEnum;
 			testProperty4: StringEnum;
 			testProperty3: ("foo" | "bar");

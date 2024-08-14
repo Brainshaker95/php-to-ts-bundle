@@ -59,6 +59,7 @@ final class PhpStan
         PHPStanType\IdentifierTypeNode::class        => Type\IdentifierTypeNode::class,
         PHPStanType\IntersectionTypeNode::class      => Type\IntersectionTypeNode::class,
         PHPStanType\NullableTypeNode::class          => Type\NullableTypeNode::class,
+        PHPStanType\OffsetAccessTypeNode::class      => Type\OffsetAccessTypeNode::class,
         PHPStanType\UnionTypeNode::class             => Type\UnionTypeNode::class,
     ];
 
