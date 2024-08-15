@@ -46,6 +46,7 @@
     "cweagans/composer-patches": "1.7.3",
     "friendsofphp/php-cs-fixer": "3.62.0",
     "kubawerlos/php-cs-fixer-custom-fixers": "3.21.0",
+    "phpat/phpat": "0.10.18",
     "phpstan/extension-installer": "1.4.1",
     "phpstan/phpstan": "1.11.10",
     "phpstan/phpstan-strict-rules": "1.6.0",

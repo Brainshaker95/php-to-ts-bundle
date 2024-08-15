@@ -17,6 +17,7 @@
   <testsuites>
     <testsuite name="PhpToTsBundle">
       <directory>tests</directory>
+      <exclude>tests/ArchitectureTest.php</exclude>
     </testsuite>
   </testsuites>
 

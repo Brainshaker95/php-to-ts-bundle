@@ -41,6 +41,10 @@ rules:
 
 services:
   -
+    class: App\Tests\ArchitectureTest
+    tags: [phpat.test]
+
+  -
     class: Symplify\PHPStanRules\Rules\ForbiddenNodeRule
     tags: [phpstan.rules.rule]
     arguments:
