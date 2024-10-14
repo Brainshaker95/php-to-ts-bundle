@@ -15,6 +15,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasFileName;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasTsInterfaceHeader;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -53,6 +54,7 @@ final class TsInterface implements Stringable
         public ?C $config = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

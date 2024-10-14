@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -22,6 +23,7 @@ final class FilesystemTest extends KernelTestCase
 {
     private Filesystem $filesystem;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();

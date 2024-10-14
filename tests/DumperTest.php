@@ -42,6 +42,7 @@ use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Brainshaker95\PhpToTsBundle\Service\Visitor;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Small;
@@ -99,6 +100,7 @@ final class DumperTest extends KernelTestCase
 
     private string $outputDir;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -117,6 +119,7 @@ final class DumperTest extends KernelTestCase
         $this->outputDir  = $this->config->getOutputDir();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->filesystem->remove($this->outputDir);

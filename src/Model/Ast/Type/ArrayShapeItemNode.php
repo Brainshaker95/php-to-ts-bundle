@@ -14,6 +14,7 @@ use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
+use Override;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 use Stringable;
@@ -35,11 +36,13 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable, Stringable
         public readonly bool $isOptional = false,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         if (!$this->keyNode) {
@@ -69,6 +72,7 @@ final class ArrayShapeItemNode implements Indentable, Node, Quotable, Stringable
         );
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanArrayShapeItemNode::class);

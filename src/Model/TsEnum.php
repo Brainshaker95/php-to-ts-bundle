@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Model\Traits\HasFileName;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasTsInterfaceHeader;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -34,6 +35,7 @@ final class TsEnum implements Stringable
         public ?C $config = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

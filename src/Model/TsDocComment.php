@@ -6,6 +6,7 @@ namespace Brainshaker95\PhpToTsBundle\Model;
 
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use Stringable;
 use Symfony\Component\String\UnicodeString;
 
@@ -64,6 +65,7 @@ final class TsDocComment implements Stringable
         public readonly array $generics = [],
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

@@ -17,6 +17,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyLast;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
 use ReflectionClass;
@@ -45,6 +46,7 @@ final class ConfigurationTest extends KernelTestCase
      */
     private array $phpToTs;
 
+    #[Override]
     protected function setUp(): void
     {
         $container = self::getContainer();

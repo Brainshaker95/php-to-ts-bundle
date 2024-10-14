@@ -15,6 +15,7 @@ use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use PhpParser\Comment\Doc;
 use PhpParser\Modifiers;
 use PhpParser\Node;
@@ -69,6 +70,7 @@ final class Visitor extends NameResolver
      *
      * @return ?Node[]
      */
+    #[Override]
     public function beforeTraverse(array $nodes): ?array
     {
         parent::beforeTraverse($nodes);
@@ -86,6 +88,7 @@ final class Visitor extends NameResolver
     /**
      * @return int|Node|null
      */
+    #[Override]
     public function enterNode(Node $node)
     {
         parent::enterNode($node);
@@ -183,6 +186,7 @@ final class Visitor extends NameResolver
     /**
      * @return int|Node|Node[]|null
      */
+    #[Override]
     public function leaveNode(Node $node)
     {
         parent::leaveNode($node);

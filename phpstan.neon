@@ -6,8 +6,10 @@ parameters:
   editorUrl: 'vscode://file/%%file%%:%%line%%'
   editorUrlTitle: '%%relFile%%:%%line%%'
 
+  phpVersion: 80300
   checkBenevolentUnionTypes: true
   checkImplicitMixed: true
+  checkMissingOverrideMethodAttribute: true
   reportAlwaysTrueInLastCondition: true
   reportAnyTypeWideningInVarTag: true
 

@@ -7,6 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\Type;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
+use Override;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ConditionalTypeNode as PhpStanConditionalTypeNode;
 use Stringable;
@@ -26,11 +27,13 @@ final class ConditionalTypeNode implements Node, Stringable
         public readonly bool $isNegated,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         return sprintf(
@@ -42,6 +45,7 @@ final class ConditionalTypeNode implements Node, Stringable
         );
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PhpStanConditionalTypeNode::class);

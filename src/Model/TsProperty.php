@@ -9,6 +9,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -47,6 +48,7 @@ final class TsProperty implements Stringable
         public ?C $config = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

@@ -19,6 +19,7 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -52,6 +53,7 @@ final class DumpCommandTest extends KernelTestCase
 
     private string $outputDir;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -66,6 +68,7 @@ final class DumpCommandTest extends KernelTestCase
         $this->outputDir  = $config->get()->getOutputDir();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->filesystem->remove($this->outputDir);

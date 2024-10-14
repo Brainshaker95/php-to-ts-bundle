@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Serializer\Normalizer\EnumNormalizer;
 use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\TsController;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Small;
@@ -29,6 +30,7 @@ final class TsControllerTest extends KernelTestCase
 {
     use TsController;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();

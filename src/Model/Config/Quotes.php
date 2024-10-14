@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Override;
 use Stringable;
 
 final class Quotes implements Stringable
@@ -24,6 +25,7 @@ final class Quotes implements Stringable
         public readonly string $style = C::QUOTES_DEFAULT,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

@@ -6,9 +6,11 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy;
 
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Override;
 
 final class ReadonlyFirst implements SortStrategy
 {
+    #[Override]
     public function sort(TsProperty $property1, TsProperty $property2): int
     {
         return $property2->isReadonly <=> $property1->isReadonly;

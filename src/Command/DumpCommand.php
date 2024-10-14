@@ -13,6 +13,7 @@ use Brainshaker95\PhpToTsBundle\Service\Traits\HasConfiguration;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasDumper;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,6 +39,7 @@ abstract class DumpCommand extends Command
 
     protected bool $isVerbose;
 
+    #[Override]
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->input     = $input;
@@ -46,6 +48,7 @@ abstract class DumpCommand extends Command
         $this->isVerbose = $output->isVerbose();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this

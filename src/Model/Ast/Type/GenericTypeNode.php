@@ -10,6 +10,7 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
+use Override;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode as PHPStanGenericTypeNode;
 use Stringable;
@@ -35,11 +36,13 @@ final class GenericTypeNode implements Node, Stringable
         public readonly array $genericTypes,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         $type = $this->type->name;
@@ -88,6 +91,7 @@ final class GenericTypeNode implements Node, Stringable
         return $type . '<' . implode(', ', $this->genericTypes) . '>';
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanGenericTypeNode::class);

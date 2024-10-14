@@ -15,6 +15,7 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
 use Error;
+use Override;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstFetchNode as PHPStanConstFetchNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use ReflectionClass;
@@ -45,11 +46,13 @@ final class ConstFetchNode implements Indentable, Node, Quotable, Stringable
         public readonly string $name,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         $hasWildcard = u($this->name)->indexOf('*') !== null;
@@ -92,6 +95,7 @@ final class ConstFetchNode implements Indentable, Node, Quotable, Stringable
         )) ?: TsProperty::TYPE_UNKNOWN;
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanConstFetchNode::class);
