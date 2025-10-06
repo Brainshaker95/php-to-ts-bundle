@@ -176,7 +176,7 @@ final class Assert
             throw new AssertionFailedException(sprintf(
                 'Expected object to be an instance of "%s". Given instance was of class "%s".',
                 $class,
-                is_string($value::class) ? $value::class : '<Unknown>',
+                $value::class,
             ));
         }
 
