@@ -14,6 +14,7 @@ use PhpParser\ErrorHandler\Collecting;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PhpVersion;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -33,7 +34,7 @@ final class Dumper
         private readonly Filesystem $filesystem,
         private readonly Visitor $visitor,
     ) {
-        $this->parser = (new ParserFactory())->create(ParserFactory::ONLY_PHP7);
+        $this->parser = (new ParserFactory())->createForVersion(PhpVersion::getHostVersion());
     }
 
     /**
@@ -135,8 +136,12 @@ final class Dumper
             return;
         }
 
-        $valueOfPath = $pathPrefix . (new ($config->getFileNameStrategy())())->getName('valueOf') . '.ts';
-        $isModule    = $config->getFileType() === FileType::TYPE_MODULE;
+        $isModule = $config->getFileType() === FileType::TYPE_MODULE;
+
+        $valueOfPath = $pathPrefix
+            . (new ($config->getFileNameStrategy())())->getName('valueOf')
+            . (!$isModule ? '.d' : '')
+            . '.ts';
 
         $this->filesystem->dumpFile(
             $valueOfPath,
@@ -158,8 +163,6 @@ final class Dumper
     public function getTsInterfacesFromFile(SplFileInfo|string $file, ?Config $config = null): array
     {
         $file = $this->filesystem->getSplFileInfo($file);
-
-        $this->filesystem->assertFile($file->getRealPath());
 
         if (Str::toLower($file->getExtension()) !== 'php') {
             return [];

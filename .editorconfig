@@ -20,3 +20,13 @@ indent_size = 4
 
 [Makefile]
 indent_style = tab
+
+[tests/Fixture/Output/*.ts]
+indent_size = 3
+
+[tests/Fixture/Output/*-*.ts]
+indent_size = 2
+
+[tests/Fixture/Output/*_*.d.ts]
+indent_style = tab
+indent_size = 2

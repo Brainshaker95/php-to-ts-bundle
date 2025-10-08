@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Model\Config;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Override;
 use Stringable;
 
 use function str_repeat;
@@ -16,13 +17,14 @@ final class Indent implements Stringable
 
     /**
      * @phpstan-param self::STYLE_* $style
-     * @param int<0,max> $count
+     * @param int<0, max> $count
      */
     public function __construct(
         public readonly string $style = C::INDENT_STYLE_DEFAULT,
         public readonly int $count = C::INDENT_COUNT_DEFAULT,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();

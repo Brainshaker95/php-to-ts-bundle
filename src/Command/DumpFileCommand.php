@@ -7,6 +7,7 @@ namespace Brainshaker95\PhpToTsBundle\Command;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class DumpFileCommand extends DumpCommand
 {
+    #[Override]
     protected function configure(): void
     {
         $this->addArgument(
@@ -29,6 +31,7 @@ final class DumpFileCommand extends DumpCommand
         parent::configure();
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /**

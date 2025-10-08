@@ -9,13 +9,15 @@ use Brainshaker95\PhpToTsBundle\Interface\Quotable;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Override;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprStringNode as PHPStanConstExprStringNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ConstExprStringNode implements Node, Quotable
+final class ConstExprStringNode implements Node, Quotable, Stringable
 {
     use HasQuotes;
 
@@ -23,11 +25,13 @@ final class ConstExprStringNode implements Node, Quotable
         private readonly string $value,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(bool $quoted = true): string
     {
         if (!$quoted) {
@@ -39,6 +43,7 @@ final class ConstExprStringNode implements Node, Quotable
             : Quotes::default($this->value);
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanConstExprStringNode::class);

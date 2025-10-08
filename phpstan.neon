@@ -3,41 +3,39 @@ parameters:
   paths:
     - src
     - tests
+  editorUrl: 'vscode://file/%%file%%:%%line%%'
+  editorUrlTitle: '%%relFile%%:%%line%%'
+
+  phpVersion: 80300
+  checkBenevolentUnionTypes: true
+  checkImplicitMixed: true
+  checkMissingOverrideMethodAttribute: true
+  reportAlwaysTrueInLastCondition: true
+  reportAnyTypeWideningInVarTag: true
+
   strictRules:
     booleansInConditions: false
+
   ignoreErrors:
     # Since it is not possible to disable single subrule of "DisallowedConstructs" the errors thrown by "DisallowedShortTernaryRule" are just ignored
     - '#Short ternary operator is not allowed. Use null coalesce operator if applicable or consider using long ternary.#'
 
-includes:
-  - vendor/phpstan/phpstan-strict-rules/rules.neon
-  - vendor/symplify/phpstan-rules/config/services/services.neon
+  type_perfect:
+    narrow_param: true
+    narrow_return: true
+    no_mixed: true
+    null_over_false: true
 
 rules:
-  - Symplify\PHPStanRules\Rules\BoolishClassMethodPrefixRule
   - Symplify\PHPStanRules\Rules\CheckClassNamespaceFollowPsr4Rule
-  - Symplify\PHPStanRules\Rules\CheckTypehintCallerTypeRule
-  - Symplify\PHPStanRules\Rules\Complexity\ForbiddenSameNamedNewInstanceRule
   - Symplify\PHPStanRules\Rules\Domain\RequireAttributeNamespaceRule
   - Symplify\PHPStanRules\Rules\Domain\RequireExceptionNamespaceRule
   - Symplify\PHPStanRules\Rules\Enum\RequireUniqueEnumConstantRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
-  - Symplify\PHPStanRules\Rules\Explicit\NoRelativeFilePathRule
   - Symplify\PHPStanRules\Rules\ForbiddenExtendOfNonAbstractClassRule
   - Symplify\PHPStanRules\Rules\ForbiddenMultipleClassLikeInOneFileRule
-  - Symplify\PHPStanRules\Rules\ForbiddenParamTypeRemovalRule
-  - Symplify\PHPStanRules\Rules\NarrowType\NarrowPublicClassMethodParamTypeByCallerTypeRule
-  - Symplify\PHPStanRules\Rules\NoAbstractMethodRule
-  - Symplify\PHPStanRules\Rules\NoArrayAccessOnObjectRule
   - Symplify\PHPStanRules\Rules\NoDynamicNameRule
-  - Symplify\PHPStanRules\Rules\NoEmptyClassRule
   - Symplify\PHPStanRules\Rules\NoInlineStringRegexRule
-  - Symplify\PHPStanRules\Rules\NoIssetOnObjectRule
-  - Symplify\PHPStanRules\Rules\NoMissingDirPathRule
-  - Symplify\PHPStanRules\Rules\NoNullableArrayPropertyRule
   - Symplify\PHPStanRules\Rules\NoReferenceRule
-  - Symplify\PHPStanRules\Rules\NoVoidGetterMethodRule
   - Symplify\PHPStanRules\Rules\PreventParentMethodVisibilityOverrideRule
   - Symplify\PHPStanRules\Rules\RegexSuffixInRegexConstantRule
   - Symplify\PHPStanRules\Rules\RequireAttributeNameRule
@@ -45,24 +43,14 @@ rules:
 
 services:
   -
-    class: Symplify\PHPStanRules\Rules\NoDuplicatedShortClassNameRule
-    tags: [phpstan.rules.rule]
-    arguments:
-      toleratedNestingLevel: 3
-
-  -
-    class: Symplify\PHPStanRules\ObjectCalisthenics\Rules\NoShortNameRule
-    tags: [phpstan.rules.rule]
-    arguments:
-      minNameLength: 3
-      allowedShortNames: [fd, i, io, j, ts, x, y]
+    class: App\Tests\ArchitectureTest
+    tags: [phpat.test]
 
   -
     class: Symplify\PHPStanRules\Rules\ForbiddenNodeRule
     tags: [phpstan.rules.rule]
     arguments:
       forbiddenNodes:
-        - PhpParser\Node\Expr\Empty_
         - PhpParser\Node\Stmt\Switch_
         - PhpParser\Node\Expr\ErrorSuppress
         - PhpParser\Node\Scalar\Encapsed

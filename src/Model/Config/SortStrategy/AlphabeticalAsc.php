@@ -6,11 +6,15 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy;
 
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Override;
+
+use function strnatcasecmp;
 
 final class AlphabeticalAsc implements SortStrategy
 {
+    #[Override]
     public function sort(TsProperty $property1, TsProperty $property2): int
     {
-        return $property1->name <=> $property2->name;
+        return strnatcasecmp($property1->name, $property2->name);
     }
 }

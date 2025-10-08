@@ -7,11 +7,13 @@ namespace App\Tests\Fixture\Input;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
+ * This is a class summary.
+ *
+ * This is a class description
+ *
  * @internal
  *
  * @PhpCsFixerIgnore phpdoc_scalar
- *
- * This is a class description
  */
 #[AsTypeScriptable]
 final class IterableTypes
@@ -32,17 +34,17 @@ final class IterableTypes
     public array $testProperty3;
 
     /**
-     * @var array<string,boolean>
+     * @var array<string, boolean>
      */
     public array $testProperty4;
 
     /**
-     * @var iterable<string,array<int>>
+     * @var iterable<string, array<int>>
      */
     public iterable $testProperty5;
 
     /**
-     * @var array<string,array<int,string[]>>
+     * @var array<string, array<int, string[]>>
      */
     public array $testProperty6;
 

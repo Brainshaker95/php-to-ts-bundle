@@ -14,11 +14,8 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use PhpParser\Comment\Doc;
 use PHPStan\PhpDocParser\Ast\ConstExpr as PHPStanConstExpr;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocChildNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocNode;
-use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTextNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TypelessParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -31,11 +28,10 @@ use PHPStan\PhpDocParser\Parser\TypeParser;
 
 use function array_filter;
 use function array_is_list;
-use function array_map;
 use function current;
-use function implode;
 use function is_array;
 use function is_iterable;
+use function is_string;
 use function sprintf;
 
 /**
@@ -44,7 +40,7 @@ use function sprintf;
 final class PhpStan
 {
     /**
-     * @var array<class-string<PHPStanNode>,class-string<Node>>
+     * @var array<class-string<PHPStanNode>, class-string<Node>>
      */
     private const NODE_CLASS_MAP = [
         PHPStanConstExpr\ConstExprFalseNode::class   => ConstExpr\ConstExprFalseNode::class,
@@ -57,11 +53,13 @@ final class PhpStan
         PHPStanType\ArrayShapeItemNode::class        => Type\ArrayShapeItemNode::class,
         PHPStanType\ArrayShapeNode::class            => Type\ArrayShapeNode::class,
         PHPStanType\ArrayTypeNode::class             => Type\ArrayTypeNode::class,
+        PHPStanType\ConditionalTypeNode::class       => Type\ConditionalTypeNode::class,
         PHPStanType\ConstTypeNode::class             => Type\ConstTypeNode::class,
         PHPStanType\GenericTypeNode::class           => Type\GenericTypeNode::class,
         PHPStanType\IdentifierTypeNode::class        => Type\IdentifierTypeNode::class,
         PHPStanType\IntersectionTypeNode::class      => Type\IntersectionTypeNode::class,
         PHPStanType\NullableTypeNode::class          => Type\NullableTypeNode::class,
+        PHPStanType\OffsetAccessTypeNode::class      => Type\OffsetAccessTypeNode::class,
         PHPStanType\UnionTypeNode::class             => Type\UnionTypeNode::class,
     ];
 
@@ -71,6 +69,9 @@ final class PhpStan
 
     private static PhpDocParser $phpDocParser;
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     public static function toNode(PHPStanNode $node): Node
@@ -78,10 +79,12 @@ final class PhpStan
         $nodeClass = self::NODE_CLASS_MAP[$node::class] ?? null;
 
         if (!$nodeClass) {
+            // @codeCoverageIgnoreStart
             throw new UnsupportedNodeException(sprintf(
                 'Unsupported node type "%s".',
                 $node::class,
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         return $nodeClass::fromPhpStan($node);
@@ -126,11 +129,6 @@ final class PhpStan
         return current($values) ?: null;
     }
 
-    public static function getDeprecatedNode(PhpDocNode $docNode): ?DeprecatedTagValueNode
-    {
-        return current($docNode->getDeprecatedTagValues()) ?: null;
-    }
-
     /**
      * @return TemplateTagValueNode[]
      */
@@ -143,35 +141,17 @@ final class PhpStan
         ];
     }
 
-    /**
-     * @return PhpDocTextNode[]
-     */
-    public static function getTextNodes(PhpDocNode $docNode): array
-    {
-        return array_filter(
-            $docNode->children,
-            static fn (PhpDocChildNode $childNode) => $childNode instanceof PhpDocTextNode && $childNode->text,
-        );
-    }
-
-    /**
-     * @param PhpDocTextNode[] $textNodes
-     */
-    public static function textNodesToString(array $textNodes): string
-    {
-        return implode("\n", array_map(
-            static fn (PhpDocTextNode $textNode) => $textNode->text,
-            $textNodes,
-        ));
-    }
-
     public static function phpValueToTsType(
         mixed $value,
         Indent $indent = new Indent(),
         Quotes $quotes = new Quotes(),
     ): string {
         if (!is_iterable($value)) {
-            return self::phpValueToNode($value)->toString();
+            $node = self::phpValueToNode($value);
+
+            Converter::applyIndentAndQuotes([$node], $indent, $quotes);
+
+            return $node->toString();
         }
 
         $itemNodes = [];
@@ -180,7 +160,7 @@ final class PhpStan
         foreach ($value as $itemKey => $itemValue) {
             $itemNodes[] = new Type\ArrayShapeItemNode(
                 valueNode: self::phpValueToNode($itemValue),
-                keyNode: $hasKeys ? new ConstExpr\ConstExprStringNode($itemKey) : null,
+                keyNode: $hasKeys && is_string($itemKey) ? new ConstExpr\ConstExprStringNode($itemKey) : null,
             );
         }
 
@@ -201,7 +181,9 @@ final class PhpStan
         if ($varNode) {
             try {
                 $node = self::toNode($varNode->type);
+                // @codeCoverageIgnoreStart
             } catch (UnsupportedNodeException) {
+                // @codeCoverageIgnoreEnd
             }
         }
 

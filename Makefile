@@ -1,6 +1,8 @@
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(RUN_ARGS):;@:)
 
+-include .local/Makefile
+
 .PHONY: help
 
 help:

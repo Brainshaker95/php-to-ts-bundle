@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Brainshaker95\PhpToTsBundle\Model;
 
-use Brainshaker95\PhpToTsBundle\Interface\Config;
+use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -30,22 +31,24 @@ final class TsProperty implements Stringable
      * @param self::TYPE_UNKNOWN|Node $type
      * @param TsGeneric[] $generics
      * @param string[] $classIdentifiers
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<TsDocComment::SUPPORTED_TAGS>, string> $tags
      */
     public function __construct(
         public string $name,
         public string|Node $type,
-        public readonly bool $isReadonly = false,
-        public readonly bool $isConstructorProperty = false,
-        public readonly bool $isEnumProperty = false,
-        public readonly array $classIdentifiers = [],
-        public readonly array $generics = [],
-        public readonly bool $doesRequireValueOf = false,
-        public readonly ?string $description = null,
-        public bool|string|null $deprecation = null,
-        public ?Config $config = null,
+        public bool $isReadonly = false,
+        public bool $isConstructorProperty = false,
+        public bool $isEnumProperty = false,
+        public array $classIdentifiers = [],
+        public array $generics = [],
+        public bool $doesRequireValueOf = false,
+        public ?string $summary = null,
+        public ?string $description = null,
+        public array $tags = [],
+        public ?C $config = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
@@ -61,8 +64,9 @@ final class TsProperty implements Stringable
         }
 
         $docComment = (new TsDocComment(
+            summary: $this->summary,
             description: $this->description,
-            deprecation: $this->deprecation,
+            tags: $this->tags,
         ))->toString($indent);
 
         return u($docComment ? ($docComment . PHP_EOL) : '')

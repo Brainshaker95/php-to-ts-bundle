@@ -4,6 +4,22 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprNullNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprTrueNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
@@ -13,48 +29,65 @@ use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalDesc;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes;
+use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
+use Brainshaker95\PhpToTsBundle\Model\TsEnum;
+use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
+use Brainshaker95\PhpToTsBundle\Model\TsInterface;
+use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Dumper;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
+use Brainshaker95\PhpToTsBundle\Service\Visitor;
+use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Brainshaker95\PhpToTsBundle\Tool\PhpStan;
+use Override;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 use const PHP_EOL;
 
-use function array_key_exists;
 use function count;
-use function sprintf;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFalseNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprFloatNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprIntegerNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprNullNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprStringNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstExprTrueNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode
- * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent
- * @covers \Brainshaker95\PhpToTsBundle\Model\Traits\HasQuotes
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsDocComment
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsGeneric
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsInterface
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
- * @covers \Brainshaker95\PhpToTsBundle\Service\Dumper
- * @covers \Brainshaker95\PhpToTsBundle\Service\Visitor
  */
+#[Small]
+#[CoversClass(ArrayShapeItemNode::class)]
+#[CoversClass(ArrayShapeNode::class)]
+#[CoversClass(ArrayTypeNode::class)]
+#[CoversClass(ConstExprFalseNode::class)]
+#[CoversClass(ConstExprFloatNode::class)]
+#[CoversClass(ConstExprIntegerNode::class)]
+#[CoversClass(ConstExprNullNode::class)]
+#[CoversClass(ConstExprStringNode::class)]
+#[CoversClass(ConstExprTrueNode::class)]
+#[CoversClass(ConstFetchNode::class)]
+#[CoversClass(ConstTypeNode::class)]
+#[CoversClass(Dumper::class)]
+#[CoversClass(GenericTypeNode::class)]
+#[CoversClass(IdentifierTypeNode::class)]
+#[CoversClass(IntersectionTypeNode::class)]
+#[CoversClass(NullableTypeNode::class)]
+#[CoversClass(TsDocComment::class)]
+#[CoversClass(TsGeneric::class)]
+#[CoversClass(TsInterface::class)]
+#[CoversClass(TsProperty::class)]
+#[CoversClass(TsEnum::class)]
+#[CoversClass(UnionTypeNode::class)]
+#[CoversClass(Visitor::class)]
+#[CoversTrait(HasIndent::class)]
+#[CoversTrait(HasQuotes::class)]
+#[CoversClass(Converter::class)]
+#[CoversClass(PhpStan::class)]
+#[CoversClass(Quotes::class)]
+#[CoversClass(Indent::class)]
+#[CoversClass(FullConfig::class)]
+#[CoversClass(PartialConfig::class)]
 final class DumperTest extends KernelTestCase
 {
     private Dumper $dumper;
@@ -67,6 +100,7 @@ final class DumperTest extends KernelTestCase
 
     private string $outputDir;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -85,6 +119,7 @@ final class DumperTest extends KernelTestCase
         $this->outputDir  = $this->config->getOutputDir();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->filesystem->remove($this->outputDir);
@@ -95,7 +130,7 @@ final class DumperTest extends KernelTestCase
     public function testDumpDirWithDefaultOptions(): void
     {
         $this->dumper->dumpDir(
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -112,7 +147,7 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -123,26 +158,15 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpDirWithInputDirChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpDir(
             configOrDir: $this->inputDir . '/SubDir',
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, sprintf(
-                    'The directory "%s" should only contain one class.',
-                    $this->inputDir . '/SubDir',
-                ));
-
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -154,42 +178,25 @@ final class DumperTest extends KernelTestCase
 
     public function testDumpFilesWithDefaultOptions(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFiles(
             files: [
                 $this->inputDir . '/IterableTypes.php',
                 $this->inputDir . '/SubDir/GenericTypes.php',
             ],
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter <= 2, 'Expected 2 dumped files.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFilesWithADirectoryAsInput(): void
     {
-        $fileCounter = 0;
-        $paths       = [];
+        $paths = [];
 
         $this->dumper->dumpFiles(
             files: [
                 $this->inputDir,
                 $this->inputDir . '/SubDir/GenericTypes.php',
             ],
-            successCallback: function (string $path) use (&$fileCounter, &$paths): void {
-                if (array_key_exists($path, $paths)) {
-                    $fileCounter += 1;
-                } else {
-                    $paths[$path] = true;
-                }
-
-                self::assertTrue($fileCounter <= 3, 'Expected 3 dumped files.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -207,7 +214,7 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir . '/SubDir', $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -220,7 +227,7 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: fn (string $path) => $this->successCallback($this->outputDir, $path),
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -232,23 +239,14 @@ final class DumperTest extends KernelTestCase
 
     public function testDumpFileWithDefaultOptions(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/IterableTypes.php',
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFileWithAllOptionsChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/SubDir/GenericTypes.php',
             config: new FullConfig(
@@ -261,19 +259,12 @@ final class DumperTest extends KernelTestCase
                 sortStrategies: [AlphabeticalDesc::class],
                 fileNameStrategy: SnakeCase::class,
             ),
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir . '/SubDir', $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
     public function testDumpFileWithSomeOptionsChanged(): void
     {
-        $fileCounter = 0;
-
         $this->dumper->dumpFile(
             file: $this->inputDir . '/NativeTypes.php',
             config: new PartialConfig(
@@ -281,12 +272,7 @@ final class DumperTest extends KernelTestCase
                 indent: new Indent(count: 3),
                 fileNameStrategy: PascalCase::class,
             ),
-            successCallback: function (string $path) use (&$fileCounter): void {
-                $fileCounter += 1;
-
-                self::assertTrue($fileCounter === 1, 'Expected 1 dumped file.');
-                $this->successCallback($this->outputDir, $path);
-            },
+            successCallback: $this->successCallback(...),
         );
     }
 
@@ -322,13 +308,14 @@ final class DumperTest extends KernelTestCase
         self::assertCount(0, $tsInterfaces);
     }
 
-    private function successCallback(string $outputDir, string $path): void
+    private function successCallback(string $path): void
     {
-        $name = $this->filesystem->getSplFileInfo($path)->getFilename();
+        $file = $this->filesystem->getSplFileInfo($path);
+        $name = $file->getFilename();
 
         self::assertStringEqualsStringIgnoringLineEndings(
             expected: $this->filesystem->getContent('tests/Fixture/Output/' . $name),
-            actual: $this->filesystem->getContent($outputDir . '/' . $name),
+            actual: $file->getContents(),
         );
     }
 }

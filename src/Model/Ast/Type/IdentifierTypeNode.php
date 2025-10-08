@@ -9,17 +9,18 @@ use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode as PHPStanIdentifierTypeNode;
+use Stringable;
 
 use function array_key_exists;
 use function in_array;
-use function str_contains;
 
 /**
  * @internal
  */
-final class IdentifierTypeNode implements Node
+final class IdentifierTypeNode implements Node, Stringable
 {
     public const TYPE_CLASS   = 'class';
     public const TYPE_DEFAULT = 'default';
@@ -32,16 +33,19 @@ final class IdentifierTypeNode implements Node
         public readonly string $type = self::TYPE_DEFAULT,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         return $this->name;
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanIdentifierTypeNode::class);
@@ -56,7 +60,7 @@ final class IdentifierTypeNode implements Node
         } elseif ($name === '\stdClass' || $name === 'stdClass') {
             $name = TsProperty::TYPE_UNKNOWN;
         } elseif (self::isInterpretedAsClass($name)) {
-            $name = self::getShortClassName($name);
+            $name = Str::getShortClassName($name);
             $type = self::TYPE_CLASS;
         }
 
@@ -69,12 +73,5 @@ final class IdentifierTypeNode implements Node
     private static function isInterpretedAsClass(string $name): bool
     {
         return $name[0] === Str::toUpper($name[0]);
-    }
-
-    private static function getShortClassName(string $name): string
-    {
-        return str_contains($name, '\\')
-            ? Str::afterLast($name, '\\')
-            : $name;
     }
 }

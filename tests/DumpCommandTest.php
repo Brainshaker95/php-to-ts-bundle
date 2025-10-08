@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\Command\DumpCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpDirCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpFileCommand;
+use Brainshaker95\PhpToTsBundle\Command\DumpFilesCommand;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\SnakeCase;
@@ -15,6 +19,9 @@ use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
@@ -23,20 +30,18 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-use function array_merge;
 use function sprintf;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpDirCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFileCommand
- * @covers \Brainshaker95\PhpToTsBundle\Command\DumpFilesCommand
  */
+#[Small]
+#[CoversClass(DumpCommand::class)]
+#[CoversClass(DumpDirCommand::class)]
+#[CoversClass(DumpFileCommand::class)]
+#[CoversClass(DumpFilesCommand::class)]
 final class DumpCommandTest extends KernelTestCase
 {
     private const INDENT_STYLE_KEY = C::INDENT_KEY . '-' . C::INDENT_STYLE_KEY;
@@ -48,6 +53,7 @@ final class DumpCommandTest extends KernelTestCase
 
     private string $outputDir;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -62,6 +68,7 @@ final class DumpCommandTest extends KernelTestCase
         $this->outputDir  = $config->get()->getOutputDir();
     }
 
+    #[Override]
     protected function tearDown(): void
     {
         $this->filesystem->remove($this->outputDir);
@@ -74,7 +81,7 @@ final class DumpCommandTest extends KernelTestCase
         $this->assertCommandSuccess(
             code: self::runCommand('phptots:dump:dir'),
             outputDir: $this->outputDir,
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -93,7 +100,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -105,7 +112,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -153,7 +160,7 @@ final class DumpCommandTest extends KernelTestCase
                 ],
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -172,7 +179,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY)   => SnakeCase::class,
             ], isVerbose: true),
             outputDir: $this->outputDir . '/SubDir',
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -185,7 +192,7 @@ final class DumpCommandTest extends KernelTestCase
                 '--' . Str::toKebab(C::FILE_NAME_STRATEGY_KEY) => PascalCase::class,
             ]),
             outputDir: $this->outputDir,
-            expectedFileCount: 3,
+            expectedFileCount: 7,
         );
     }
 
@@ -258,15 +265,13 @@ final class DumpCommandTest extends KernelTestCase
 
         self::assertTrue(
             $files->count() === $expectedFileCount,
-            sprintf('Expected %s dumped file%s.', $expectedFileCount, $expectedFileCount === 1 ? '' : 's'),
+            sprintf('Expected %s dumped file%s, %s given.', $expectedFileCount, $expectedFileCount === 1 ? '' : 's', $expectedFileCount),
         );
 
         foreach ($files as $file) {
-            $name = $file->getFilename();
-
             self::assertStringEqualsStringIgnoringLineEndings(
-                expected: $this->filesystem->getContent('tests/Fixture/Output/' . $name),
-                actual: $this->filesystem->getContent($outputDir . '/' . $name),
+                expected: $this->filesystem->getContent('tests/Fixture/Output/' . $file->getFilename()),
+                actual: $file->getContents(),
             );
         }
     }
@@ -281,15 +286,19 @@ final class DumpCommandTest extends KernelTestCase
      */
     private static function runCommand(string $command, array $arguments = [], bool $isVerbose = false): int
     {
+        self::assertInstanceOf(KernelInterface::class, self::$kernel);
+
         $application = new Application(self::$kernel);
 
         $application->setAutoExit(false);
         $application->setCatchExceptions(false);
 
         return $application->run(
-            new ArrayInput(array_merge([
+            new ArrayInput([
                 'command' => $command,
-            ], $arguments, $isVerbose ? ['-v'] : [])),
+                ...$arguments,
+                ...($isVerbose ? ['-v'] : []),
+            ]),
             $isVerbose ? new BufferedOutput() : new NullOutput(),
         );
     }

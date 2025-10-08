@@ -6,10 +6,12 @@
 import type { SomeClass } from './some-class';
 
 /**
+ * @internal
  * @deprecated because of reasons
  *
  * @template T1 class level generic
  * @template T2 constructor level generic
+ *
  * @template U2 property level generic
  * with a newline
  */
@@ -28,10 +30,13 @@ export interface GenericTypes<
   testProperty2: T2;
   testProperty3: U1;
   /**
-   * This is the description for testProperty4
+   * This is the summary for testProperty4
+   * And also this.
    */
   testProperty4: (T1 | 'foo');
   /**
+   * This is the summary for testProperty5.
+   *
    * This is the description for testProperty5
    */
   testProperty5: {
@@ -40,9 +45,13 @@ export interface GenericTypes<
     baz: (V | T3);
   };
   /**
-   * This is the description for testProperty6.
+   * This is the summary for testProperty6.
+   *
+   * This is the description for testProperty6
    */
   testProperty6: W;
   testProperty7: SomeClass<T1>;
   testProperty8: number;
+  testProperty9: (T1 extends 'foo' ? 'bar' : 'baz');
+  testProperty10: (T1 extends 'foo' ? 'baz' : 'bar');
 }

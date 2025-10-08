@@ -4,15 +4,14 @@
  */
 
 /**
+ * This is a class summary.
+ *
  * This is a class description
+ *
+ * @internal
  */
 export interface IterableTypes {
   testProperty1: string[];
-  testProperty10: {
-    [key: string]: unknown;
-    '0': (1.0 | string);
-    foo: string;
-  };
   testProperty2: string[][];
   testProperty3: Array<number>;
   testProperty4: Record<string, boolean>;
@@ -34,4 +33,9 @@ export interface IterableTypes {
     string,
     ...unknown[],
   ];
+  testProperty10: {
+    [key: string]: unknown;
+    '0': (1.0 | string);
+    foo: string;
+  };
 }

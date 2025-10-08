@@ -10,9 +10,11 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasIndent;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Override;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeItemNode as PHPStanArrayShapeItemNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode as PHPStanArrayShapeNode;
+use Stringable;
 
 use const PHP_EOL;
 
@@ -24,7 +26,7 @@ use function sprintf;
 /**
  * @internal
  */
-final class ArrayShapeNode implements Indentable, Node
+final class ArrayShapeNode implements Indentable, Node, Stringable
 {
     use HasIndent;
 
@@ -35,11 +37,13 @@ final class ArrayShapeNode implements Indentable, Node
         public readonly array $items,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         $items = implode(PHP_EOL, $this->items);
@@ -57,6 +61,7 @@ final class ArrayShapeNode implements Indentable, Node
             . ($this->indent?->toString() ?? '') . $closingBracket;
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanArrayShapeNode::class);

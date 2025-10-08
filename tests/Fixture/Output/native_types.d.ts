@@ -3,7 +3,49 @@
  * Do not modify directly!
  */
 
+/**
+ * @internal
+ */
 declare type NativeTypes = {
+			testProperty23: false;
+			testProperty22: true;
+			testProperty21: null;
+			testProperty20: true;
+			testProperty19: (string | false);
+			testProperty18: (Foo & Bar);
+			testProperty17: unknown;
+			testProperty16: unknown;
+			testProperty15: unknown;
+			/**
+			 * This is the summary for testProperty14.
+			 *
+			 * This is the description for testProperty14
+			 * with a newline
+			 * and another one.
+			 *
+			 * And also another paragraph.
+			 *
+			 * And even another one
+			 * with a newline
+			 */
+			testProperty14: (number | null);
+			/**
+			 * This is the summary for testProperty13.
+			 *
+			 * @deprecated it is also deprecated
+			 */
+			testProperty13: (number | null);
+			/**
+			 * This is the summary for testProperty12.
+			 *
+			 * @deprecated
+			 */
+			testProperty12: unknown;
+			/**
+			 * @deprecated
+			 */
+			testProperty11: unknown;
+			testProperty10: unknown[];
 			testProperty9: unknown[];
 			testProperty8: boolean;
 			testProperty7: string;
@@ -17,39 +59,10 @@ declare type NativeTypes = {
 			 * @deprecated
 			 */
 			testProperty3: string;
-			testProperty20: true;
 			/**
 			 * @deprecated
 			 */
 			readonly testProperty2: string;
-			testProperty19: (string | false);
-			testProperty18: (Foo & Bar);
-			testProperty17: unknown;
-			testProperty16: unknown;
-			testProperty15: unknown;
-			/**
-			 * This is the description for testProperty14
-			 * with a newline
-			 * and another one.
-			 */
-			testProperty14: (number | null);
-			/**
-			 * This is the description for testProperty13.
-			 *
-			 * @deprecated it is also deprecated
-			 */
-			testProperty13: (number | null);
-			/**
-			 * This is the description for testProperty12.
-			 *
-			 * @deprecated
-			 */
-			testProperty12: unknown;
-			/**
-			 * @deprecated
-			 */
-			testProperty11: unknown;
-			testProperty10: unknown[];
 			/**
 			 * This is the description for testProperty1
 			 *

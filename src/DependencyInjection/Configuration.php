@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\DependencyInjection;
 
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
+use Override;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -22,6 +23,7 @@ final class Configuration implements ConfigurationInterface
 
     private TreeBuilder $treeBuilder;
 
+    #[Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $this->treeBuilder = new TreeBuilder(self::TREE_BUILDER_NAME, self::TREE_BUILDER_TYPE);

@@ -8,6 +8,7 @@ use ArrayObject;
 use BackedEnum;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
+use Override;
 use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 
 use function get_debug_type;
@@ -19,26 +20,31 @@ final class EnumNormalizer implements NormalizerInterface
     /**
      * @param mixed[] $context
      *
-     * @return array<mixed>|string|int|float|bool|ArrayObject<int|string,mixed>|null
+     * @return array<mixed>|string|int|float|bool|ArrayObject<int|string, mixed>|null
      */
+    #[Override]
     public function normalize(
         mixed $data,
         ?string $format = null,
         array $context = [],
     ): array|string|int|float|bool|ArrayObject|null {
         if (!is_object($data)) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(sprintf(
                 'Expected paramteter 1 ($data) to be of type "object" but got "%s".',
                 get_debug_type($data),
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         if (!$data instanceof BackedEnum) {
+            // @codeCoverageIgnoreStart
             throw new InvalidArgumentException(sprintf(
                 'Expected object to be an instance of "%s". Given instance was of class "%s".',
                 BackedEnum::class,
                 $data::class,
             ));
+            // @codeCoverageIgnoreEnd
         }
 
         return $data->value;
@@ -47,6 +53,7 @@ final class EnumNormalizer implements NormalizerInterface
     /**
      * @param mixed[] $context
      */
+    #[Override]
     public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof BackedEnum
@@ -54,8 +61,9 @@ final class EnumNormalizer implements NormalizerInterface
     }
 
     /**
-     * @return array<class-string|'*'|'object'|string,bool|null>
+     * @return array<class-string|'*'|'object'|string, bool|null>
      */
+    #[Override]
     public function getSupportedTypes(?string $format): array
     {
         return [

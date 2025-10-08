@@ -13,18 +13,25 @@ use Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr\ConstFetchNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeItemNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayShapeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ArrayTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConditionalTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\ConstTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\GenericTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IdentifierTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\IntersectionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\NullableTypeNode;
+use Brainshaker95\PhpToTsBundle\Model\Ast\Type\OffsetAccessTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Ast\Type\UnionTypeNode;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
+use Brainshaker95\PhpToTsBundle\Model\TsDocComment;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsGeneric;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use Closure;
+use phpDocumentor\Reflection\DocBlock;
+use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use PhpParser\Comment\Doc;
 use PhpParser\Node\ComplexType;
 use PhpParser\Node\Expr\Variable;
@@ -33,14 +40,13 @@ use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
-use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\EnumCase;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
-use PHPStan\PhpDocParser\Ast\PhpDoc\DeprecatedTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -50,6 +56,7 @@ use function array_map;
 use function array_unique;
 use function count;
 use function end;
+use function explode;
 use function get_debug_type;
 use function implode;
 use function in_array;
@@ -136,6 +143,11 @@ final class Converter
         self::TYPE_NON_EMPTY_LIST,
     ];
 
+    private static DocBlockFactoryInterface $docBlockFactory;
+
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 
     public static function toInterface(Class_ $node, bool $isReadonly): TsInterface
@@ -144,17 +156,19 @@ final class Converter
 
         Assert::nonEmptyStringNonNullable($name);
 
-        $docComment     = $node->getDocComment();
-        $generics       = [];
-        $description    = null;
-        $deprecatedNode = null;
+        $docComment  = $node->getDocComment();
+        $generics    = [];
+        $summary     = null;
+        $description = null;
+        $tags        = [];
 
         if ($docComment) {
-            $docNode        = PhpStan::getDocNode($docComment);
-            $textNodes      = PhpStan::getTextNodes($docNode);
-            $description    = PhpStan::textNodesToString($textNodes);
-            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
-            $generics       = self::getGenerics(PhpStan::getTemplateNodes($docNode));
+            $docBlock    = self::getDocBlockFactory()->create($docComment->getText());
+            $summary     = $docBlock->getSummary();
+            $description = $docBlock->getDescription()->render();
+            $tags        = self::getSupportedTags($docBlock);
+            $docNode     = PhpStan::getDocNode($docComment);
+            $generics    = self::getGenerics(PhpStan::getTemplateNodes($docNode));
         }
 
         return new TsInterface(
@@ -162,8 +176,9 @@ final class Converter
             parentName: $node->extends ? self::getTypeName($node->extends) : null,
             isReadonly: $isReadonly,
             generics: $generics,
+            summary: $summary ?: null,
             description: $description ?: null,
-            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
+            tags: $tags,
         );
     }
 
@@ -187,32 +202,37 @@ final class Converter
             ));
         }
 
-        $docComment     = $node->getDocComment();
-        $description    = null;
-        $deprecatedNode = null;
+        $docComment  = $node->getDocComment();
+        $summary     = null;
+        $description = null;
+        $tags        = [];
 
         if ($docComment) {
-            $docNode        = PhpStan::getDocNode($docComment);
-            $textNodes      = PhpStan::getTextNodes($docNode);
-            $description    = PhpStan::textNodesToString($textNodes);
-            $deprecatedNode = PhpStan::getDeprecatedNode($docNode);
+            $docBlock    = self::getDocBlockFactory()->create($docComment->getText());
+            $summary     = $docBlock->getSummary();
+            $description = $docBlock->getDescription()->render();
+            $tags        = self::getSupportedTags($docBlock);
         }
 
         return new TsEnum(
             name: $name,
             scalarType: $scalarType,
+            summary: $summary,
             description: $description ?: null,
-            deprecation: $deprecatedNode ? ($deprecatedNode->description ?: true) : null,
+            tags: $tags,
         );
     }
 
     /**
+     * @param array<string, string> $classNameMap
+     *
      * @throws InvalidPropertyException
      */
     public static function toProperty(
         Param|Property|EnumCase $property,
         bool $isReadonly,
         ?Doc $docComment,
+        array $classNameMap,
     ): TsProperty {
         $name = self::getNameFromProperty($property);
         $data = [];
@@ -232,6 +252,11 @@ final class Converter
                 name: $name,
                 forceVarNode: true,
             )['rootNode'];
+        }
+
+        if (isset($data['rootNode'])) {
+            self::normalizeClassIdentifiers([$data['rootNode']], $classNameMap);
+            self::fqcnifyConstFetchNodeClassNames([$data['rootNode']], $classNameMap);
         }
 
         $classIdentifiers = $data['rootNode']
@@ -267,8 +292,9 @@ final class Converter
             classIdentifiers: $classIdentifiers,
             generics: $generics,
             doesRequireValueOf: $doesRequireValueOf,
+            summary: $data['summary'] ?? null,
             description: $data['description'] ?? null,
-            deprecation: isset($data['deprecatedNode']) ? ($data['deprecatedNode']->description ?: true) : null,
+            tags: $data['tags'] ?? [],
         );
     }
 
@@ -305,13 +331,17 @@ final class Converter
             $nextLevelNodes = match (true) {
                 $node instanceof ConstTypeNode         => [$node->constExpr],
                 $node instanceof ArrayShapeNode        => $node->items,
+                $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
                 $node instanceof GenericTypeNode       => $node->genericTypes,
+                $node instanceof OffsetAccessTypeNode  => [$node->type, $node->offset],
                 self::isUnionOrIntersectionNode($node) => $node->types,
                 self::isArrayOrNullableNode($node)     => match (true) {
                     $node->type instanceof ConstTypeNode,
                     $node->type instanceof ArrayShapeNode,
                     $node->type instanceof GenericTypeNode,
                     self::isUnionOrIntersectionNode($node->type) => [$node->type],
+                    $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
+                    $node->type instanceof OffsetAccessTypeNode  => [$node->type->type, $node->type->offset],
                     default                                      => [],
                 },
                 default => [],
@@ -331,13 +361,18 @@ final class Converter
         return match (true) {
             default                                => [],
             $node instanceof ArrayShapeNode        => $node->items,
+            $node instanceof ArrayTypeNode         => [$node->type],
             $node instanceof ArrayShapeItemNode    => [$node->valueNode],
+            $node instanceof ConditionalTypeNode   => [$node->subject, $node->target, $node->if, $node->else],
             $node instanceof GenericTypeNode       => $node->genericTypes,
+            $node instanceof OffsetAccessTypeNode  => [$node->type, $node->offset],
             self::isUnionOrIntersectionNode($node) => $node->types,
             self::isArrayOrNullableNode($node)     => match (true) {
                 default                                      => [],
                 $node->type instanceof ArrayShapeNode        => $node->type->items,
+                $node->type instanceof ConditionalTypeNode   => [$node->type->subject, $node->type->target, $node->type->if, $node->type->else],
                 $node->type instanceof GenericTypeNode       => $node->type->genericTypes,
+                $node->type instanceof OffsetAccessTypeNode  => [$node->type->type, $node->type->offset],
                 self::isUnionOrIntersectionNode($node->type) => $node->type->types,
             },
         };
@@ -380,8 +415,9 @@ final class Converter
     /**
      * @return array{
      *     rootNode: ?Node,
+     *     summary: ?string,
      *     description: ?string,
-     *     deprecatedNode: ?DeprecatedTagValueNode,
+     *     tags: array<value-of<TsDocComment::SUPPORTED_TAGS>, string>,
      *     templateNodes: TemplateTagValueNode[],
      * }
      */
@@ -391,7 +427,8 @@ final class Converter
         string $name,
         bool $forceVarNode = false,
     ): array {
-        $docNode = PhpStan::getDocNode($docComment);
+        $docBlock = self::getDocBlockFactory()->create($docComment->getText());
+        $docNode  = PhpStan::getDocNode($docComment);
 
         $rawNode = $property instanceof Param && !$forceVarNode
             ? PhpStan::getParamNode($docNode, $name)
@@ -403,13 +440,14 @@ final class Converter
 
         $description = $property instanceof Param
             ? $rawNode?->description
-            : PhpStan::textNodesToString(PhpStan::getTextNodes($docNode));
+            : $docBlock->getDescription()->render();
 
         return [
-            'rootNode'       => $rootNode,
-            'description'    => $description ?: null,
-            'deprecatedNode' => PhpStan::getDeprecatedNode($docNode),
-            'templateNodes'  => PhpStan::getTemplateNodes($docNode),
+            'rootNode'      => $rootNode,
+            'summary'       => $docBlock->getSummary() ?: null,
+            'description'   => $description ?: null,
+            'tags'          => self::getSupportedTags($docBlock),
+            'templateNodes' => PhpStan::getTemplateNodes($docNode),
         ];
     }
 
@@ -442,7 +480,7 @@ final class Converter
     private static function getTypeFromProperty(Param|Property|EnumCase $property): string
     {
         if ($property instanceof EnumCase) {
-            if ($property->expr instanceof LNumber) {
+            if ($property->expr instanceof Int_) {
                 return (string) $property->expr->value;
             }
 
@@ -495,50 +533,91 @@ final class Converter
 
     /**
      * @param Node[] $nodes
-     * @param string[] $identifiers
      *
      * @return string[]
      */
-    private static function getClassIdentifiers(array $nodes, array $identifiers = []): array
+    private static function getClassIdentifiers(array $nodes): array
     {
-        foreach ($nodes as $node) {
+        $identifiers = [];
+
+        self::traverseNodes($nodes, static function (Node $node) use (&$identifiers): void {
             $identifier = self::getClassIdentifierNode($node)?->name;
 
+            // TODO: Test for duplicates when using ArrayTypeNode or NullableNode
+            // if ($identifier && !in_array($identifier, $identifiers, true)) {
             if ($identifier) {
                 $identifiers[] = $identifier;
             }
-
-            $nextLevelNodes = self::getNextLevelNodes($node);
-
-            if (count($nextLevelNodes)) {
-                $identifiers = self::getClassIdentifiers($nextLevelNodes, $identifiers);
-            }
-        }
+        });
 
         return $identifiers;
     }
 
     /**
      * @param Node[] $nodes
-     * @param GenericTypeNode[] $valueOfNodes
      *
      * @return GenericTypeNode[]
      */
-    private static function getValueOfNodes(array $nodes, array $valueOfNodes = []): array
+    private static function getValueOfNodes(array $nodes): array
     {
-        foreach ($nodes as $node) {
+        $valueOfNodes = [];
+
+        self::traverseNodes($nodes, static function (Node $node) use (&$valueOfNodes): void {
             if ($node instanceof GenericTypeNode && $node->type->name === self::TYPE_VALUE_OF) {
                 $valueOfNodes[] = $node;
             }
-
-            $nextLevelNodes = self::getNextLevelNodes($node);
-
-            if (count($nextLevelNodes)) {
-                $valueOfNodes = self::getValueOfNodes($nextLevelNodes, $valueOfNodes);
-            }
-        }
+        });
 
         return $valueOfNodes;
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param array<string, string> $classNameMap
+     */
+    private static function normalizeClassIdentifiers(array $nodes, array $classNameMap): void
+    {
+        self::traverseNodes($nodes, static function (Node $node) use ($classNameMap): void {
+            $classIdentifierNode = self::getClassIdentifierNode($node);
+
+            if ($classIdentifierNode && ($classNameMap[$classIdentifierNode->name] ?? false)) {
+                $classIdentifierNode->name = Str::getShortClassName($classNameMap[$classIdentifierNode->name]);
+            }
+        });
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param array<string, string> $classNameMap
+     */
+    private static function fqcnifyConstFetchNodeClassNames(array $nodes, array $classNameMap): void
+    {
+        self::traverseNodes($nodes, static function (Node $node) use ($classNameMap): void {
+            if (!$node instanceof ConstTypeNode || !$node->constExpr instanceof ConstFetchNode) {
+                return;
+            }
+
+            $constFetchNode     = $node->constExpr;
+            $firstNamespacePart = Str::getFirstNamespacePart($constFetchNode->className);
+
+            if ($classNameMap[$firstNamespacePart] ?? false) {
+                $constFetchNode->className = $classNameMap[$firstNamespacePart] . '\\' . Str::getTrailingNamespaceParts($constFetchNode->className);
+            } elseif ($classNameMap[$constFetchNode->className] ?? false) {
+                $constFetchNode->className = $classNameMap[$constFetchNode->className];
+            }
+        });
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @param Closure(Node $node): void $callback
+     */
+    private static function traverseNodes(array $nodes, Closure $callback): void
+    {
+        foreach ($nodes as $node) {
+            $callback($node);
+            self::traverseNodes(self::getNextLevelNodes($node), $callback);
+        }
     }
 
     /**
@@ -556,8 +635,37 @@ final class Converter
 
     private static function getTypeName(Identifier|Name $node): ?string
     {
-        return $node instanceof Name
-            ? (end($node->parts) ?: null)
-            : $node->name;
+        if ($node instanceof Identifier) {
+            return $node->name;
+        }
+
+        $parts = explode('\\', $node->name);
+
+        return end($parts) ?: null;
+    }
+
+    private static function getDocBlockFactory(): DocBlockFactoryInterface
+    {
+        self::$docBlockFactory ??= DocBlockFactory::createInstance();
+
+        return self::$docBlockFactory;
+    }
+
+    /**
+     * @phpstan-return array<value-of<TsDocComment::SUPPORTED_TAGS>, string>
+     */
+    private static function getSupportedTags(DocBlock $docBlock): array
+    {
+        $tags = [];
+
+        foreach ($docBlock->getTags() as $tag) {
+            $name = $tag->getName();
+
+            if (in_array($name, TsDocComment::SUPPORTED_TAGS, true)) {
+                $tags[$name] = $tag->render();
+            }
+        }
+
+        return $tags;
     }
 }

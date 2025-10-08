@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Fixture\Input;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
-use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 use stdClass;
 
 /**
@@ -13,6 +12,7 @@ use stdClass;
  *
  * @PhpCsFixerIgnore fully_qualified_strict_types
  * @PhpCsFixerIgnore global_namespace_import
+ * @PhpCsFixerIgnore nullable_type_declaration
  * @PhpCsFixerIgnore phpdoc_add_missing_param_annotation
  */
 #[AsTypeScriptable]
@@ -42,23 +42,30 @@ final class NativeTypes
     public mixed $testProperty11;
 
     /**
-     * This is the description for testProperty12.
+     * This is the summary for testProperty12.
      *
      * @deprecated
      */
     public object $testProperty12;
 
     /**
-     * This is the description for testProperty13.
+     * This is the summary for testProperty13.
      *
      * @deprecated it is also deprecated
      */
     public ?int $testProperty13;
 
     /**
+     * This is the summary for testProperty14.
+     *
      * This is the description for testProperty14
      * with a newline
      * and another one.
+     *
+     * And also another paragraph.
+     *
+     * And even another one
+     * with a newline
      */
     public int|null $testProperty14;
 
@@ -85,14 +92,21 @@ final class NativeTypes
      */
     public bool $testProperty20;
 
+    public null $testProperty21;
+
+    public true $testProperty22;
+
+    /**
+     * @var false
+     */
+    public $testProperty23;
+
     /**
      * @phpstan-ignore-next-line
      */
-    private $testProperty21;
+    private $privateProperty2;
 
     /**
-     * This is the constructor description.
-     *
      * @param string $testProperty1 This is the description for testProperty1
      *
      * @deprecated
@@ -104,8 +118,6 @@ final class NativeTypes
         public readonly string $testProperty2,
         public string $testProperty3,
         public $testProperty4,
-        #[Hidden]
-        public $hiddenProperty,
         /**
          * @phpstan-ignore-next-line
          */

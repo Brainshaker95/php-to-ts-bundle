@@ -6,9 +6,11 @@ namespace Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy;
 
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 
 final class PascalCase implements FileNameStrategy
 {
+    #[Override]
     public function getName(string $name): string
     {
         return Str::toPascal($name);

@@ -4,26 +4,33 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Tests\Fixture\Input\IntEnum;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
+use Brainshaker95\PhpToTsBundle\Serializer\Normalizer\EnumNormalizer;
 use Brainshaker95\PhpToTsBundle\Serializer\Serializer;
+use Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer;
 use Brainshaker95\PhpToTsBundle\Service\Traits\TsController;
+use Override;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @internal
- *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Serializer\Serializer
- * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\HasSerializer
- * @covers \Brainshaker95\PhpToTsBundle\Service\Traits\TsController
  */
+#[Small]
+#[CoversClass(Serializer::class)]
+#[CoversTrait(HasSerializer::class)]
+#[CoversTrait(TsController::class)]
+#[CoversClass(EnumNormalizer::class)]
 final class TsControllerTest extends KernelTestCase
 {
     use TsController;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -39,10 +46,10 @@ final class TsControllerTest extends KernelTestCase
         $instance = new #[AsTypeScriptable] class(true, ['foo' => ['bar' => ['baz']]]) {
             public int $property1;
 
-            public string $property2;
+            public IntEnum $property2;
 
             /**
-             * @param array<string,array<string,string[]>> $property4
+             * @param array<string, array<string, string[]>> $property4
              */
             public function __construct(
                 public bool $property3,
@@ -51,14 +58,14 @@ final class TsControllerTest extends KernelTestCase
         };
 
         $instance->property1 = 1;
-        $instance->property2 = '1';
+        $instance->property2 = IntEnum::CASE_1;
 
         $response = $this->ts($instance);
 
         self::assertTrue($response->getStatusCode() === Response::HTTP_OK);
         self::assertInstanceOf(JsonResponse::class, $response);
 
-        $expected = '{"property1":1,"property2":"1","property3":true,"property4":{"foo":{"bar":["baz"]}}}';
+        $expected = '{"property1":1,"property2":0,"property3":true,"property4":{"foo":{"bar":["baz"]}}}';
 
         self::assertSame(
             expected: $expected,

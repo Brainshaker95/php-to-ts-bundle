@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Interface\FileNameStrategy;
 use Brainshaker95\PhpToTsBundle\Interface\SortStrategy;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Override;
 
 /**
  * @phpstan-import-type ConfigArray from C
@@ -31,11 +32,13 @@ final class PartialConfig implements C
         private ?string $fileNameStrategy = null,
     ) {}
 
+    #[Override]
     public function getInputDir(): ?string
     {
         return $this->inputDir;
     }
 
+    #[Override]
     public function setInputDir(?string $inputDir): self
     {
         $this->inputDir = $inputDir;
@@ -43,11 +46,13 @@ final class PartialConfig implements C
         return $this;
     }
 
+    #[Override]
     public function getOutputDir(): ?string
     {
         return $this->outputDir;
     }
 
+    #[Override]
     public function setOutputDir(?string $outputDir): self
     {
         $this->outputDir = $outputDir;
@@ -58,6 +63,7 @@ final class PartialConfig implements C
     /**
      * @phpstan-return ?FileType::TYPE_*
      */
+    #[Override]
     public function getFileType(): ?string
     {
         return $this->fileType;
@@ -66,6 +72,7 @@ final class PartialConfig implements C
     /**
      * @phpstan-param ?FileType::TYPE_* $fileType
      */
+    #[Override]
     public function setFileType(?string $fileType): self
     {
         $this->fileType = $fileType;
@@ -76,6 +83,7 @@ final class PartialConfig implements C
     /**
      * @phpstan-return ?TypeDefinitionType::TYPE_*
      */
+    #[Override]
     public function getTypeDefinitionType(): ?string
     {
         return $this->typeDefinitionType;
@@ -84,6 +92,7 @@ final class PartialConfig implements C
     /**
      * @phpstan-param TypeDefinitionType::TYPE_* $typeDefinitionType
      */
+    #[Override]
     public function setTypeDefinitionType(string $typeDefinitionType): self
     {
         $this->typeDefinitionType = $typeDefinitionType;
@@ -91,11 +100,13 @@ final class PartialConfig implements C
         return $this;
     }
 
+    #[Override]
     public function getIndent(): ?Indent
     {
         return $this->indent;
     }
 
+    #[Override]
     public function setIndent(?Indent $indent): self
     {
         $this->indent = $indent;
@@ -103,11 +114,13 @@ final class PartialConfig implements C
         return $this;
     }
 
+    #[Override]
     public function getQuotes(): ?Quotes
     {
         return $this->quotes;
     }
 
+    #[Override]
     public function setQuotes(?Quotes $quotes): self
     {
         $this->quotes = $quotes;
@@ -116,16 +129,18 @@ final class PartialConfig implements C
     }
 
     /**
-     * @return ?class-string<SortStrategy>[]
+     * @phpstan-return ?class-string<SortStrategy>[]
      */
+    #[Override]
     public function getSortStrategies(): ?array
     {
         return $this->sortStrategies;
     }
 
     /**
-     * @param ?class-string<SortStrategy>[] $sortStrategies
+     * @phpstan-param ?class-string<SortStrategy>[] $sortStrategies
      */
+    #[Override]
     public function setSortStrategies(?array $sortStrategies): self
     {
         $this->sortStrategies = $sortStrategies;
@@ -134,16 +149,18 @@ final class PartialConfig implements C
     }
 
     /**
-     * @return ?class-string<FileNameStrategy>
+     * @phpstan-return ?class-string<FileNameStrategy>
      */
+    #[Override]
     public function getFileNameStrategy(): ?string
     {
         return $this->fileNameStrategy;
     }
 
     /**
-     * @param ?class-string<FileNameStrategy> $fileNameStrategy
+     * @phpstan-param ?class-string<FileNameStrategy> $fileNameStrategy
      */
+    #[Override]
     public function setFileNameStrategy(?string $fileNameStrategy): self
     {
         $this->fileNameStrategy = $fileNameStrategy;
@@ -154,6 +171,7 @@ final class PartialConfig implements C
     /**
      * @phpstan-param ConfigArray $array
      */
+    #[Override]
     public static function fromArray(array $array): self
     {
         $fileType = isset($array[C::FILE_TYPE_KEY])

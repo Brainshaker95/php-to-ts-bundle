@@ -4,10 +4,12 @@
  */
 
 /**
+ * @internal
  * @deprecated because of reasons
  *
  * @template T1 class level generic
  * @template T2 constructor level generic
+ *
  * @template U2 property level generic
  * with a newline
  */
@@ -22,13 +24,19 @@ declare type GenericTypes<
 			V extends boolean,
 			W extends unknown,
 > = {
+			testProperty10: (T1 extends "foo" ? "baz" : "bar");
+			testProperty9: (T1 extends "foo" ? "bar" : "baz");
 			testProperty8: number;
 			testProperty7: SomeClass<T1>;
 			/**
-			 * This is the description for testProperty6.
+			 * This is the summary for testProperty6.
+			 *
+			 * This is the description for testProperty6
 			 */
 			testProperty6: W;
 			/**
+			 * This is the summary for testProperty5.
+			 *
 			 * This is the description for testProperty5
 			 */
 			testProperty5: {
@@ -37,7 +45,8 @@ declare type GenericTypes<
 						baz: (V | T3);
 			};
 			/**
-			 * This is the description for testProperty4
+			 * This is the summary for testProperty4
+			 * And also this.
 			 */
 			testProperty4: (T1 | "foo");
 			testProperty3: U1;

@@ -6,6 +6,9 @@
 import type { Bar } from './bar';
 import type { Foo } from './foo';
 
+/**
+ * @internal
+ */
 export interface NativeTypes {
   /**
    * @deprecated
@@ -25,27 +28,39 @@ export interface NativeTypes {
    * @deprecated
    */
   testProperty4: unknown;
+  testProperty5: number;
+  testProperty6: number;
+  testProperty7: string;
+  testProperty8: boolean;
+  testProperty9: unknown[];
   testProperty10: unknown[];
   /**
    * @deprecated
    */
   testProperty11: unknown;
   /**
-   * This is the description for testProperty12.
+   * This is the summary for testProperty12.
    *
    * @deprecated
    */
   testProperty12: unknown;
   /**
-   * This is the description for testProperty13.
+   * This is the summary for testProperty13.
    *
    * @deprecated it is also deprecated
    */
   testProperty13: (number | null);
   /**
+   * This is the summary for testProperty14.
+   *
    * This is the description for testProperty14
    * with a newline
    * and another one.
+   *
+   * And also another paragraph.
+   *
+   * And even another one
+   * with a newline
    */
   testProperty14: (number | null);
   testProperty15: unknown;
@@ -54,9 +69,7 @@ export interface NativeTypes {
   testProperty18: (Foo & Bar);
   testProperty19: (string | false);
   testProperty20: true;
-  testProperty5: number;
-  testProperty6: number;
-  testProperty7: string;
-  testProperty8: boolean;
-  testProperty9: unknown[];
+  testProperty21: null;
+  testProperty22: true;
+  testProperty23: false;
 }

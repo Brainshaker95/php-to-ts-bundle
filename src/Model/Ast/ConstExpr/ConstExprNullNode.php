@@ -7,24 +7,29 @@ namespace Brainshaker95\PhpToTsBundle\Model\Ast\ConstExpr;
 use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
 use Brainshaker95\PhpToTsBundle\Tool\Assert;
+use Override;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprNullNode as PHPStanConstExprNullNode;
 use PHPStan\PhpDocParser\Ast\Node as PHPStanNode;
+use Stringable;
 
 /**
  * @internal
  */
-final class ConstExprNullNode implements Node
+final class ConstExprNullNode implements Node, Stringable
 {
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
     }
 
+    #[Override]
     public function toString(): string
     {
         return TsProperty::TYPE_NULL;
     }
 
+    #[Override]
     public static function fromPhpStan(PHPStanNode $node): self
     {
         Assert::instanceOf($node, PHPStanConstExprNullNode::class);

@@ -12,17 +12,17 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\TsProperty;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Model\TsProperty
- *
  * @PhpCsFixerIgnore heredoc_indentation
  */
+#[Small]
+#[CoversClass(TsProperty::class)]
 final class TsPropertyTest extends TestCase
 {
     public function testToString(): void
@@ -31,20 +31,48 @@ final class TsPropertyTest extends TestCase
             name: 'propertyName',
             type: TsProperty::TYPE_UNKNOWN,
             isReadonly: true,
+            summary: 'This is a summary',
             description: 'This is a description',
-            deprecation: 'This is a deprecation',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
         );
 
         self::assertSame($tsProperty->toString(), $tsProperty->__toString());
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
   /**
+   * This is a summary
+   *
    * This is a description
    *
    * @deprecated This is a deprecation
    */
   readonly propertyName: unknown;
 EOT, '' . $tsProperty);
+
+        self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
+  /**
+   * This is a summary
+   *
+   * This is a description
+   */
+  propertyName: 3.14;
+EOT, '' . new TsProperty(
+            name: 'propertyName',
+            type: new ConstExprFloatNode('3.14'),
+            summary: 'This is a summary',
+            description: 'This is a description',
+        ));
+
+        self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
+  /**
+   * This is a summary
+   */
+  propertyName: 3.14;
+EOT, '' . new TsProperty(
+            name: 'propertyName',
+            type: new ConstExprFloatNode('3.14'),
+            summary: 'This is a summary',
+        ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
   /**
@@ -65,7 +93,7 @@ EOT, '' . new TsProperty(
 EOT, '' . new TsProperty(
             name: 'propertyName',
             type: new ConstExprNullNode(),
-            deprecation: 'This is a deprecation',
+            tags: ['deprecated' => '@deprecated This is a deprecation'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<'EOT'
@@ -76,7 +104,7 @@ EOT, '' . new TsProperty(
 EOT, '' . new TsProperty(
             name: 'propertyName',
             type: new ConstExprIntegerNode('69'),
-            deprecation: true,
+            tags: ['deprecated' => '@deprecated'],
         ));
 
         self::assertStringEqualsStringIgnoringLineEndings(<<<EOT

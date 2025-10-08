@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\TsEnum;
 use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,6 +22,7 @@ use function is_string;
 )]
 final class DumpDirCommand extends DumpCommand
 {
+    #[Override]
     protected function configure(): void
     {
         $this->addArgument(
@@ -32,6 +34,7 @@ final class DumpDirCommand extends DumpCommand
         parent::configure();
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $config   = $this->getConfig();

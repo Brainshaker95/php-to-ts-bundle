@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Brainshaker95\PhpToTsBundle\Service;
 
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
-use Brainshaker95\PhpToTsBundle\Attribute\Hidden;
 use Brainshaker95\PhpToTsBundle\Event\TsEnumGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsInterfaceGeneratedEvent;
 use Brainshaker95\PhpToTsBundle\Event\TsPropertyGeneratedEvent;
@@ -15,7 +14,10 @@ use Brainshaker95\PhpToTsBundle\Model\TsInterface;
 use Brainshaker95\PhpToTsBundle\Service\Traits\HasEventDispatcher;
 use Brainshaker95\PhpToTsBundle\Tool\Attribute;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Brainshaker95\PhpToTsBundle\Tool\Str;
+use Override;
 use PhpParser\Comment\Doc;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
@@ -23,7 +25,10 @@ use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\EnumCase;
+use PhpParser\Node\Stmt\GroupUse;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\UseItem;
 use PhpParser\NodeVisitor\NameResolver;
 
 use function array_filter;
@@ -41,14 +46,14 @@ final class Visitor extends NameResolver
 
     private bool $isTypeScriptable;
 
-    /**
-     * @var ?class-string
-     */
-    private ?string $currentClassName;
-
     private ?TsInterface $currentTsInterface;
 
     private ?TsEnum $currentTsEnum;
+
+    /**
+     * @var array<string, string>
+     */
+    private array $currentClassNameMap;
 
     /**
      * @var TsInterface[]
@@ -65,16 +70,17 @@ final class Visitor extends NameResolver
      *
      * @return ?Node[]
      */
-    public function beforeTraverse(array $nodes)
+    #[Override]
+    public function beforeTraverse(array $nodes): ?array
     {
         parent::beforeTraverse($nodes);
 
-        $this->isTypeScriptable   = false;
-        $this->currentClassName   = null;
-        $this->currentTsInterface = null;
-        $this->currentTsEnum      = null;
-        $this->tsInterfaces       = [];
-        $this->tsEnums            = [];
+        $this->isTypeScriptable    = false;
+        $this->currentTsInterface  = null;
+        $this->currentTsEnum       = null;
+        $this->currentClassNameMap = [];
+        $this->tsInterfaces        = [];
+        $this->tsEnums             = [];
 
         return null;
     }
@@ -82,20 +88,47 @@ final class Visitor extends NameResolver
     /**
      * @return int|Node|null
      */
+    #[Override]
     public function enterNode(Node $node)
     {
         parent::enterNode($node);
 
+        if ($node instanceof Use_ || $node instanceof GroupUse) {
+            if ($node instanceof Use_ && $node->type !== Use_::TYPE_NORMAL) {
+                return null;
+            }
+
+            $uses = $node instanceof Use_
+                ? $node->uses
+                : array_filter(
+                    $node->uses,
+                    static fn (UseItem $use): bool => $use->type === Use_::TYPE_NORMAL,
+                );
+
+            foreach ($uses as $use) {
+                $this->currentClassNameMap[$use->getAlias()->name] = $use->name->name;
+            }
+
+            return null;
+        }
+
         if (($node instanceof Class_ || $node instanceof Enum_)
             && !$this->isTypeScriptable && self::isTypeScriptable($node)) {
             $this->isTypeScriptable = true;
-            $this->currentClassName = self::getFqcn($node);
+            $fqcn                   = self::getFqcn($node);
+
+            if ($fqcn) {
+                $this->currentClassNameMap['self']                        = $fqcn;
+                $this->currentClassNameMap[Str::getShortClassName($fqcn)] = $fqcn;
+            }
 
             if ($node instanceof Class_) {
                 $this->currentTsInterface = Converter::toInterface($node, $node->isReadonly());
             } else {
                 $this->currentTsEnum = Converter::toEnum($node);
             }
+
+            return null;
         }
 
         if (!$this->currentTsInterface && !$this->currentTsEnum) {
@@ -117,11 +150,11 @@ final class Visitor extends NameResolver
         if ($node instanceof ClassMethod && $node->name->name === '__construct') {
             $publicParams = array_filter(
                 $node->params,
-                static fn (Param $param) => ($param->flags & Class_::MODIFIER_PUBLIC) !== 0,
+                static fn (Param $param) => ($param->flags & Modifiers::PUBLIC) !== 0,
             );
 
             $readonlyStates = array_map(
-                static fn (Param $param) => ($param->flags & Class_::MODIFIER_READONLY) !== 0,
+                static fn (Param $param) => ($param->flags & Modifiers::READONLY) !== 0,
                 $publicParams,
             );
 
@@ -134,6 +167,8 @@ final class Visitor extends NameResolver
                 $publicParams,
                 $readonlyStates,
             );
+
+            return null;
         }
 
         if ($node instanceof EnumCase) {
@@ -141,6 +176,8 @@ final class Visitor extends NameResolver
                 property: $node,
                 docComment: $docComment,
             );
+
+            return null;
         }
 
         return null;
@@ -149,6 +186,7 @@ final class Visitor extends NameResolver
     /**
      * @return int|Node|Node[]|null
      */
+    #[Override]
     public function leaveNode(Node $node)
     {
         parent::leaveNode($node);
@@ -209,13 +247,7 @@ final class Visitor extends NameResolver
         bool $isReadonly = false,
         ?Doc $docComment = null,
     ): void {
-        $tsProperty = Converter::toProperty($property, $isReadonly, $docComment);
-
-        if ($this->currentClassName
-            && Attribute::existsOnProperty(Hidden::class, $this->currentClassName, $tsProperty->name)) {
-            return;
-        }
-
+        $tsProperty         = Converter::toProperty($property, $isReadonly, $docComment, $this->currentClassNameMap);
         $tsProperty->config = $this->config;
 
         $event = $this->eventDispatcher->dispatch(new TsPropertyGeneratedEvent(

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Brainshaker95\PhpToTsBundle\Service\Filesystem;
+use Override;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\SplFileInfo;
@@ -12,16 +15,15 @@ use Symfony\Component\Finder\SplFileInfo;
 /**
  * @internal
  *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\Service\Filesystem
- *
  * @PhpCsFixerIgnore heredoc_indentation
  */
+#[Small]
+#[CoversClass(Filesystem::class)]
 final class FilesystemTest extends KernelTestCase
 {
     private Filesystem $filesystem;
 
+    #[Override]
     protected function setUp(): void
     {
         $container  = self::getContainer();
@@ -115,9 +117,6 @@ EOT, $license);
     {
         $this->expectException(FileNotFoundException::class);
 
-        /**
-         * @phpstan-ignore-next-line
-         */
         $this->filesystem->assertDir('tests/TestKernel.php');
     }
 }

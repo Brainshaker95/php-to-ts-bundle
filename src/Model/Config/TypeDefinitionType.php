@@ -9,5 +9,8 @@ final class TypeDefinitionType
     public const TYPE_INTERFACE  = 'interface';
     public const TYPE_TYPE_ALIAS = 'type';
 
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct() {}
 }

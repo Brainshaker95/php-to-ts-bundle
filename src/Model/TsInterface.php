@@ -12,8 +12,10 @@ use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ConstructorFirst;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
+use Brainshaker95\PhpToTsBundle\Model\Traits\HasFileName;
 use Brainshaker95\PhpToTsBundle\Model\Traits\HasTsInterfaceHeader;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -32,24 +34,27 @@ use function usort;
 
 final class TsInterface implements Stringable
 {
+    use HasFileName;
     use HasTsInterfaceHeader;
 
     /**
      * @param TsGeneric[] $generics
-     * @param true|string|null $deprecation
+     * @phpstan-param array<value-of<TsDocComment::SUPPORTED_TAGS>, string> $tags
      * @param TsProperty[] $properties
      */
     public function __construct(
         public string $name,
         public ?string $parentName = null,
-        public readonly bool $isReadonly = false,
-        public readonly array $generics = [],
+        public bool $isReadonly = false,
+        public array $generics = [],
+        public ?string $summary = null,
         public ?string $description = null,
-        public bool|string|null $deprecation = null,
+        public array $tags = [],
         public array $properties = [],
         public ?C $config = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
@@ -73,8 +78,9 @@ final class TsInterface implements Stringable
         $generics           = $this->getGenerics();
 
         $docComment = (new TsDocComment(
+            summary: $this->summary,
             description: $this->description,
-            deprecation: $this->deprecation,
+            tags: $this->tags,
             generics: $generics,
         ))->toString();
 
@@ -114,7 +120,7 @@ final class TsInterface implements Stringable
             ->append(PHP_EOL)
         ;
 
-        foreach ($this->getSortedProperties() as $property) {
+        foreach ($this->getSortedProperties(null) as $property) {
             $string = $string
                 ->append($property->toString())
                 ->append(PHP_EOL)
@@ -128,22 +134,9 @@ final class TsInterface implements Stringable
     }
 
     /**
-     * Gets the file based on the configured file name strategy and file type.
-     */
-    public function getFileName(): string
-    {
-        $fileNameStrategy = $this->config?->getFileNameStrategy() ?? C::FILE_NAME_STRATEGY_DEFAULT;
-        $fileType         = $this->config?->getFileType() ?? C::FILE_TYPE_DEFAULT;
-
-        return (new $fileNameStrategy())->getName($this->name)
-            . ($fileType === FileType::TYPE_DECLARATION ? '.d' : '')
-            . '.ts';
-    }
-
-    /**
      * Gets the properties based on the configured sort strategy.
      *
-     * @param ?class-string<SortStrategy>[] $sortStrategies
+     * @phpstan-param ?class-string<SortStrategy>[] $sortStrategies
      *
      * @return TsProperty[]
      */

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Brainshaker95\PhpToTsBundle\DependencyInjection\Configuration as DependencyInjectionConfiguration;
+use Brainshaker95\PhpToTsBundle\DependencyInjection\PhpToTsExtension;
 use Brainshaker95\PhpToTsBundle\Interface\Config as C;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileNameStrategy\PascalCase;
 use Brainshaker95\PhpToTsBundle\Model\Config\FileType;
@@ -15,6 +17,9 @@ use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\AlphabeticalAsc;
 use Brainshaker95\PhpToTsBundle\Model\Config\SortStrategy\ReadonlyLast;
 use Brainshaker95\PhpToTsBundle\Model\Config\TypeDefinitionType;
 use Brainshaker95\PhpToTsBundle\Service\Configuration;
+use Override;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -24,16 +29,14 @@ use function count;
 /**
  * @internal
  *
- * @small
- *
- * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\Configuration
- * @covers \Brainshaker95\PhpToTsBundle\DependencyInjection\PhpToTsExtension
- * @covers \Brainshaker95\PhpToTsBundle\Model\Config\FullConfig
- * @covers \Brainshaker95\PhpToTsBundle\Model\Config\PartialConfig
- * @covers \Brainshaker95\PhpToTsBundle\Service\Configuration
- *
  * @phpstan-import-type ConfigurationArray from Configuration
  */
+#[Small]
+#[CoversClass(Configuration::class)]
+#[CoversClass(DependencyInjectionConfiguration::class)]
+#[CoversClass(FullConfig::class)]
+#[CoversClass(PartialConfig::class)]
+#[CoversClass(PhpToTsExtension::class)]
 final class ConfigurationTest extends KernelTestCase
 {
     private Configuration $config;
@@ -43,6 +46,7 @@ final class ConfigurationTest extends KernelTestCase
      */
     private array $phpToTs;
 
+    #[Override]
     protected function setUp(): void
     {
         $container = self::getContainer();

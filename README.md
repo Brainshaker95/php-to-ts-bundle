@@ -48,6 +48,8 @@ namespace App\Model\TypeScriptables;
 use Brainshaker95\PhpToTsBundle\Attribute\AsTypeScriptable;
 
 /**
+ * This is a class summary.
+ * 
  * This is a class description
  *
  * @deprecated use MyOtherClass instead
@@ -77,7 +79,7 @@ final class MyClass extends MyParentClass
     public $foo2;
 
     /**
-     * This is a property description
+     * This is a property summary
      * with a new line
      *
      * @deprecated
@@ -106,6 +108,8 @@ import type { Foo } from './foo';
 import type { MyParentClass } from './my-parent-class';
 
 /**
+ * This is a class summary.
+ * 
  * This is a class description
  *
  * @deprecated use MyOtherClass instead
@@ -115,7 +119,7 @@ export interface MyClass<
 > extends MyParentClass {
   readonly bar1: (Foo & Bar);
   /**
-   * This is a property description
+   * This is a property summary
    * with a new line
    *
    * @deprecated
@@ -340,7 +344,6 @@ final class MyService
 
 * All class identifiers used need to point to classes tagged with the `AsTypeScriptable` attribute, otherwise invalid TypeScript interfaces will be generated.
 * Types are only recognized as class identifiers if they start with an uppercase letter.
-* Multiline `@deprecated` and `@template` descriptions cannot contain empty lines between paragraphs. Only a single new line can be used as a separator. All other lines will be considered as part of the property description.
 * No support for nested readonly types for array shapes. Only the array property itself will be marked as readonly, which would technically allow nested properties to be modified.
 * No support for array shapes where some items have keys and some do not.
 * No support for `value-of` on backed enums.
@@ -352,7 +355,6 @@ final class MyService
 
 * Document example TypeScriptable class
 * Document example TypeScriptable enum
-* Document usage of Hidden attribute
 * Document usage of TsController
 
 <p align="right"><a href="#top" title="Back to top">&nbsp;&nbsp;&nbsp;⬆&nbsp;&nbsp;&nbsp;</a></p>

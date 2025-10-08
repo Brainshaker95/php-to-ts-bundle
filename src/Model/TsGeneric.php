@@ -8,6 +8,7 @@ use Brainshaker95\PhpToTsBundle\Interface\Node;
 use Brainshaker95\PhpToTsBundle\Model\Config\Indent;
 use Brainshaker95\PhpToTsBundle\Model\Config\Quotes;
 use Brainshaker95\PhpToTsBundle\Tool\Converter;
+use Override;
 use Stringable;
 
 use const PHP_EOL;
@@ -28,12 +29,13 @@ final class TsGeneric implements Stringable
      */
     public function __construct(
         public string $name,
-        public ?Node $bound = null,
-        public ?Node $default = null,
-        public ?string $description = null,
         public array $properties = [],
+        public readonly ?Node $bound = null,
+        public readonly ?Node $default = null,
+        public readonly ?string $description = null,
     ) {}
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toString();
